@@ -66,12 +66,15 @@ execFileSync(
 console.log(`ok ${OUT_MOBILE}`)
 
 // ── 2. La boucle du décor, débarrassée du leurre filmé ──────────────────────
-// Pas de `delogo` : son interpolation laisse une grille visible sur une zone de
-// cette taille. Deux anneaux de flou — large et doux puis serré et fort — font
-// fondre le leurre dans l'eau ; puis le cadre ENTIER passe en profondeur de
-// champ (`gblur`) pour noyer les bords de la rustine. Sigma 8 : jugé sur
-// prototypes (6 = rustine encore devinable en mouvement, 12 = soupe sans
-// texture) — les bulles et rais de lumière restent lisibles.
+// D'abord le FILIGRANE du générateur (l'étoile ✦, statique en bas à droite,
+// mesurée à ~(1160, 600)) : `delogo` sur cette petite zone — l'interpolation
+// y est propre (zone compacte), et le flou final efface ce qui en reste.
+// Ensuite le leurre filmé : pas de `delogo` sur lui — son interpolation laisse
+// une grille visible sur une zone de cette taille. Deux anneaux de flou —
+// large et doux puis serré et fort — le fondent dans l'eau ; puis le cadre
+// ENTIER passe en profondeur de champ (`gblur`) pour noyer les bords des
+// rustines. Sigma 8 : jugé sur prototypes (6 = rustine encore devinable en
+// mouvement, 12 = soupe sans texture) — bulles et rais restent lisibles.
 const outer = {
   x: LURE_BOX.x - 37,
   y: LURE_BOX.y - 25,
@@ -85,7 +88,8 @@ execFileSync(
     '-y', '-i', BACKDROP,
     '-filter_complex',
     // Chaque flux est consommé UNE fois : d'où les `split` (règle ffmpeg).
-    `[0:v]split[base][forOuter];` +
+    `[0:v]delogo=x=1110:y=550:w=100:h=100[nolabel];` +
+      `[nolabel]split[base][forOuter];` +
       `[forOuter]crop=${outer.w}:${outer.h}:${outer.x}:${outer.y},avgblur=8[w];` +
       `[base][w]overlay=${outer.x}:${outer.y}[a];` +
       `[a]split[a1][a2];` +
