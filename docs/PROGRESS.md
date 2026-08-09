@@ -3,6 +3,35 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-09 (après-midi) — Le hero téléphone refait : plein écran, recadrage central
+
+Demande Camil : « revoit complètement le format de la vidéo sur le responsive téléphone »
+puis « le scroll to trigger doit être en full screen, standardise tout ».
+
+- **Fini le letterbox flouté** : `hero-mobile.mp4` est désormais un RECADRAGE CENTRAL 9:16
+  plein cadre (540×960, 1,6 Mo au lieu de 3,0). Vérifié à la planche contact : l'action est
+  centrée sur toute la durée — le sujet reste dans le cadre. L'ancien montage (bande 16:9
+  nette + remplissage flouté, affiché en `object-contain`) morcelait l'écran en rubans.
+  `scripts/hero-mobile.mjs` (partie 1) + commentaires `src/lib/hero-variant.ts`.
+- **`object-cover` partout** : vidéo d'ouverture, séquence canvas au scroll — même cadrage
+  dans toutes les orientations, plus aucun saut visuel au relais vidéo → scroll.
+  `HeroScroll.tsx`, `HeroVideo.tsx`, `use-portrait.ts` (le hook ne sert plus qu'au choix de
+  source et à la caméra 3D).
+- **Hero plein écran dès le premier pixel (accueil, mobile ET desktop)** : sur l'accueil le
+  header devient une SURCOUCHE `fixed` — transparente en haut de page (liens en blanc via
+  `tone="overlay"` du `LangSwitcher` et le style des items), effacée quand on défile vers le
+  bas (la scène règne seule), rappelée sur fond plein en remontant (seuils 4px/96px). Les
+  autres pages gardent le `sticky` classique. Un voile dégradé (`h-44`,
+  `from-background/70`) posé en haut du hero garde le chrome lisible sur les plans clairs.
+  Le lock-up descend à `top-[21svh]` sur téléphone (le header y fait trois lignes).
+  `SiteHeader.tsx`, `LangSwitcher.tsx`, `HeroBrand.tsx`.
+- Vérifié au viewport réel 375×812 et desktop : plein écran aux trois moments (ouverture,
+  séquence, relais 3D), console propre, FAQ inchangée.
+- **Modèle 3D « Orange feu » remplacé** (nouvel export Camil, `assets/3d models/leurre_orange.glb`)
+  et redérivé par `npm run models` : 26,9 Mo → 8,2 Mo servi. La nage s'applique génériquement à
+  tout modèle chargé (`lure-stage.ts`) — vérifié au navigateur : le nouveau coloris s'affiche et
+  bat de la charnière. Gate complet vert (tsc, eslint, 154 tests, build).
+
 ## 2026-08-09 (midi) — Le site est sur GitHub et en pré-prod Vercel
 
 Le dépôt et la mise en ligne de pré-production sont branchés (demande Camil, en

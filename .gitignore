@@ -71,3 +71,6 @@ assets/video scroll trigger/**/*.mp4
 # Originaux conservés par `npm run loop` avant de coudre le fondu de boucle.
 # Sources de travail : ni versionnées, ni servies au visiteur.
 public/**/*.orig.mp4
+
+.vercel
+.env*
