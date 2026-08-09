@@ -87,7 +87,7 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
   /** Part du fondu déjà franchie : 0 = séquence seule, 1 = 3D seule. */
   const [blend, setBlend] = useState(0)
   const [reducedMotion, setReducedMotion] = useState(false)
-  /** Portrait = vidéo téléphone (bande entière, jamais rognée) + médias en `contain`. */
+  /** Portrait = vidéo téléphone (recadrage central 9:16, plein cadre). */
   const portrait = useIsPortrait()
   const introSrc = portrait ? HERO_VIDEO_MOBILE : HERO_VIDEO
 
@@ -292,13 +292,14 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
         <HeroBackdrop alive={blendValue > 0} />
 
         {/* La séquence. aria-hidden : c'est une illustration, le texte porte le sens.
-            Portrait : `contain` — la bande 16:9 entière sur le décor, jamais un
-            recadrage qui coupe le leurre. */}
+            `cover` dans TOUTES les orientations : l'action est centrée dans les
+            images (même cadrage que la vidéo téléphone) — le plein cadre prime
+            sur les bords du décor. */}
         <canvas
           ref={canvasRef}
           aria-hidden="true"
           style={{ opacity: 1 - blendValue }}
-          className={`absolute inset-0 size-full ${portrait ? 'object-contain' : 'object-cover'}`}
+          className="absolute inset-0 size-full object-cover"
         />
 
         {status === 'failed' && (
@@ -352,9 +353,7 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
                 opacity: introPhase === 'playing' ? 1 : 0,
                 transition: `opacity ${HERO_FADE_MS}ms var(--ease-out-soft)`,
               }}
-              className={`pointer-events-none absolute inset-0 z-20 size-full ${
-                portrait ? 'object-contain' : 'object-cover'
-              }`}
+              className="pointer-events-none absolute inset-0 z-20 size-full object-cover"
             >
               <source src={introSrc} type="video/mp4" />
             </video>
@@ -369,6 +368,14 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
             </div>
           </>
         )}
+
+        {/* Le voile sous le header en surcouche (accueil plein écran) : le
+            chrome reste lisible sur les plans clairs de la vidéo. Au-dessus de
+            l'ouverture vidéo (z-20), sous le header (z-50). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 h-44 bg-linear-to-b from-background/70 to-transparent"
+        />
 
         {/* Le titre `sr-only` de la page : aucun texte visible sur la scène. */}
         {overlay}

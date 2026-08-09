@@ -370,9 +370,9 @@ export function createLureStage(
     // hauteur. Trois régimes, calés sur le traitement des médias filmés :
     //   aspect ≥ 16/9  → largeur figée, rognage en hauteur (« cover », écrans larges) ;
     //   1 ≤ aspect < 16/9 → hauteur figée, rognage en largeur (« cover », tablette) ;
-    //   aspect < 1 (PORTRAIT) → largeur figée À NOUVEAU : la vidéo téléphone montre
-    //   la bande 16:9 entière (`object-contain`), la 3D doit donc montrer le leurre
-    //   ENTIER — un rognage latéral en couperait la moitié (demande du 2026-08-09).
+    //   aspect < 1 (PORTRAIT) → largeur figée À NOUVEAU : contrairement à la vidéo
+    //   (plein cadre recadré depuis 2026-08-09), la 3D montre le leurre ENTIER —
+    //   c'est le produit qu'on vend, un rognage latéral en couperait la moitié.
     const referenceHeight = frameWidth / REFERENCE_ASPECT
     const visibleHeight =
       aspect >= REFERENCE_ASPECT || aspect < 1 ? frameWidth / aspect : referenceHeight

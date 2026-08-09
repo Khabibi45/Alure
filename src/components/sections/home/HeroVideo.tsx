@@ -48,7 +48,7 @@ export function HeroVideo({
   const [done, setDone] = useState(false)
   const [failed, setFailed] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
-  /** Portrait = vidéo téléphone (bande entière, jamais rognée) + `contain`. */
+  /** Portrait = vidéo téléphone (recadrage central 9:16, plein cadre). */
   const portrait = useIsPortrait()
   const videoSrc = portrait ? HERO_VIDEO_MOBILE : HERO_VIDEO
 
@@ -107,7 +107,7 @@ export function HeroVideo({
             opacity: 1 - blend,
             transition: `opacity ${HERO_FADE_MS}ms var(--ease-out-soft)`,
           }}
-          className={`absolute inset-0 size-full ${portrait ? 'object-contain' : 'object-cover'}`}
+          className="absolute inset-0 size-full object-cover"
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
@@ -141,6 +141,13 @@ export function HeroVideo({
         >
           {children}
         </div>
+
+        {/* Le voile sous le header en surcouche (accueil plein écran) : le
+            chrome reste lisible sur les plans clairs de la vidéo. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 h-44 bg-linear-to-b from-background/70 to-transparent"
+        />
 
         {/* Le titre `sr-only` de la page : aucun texte visible sur la scène. */}
         {overlay}

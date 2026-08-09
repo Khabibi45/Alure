@@ -2,10 +2,12 @@
  * Produit les déclinaisons TÉLÉPHONE du hero, depuis les mêmes sources uniques :
  *
  * 1. `public/hero-video/hero-mobile.mp4` — la vidéo du lancer au format
- *    portrait 9:16 (1080×1920). La bande 16:9 d'origine reste ENTIÈRE et nette
- *    au centre (rien de l'action n'est rogné — c'est toute la raison de cette
- *    déclinaison) ; le haut et le bas sont remplis par la même image agrandie
- *    et floutée, le traitement standard des formats verticaux.
+ *    portrait 9:16 (540×960) : un RECADRAGE CENTRAL plein cadre de la bande
+ *    16:9. L'action est centrée sur toute la durée (vérifié à la planche
+ *    contact) : le sujet reste dans le cadre, seul du décor latéral part au
+ *    rognage. L'ancien traitement « bande entière + remplissage flouté »
+ *    morcelait l'écran du téléphone en rubans (flou / net / flou) — un
+ *    recadrage assumé remplit l'écran comme un vrai format vertical.
  * 2. `public/hero-video/backdrop-clean.mp4` — la boucle du décor SANS le leurre
  *    filmé. La boucle d'origine (`backdrop.mp4`) contient le leurre, petit, au
  *    centre du cadre : sous le leurre 3D on voyait DEUX leurres dès que la vue
@@ -43,17 +45,16 @@ for (const src of [HERO, BACKDROP]) {
 }
 
 // ── 1. La vidéo portrait ────────────────────────────────────────────────────
-// [bg] : la source recadrée/zoomée en 1080×1920 puis floutée — le remplissage.
-// [fg] : la source entière, nette, ramenée à 1080 de large, posée au centre.
+// Recadrage central 9:16 (405×720 sur une source 720p), remonté en 540×960 :
+// assez pour un écran de téléphone, et ~3× plus léger que l'ancien letterbox
+// flouté en 1080×1920. `crop` avant `scale` : on n'agrandit que ce qu'on garde.
 execFileSync(
   ffmpeg,
   // prettier-ignore
   [
     '-y', '-i', HERO,
-    '-filter_complex',
-    '[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,boxblur=22:5[bg];' +
-      '[0:v]scale=1080:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2',
-    '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p',
+    '-vf', 'crop=ih*9/16:ih,scale=540:960',
+    '-c:v', 'libx264', '-crf', '22', '-preset', 'medium', '-pix_fmt', 'yuv420p',
     '-movflags', '+faststart', '-an',
     OUT_MOBILE,
   ],

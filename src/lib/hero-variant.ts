@@ -33,9 +33,10 @@ export const HERO_VARIANT: HeroVariant = 'cine'
 export const HERO_VIDEO = '/hero-video/hero.mp4'
 
 /**
- * La MÊME vidéo au format téléphone (portrait 9:16, bande 16:9 entière et
- * nette au centre, remplissage flouté) — produite par `npm run video:mobile`.
- * Servie quand l'écran est en portrait : l'action n'est jamais rognée.
+ * La MÊME vidéo au format téléphone : recadrage central 9:16 plein cadre
+ * (l'action est centrée sur toute la durée — vérifié à la planche contact),
+ * produite par `npm run video:mobile`. Servie quand l'écran est en portrait :
+ * l'écran est REMPLI, sans bande floutée ni letterbox.
  */
 export const HERO_VIDEO_MOBILE = '/hero-video/hero-mobile.mp4'
 
