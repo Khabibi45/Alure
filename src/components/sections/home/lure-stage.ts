@@ -54,6 +54,13 @@ const REFERENCE_ASPECT = 16 / 9
  */
 const DEFAULT_FRAME_WIDTH = 4.93
 /**
+ * Grossissement supplémentaire en PORTRAIT (téléphone) : la caméra s'approche
+ * ×2 (demande du 2026-08-09) — le leurre passe de ~40 % à ~81 % de la largeur
+ * de l'écran (2 unités sur 4.93/2 ≈ 2.46 visibles : il tient entier, marge
+ * comprise). Les voisins sortent du cadre ; flèches et glissé les ramènent.
+ */
+const PORTRAIT_ZOOM = 2
+/**
  * Constante de temps de l'amortissement du carrousel. 3τ ≈ 0,42 s = `--dur-page` : le
  * passage est posé à la durée de la fondation, pas à une valeur choisie au hasard.
  */
@@ -375,7 +382,13 @@ export function createLureStage(
     //   c'est le produit qu'on vend, un rognage latéral en couperait la moitié.
     const referenceHeight = frameWidth / REFERENCE_ASPECT
     const visibleHeight =
-      aspect >= REFERENCE_ASPECT || aspect < 1 ? frameWidth / aspect : referenceHeight
+      aspect < 1
+        ? // Portrait : largeur figée PUIS caméra rapprochée (`PORTRAIT_ZOOM`) —
+          // le produit d'abord, plein cadre, sur l'écran où il est le plus petit.
+          frameWidth / aspect / PORTRAIT_ZOOM
+        : aspect >= REFERENCE_ASPECT
+          ? frameWidth / aspect
+          : referenceHeight
     camera.position.z = visibleHeight / 2 / Math.tan((camera.fov * Math.PI) / 360)
 
     // Les décalages sont exprimés en fraction de l'image de RÉFÉRENCE, pas du
