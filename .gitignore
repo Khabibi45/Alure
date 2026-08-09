@@ -1,0 +1,73 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+# …sauf le modèle sans valeur, qui documente les variables attendues.
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# assets — dumps de pages fournisseur (AliExpress) : JS/CSS/trackers tiers, droits AliExpress,
+# ~26 Mo sans valeur. Les photos produit utiles en ont été extraites dans
+# "assets/photos leurre pour 3d/reference-fournisseur/" (versionnée, elle).
+assets/**/*_files/
+assets/photos leurre pour 3d/*.html
+assets/**/*.zip
+
+# assets — rushes vidéo générés par `npm run video` : lourds, et refabricables
+# depuis les prompts de la spec. Les sidecars .json restent versionnés, eux :
+# ils disent quel prompt, quelle seed et quelles images ont produit quel rush.
+assets/hero/rushes/*.mp4
+.gstack/
+
+# assets — exports Blender BRUTS des leurres (~25 Mo pièce, 103 Mo à quatre).
+# Ce sont des SOURCES, pas des livrables : `npm run models` en dérive les fichiers
+# réellement servis dans `public/models/` (25 Mo à quatre, eux versionnés).
+# Les garder dans git alourdit chaque clone pour toujours sans rien apporter — ils
+# se sauvegardent sur un disque ou un drive, à côté des .blend.
+assets/3d models/*.glb
+
+# Montages vidéo : produits par `npm run montage` à partir des segments, qui sont
+# versionnés eux. Un dérivé de 14 Mo qui se refabrique en 2 secondes n'a rien à
+# faire dans l'historique. Le sidecar .json, lui, reste (il dit ce que contient
+# le fichier : segments, trous de continuité, méthode).
+assets/video scroll trigger/**/*.mp4
+
+# Originaux conservés par `npm run loop` avant de coudre le fondu de boucle.
+# Sources de travail : ni versionnées, ni servies au visiteur.
+public/**/*.orig.mp4

@@ -1,0 +1,22 @@
+{
+  "segment": 6,
+  "title": "La nage — le profil",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k6.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k7.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\na small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) levels off at depth and starts to swim: it turns nose-first and settles into a steady S-shaped swimming action, the rear section kicking around the metal pin joints while the head holds its line, shedding micro-bubbles. The camera settles into a tracking profile shot at lure height, matching its speed, sharp sunlight shafts falling from the surface, a dark weed wall sliding past in the background gloom, fine particles drifting.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\na small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) levels off at depth and starts to swim: it turns nose-first and settles into a steady S-shaped swimming action, the rear section kicking around the metal pin joints while the head holds its line, shedding micro-bubbles. The camera settles into a tracking profile shot at lure height, matching its speed, sharp sunlight shafts falling from the surface, a dark weed wall sliding past in the background gloom, fine particles drifting.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fdafd-047a-70c2-ba2c-2323406997e9",
+  "seed": 2133022654,
+  "generatedAt": "2026-08-07T06:53:57.519Z"
+}

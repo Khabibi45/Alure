@@ -1,0 +1,22 @@
+{
+  "segment": 5,
+  "title": "L'impact — la caméra passe sous l'eau",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k5.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k6.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nThe lure drops and pierces the mirror surface, and the camera plunges through with it in one continuous move: from below, a compact splash crown blooms against the bright rippling ceiling of the surface, a column of white bubbles trails the lure as a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) dives nose-down into cold blue-green water, the thin line angling up toward the surface, light rays bending through, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nThe lure drops and pierces the mirror surface, and the camera plunges through with it in one continuous move: from below, a compact splash crown blooms against the bright rippling ceiling of the surface, a column of white bubbles trails the lure as a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) dives nose-down into cold blue-green water, the thin line angling up toward the surface, light rays bending through, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fdaf9-fa9d-7183-8690-d239001104ba",
+  "seed": 280420375,
+  "generatedAt": "2026-08-07T06:50:42.568Z"
+}

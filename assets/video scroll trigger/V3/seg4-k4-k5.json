@@ -1,0 +1,22 @@
+{
+  "segment": 4,
+  "title": "Le vol — au plus près du leurre",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k4.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k5.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nContinuous low chase over the water: the camera closes alongside a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) as it flies through drifting mist, ending in close-up on the lure in mid-air, treble hooks hanging, the taut line running back to the right of frame, pale sunrise glow on the left, mirror-calm water below, the lure just beginning to drop, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nContinuous low chase over the water: the camera closes alongside a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) as it flies through drifting mist, ending in close-up on the lure in mid-air, treble hooks hanging, the taut line running back to the right of frame, pale sunrise glow on the left, mirror-calm water below, the lure just beginning to drop, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fdaf6-b4c8-7112-a6b0-c4a895f3b1ee",
+  "seed": 1571307227,
+  "generatedAt": "2026-08-07T06:47:23.439Z"
+}

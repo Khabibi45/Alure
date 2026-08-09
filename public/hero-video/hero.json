@@ -1,0 +1,23 @@
+{
+  "source": "assets/video scroll trigger/V3",
+  "complete": true,
+  "breaks": [],
+  "durationSeconds": 10.08,
+  "method": "stream-copy",
+  "segments": [
+    {
+      "number": 5,
+      "file": "seg5-k5-k6.mp4",
+      "title": "L'impact — la caméra passe sous l'eau",
+      "frameIn": "k5.png",
+      "frameOut": "k6.png"
+    },
+    {
+      "number": 6,
+      "file": "seg6-k6-k7.mp4",
+      "title": "La nage — le profil",
+      "frameIn": "k6.png",
+      "frameOut": "k7.png"
+    }
+  ]
+}

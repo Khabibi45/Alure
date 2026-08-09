@@ -1,0 +1,1569 @@
+<title>Alure — Le lancer · hero scroll-to-trigger</title>
+
+<style>
+/* =========================================================================
+   Alure — spec du hero vidéo « Le lancer » + section coloris 3D
+   Thème sombre unique, assumé (charte V.02 : pas de mode clair, pas de
+   toggle). Les tokens light reprennent les mêmes valeurs : la bascule de
+   thème du lecteur ne casse rien, elle ne fait rien. Décision de marque.
+   ========================================================================= */
+:root {
+  --bg:        #071128;  /* Black Pearl  */
+  --hollow:    #0e1729;  /* creux        */
+  --surface:   #20293e;  /* Mirage       */
+  --line:      #394153;  /* Oxford Blue  */
+  --fg:        #ffffff;
+  --dim:       #9aa7bd;
+  --prose:     #d5dbe6;
+
+  /* La chaleur ne vient que de l'image, jamais d'un composant (charte §1).
+     Ces valeurs ne servent QUE dans les vignettes de plan et la règle de
+     montage, qui représentent la photographie elle-même. */
+  --sun:       #f0a366;
+  --ember:     #d9564a;
+
+  --ok:        #4cc38a;
+  --warn:      #e8b046;
+  --info:      #8fb8e8;
+
+  --ff: "Futura","Futura PT","Century Gothic","Avenir Next","URW Gothic","Questrial",ui-sans-serif,system-ui,sans-serif;
+
+  --s1:.25rem; --s2:.5rem; --s3:.75rem; --s4:1rem; --s5:1.25rem;
+  --s6:1.5rem; --s7:2rem; --s8:2.5rem; --s9:3rem; --s10:4rem; --s12:6rem;
+
+  --maxw: 78rem;
+}
+:root[data-theme="light"], :root[data-theme="dark"] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--ff); font-size: 1rem; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+
+.wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--s5); }
+@media (min-width: 1024px) { .wrap { padding-inline: var(--s9); } }
+
+/* ---- type ------------------------------------------------------------- */
+.label {
+  font-size: .625rem; font-weight: 700; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--dim); line-height: 1.4; margin: 0;
+}
+h1 {
+  font-size: clamp(2.5rem, 9vw, 5rem); font-weight: 700; line-height: 1.02;
+  letter-spacing: .01em; text-transform: uppercase; margin: 0; text-wrap: balance;
+}
+h2 {
+  font-size: clamp(1.5rem, 3.4vw, 2.25rem); font-weight: 700; line-height: 1.1;
+  letter-spacing: .02em; text-transform: uppercase; margin: 0; text-wrap: balance;
+}
+h3 { font-size: 1.125rem; font-weight: 700; line-height: 1.3; margin: 0; }
+h4 {
+  font-size: .6875rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dim); margin: 0;
+}
+p { margin: 0; text-wrap: pretty; }
+.prose { color: var(--prose); max-width: 62ch; }
+.small { font-size: .8125rem; line-height: 1.5; }
+.dim { color: var(--dim); }
+a { color: var(--fg); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--dim); }
+:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; border-radius: 2px; }
+
+/* Pas de police mono : la charte l'interdit dans l'UI, on garde la règle ici. */
+code {
+  font-family: inherit; font-weight: 700; font-size: .9em;
+  background: var(--hollow); padding: .1rem .35rem; border-radius: .3rem;
+  color: var(--fg); word-break: break-word;
+}
+
+/* ---- en-tête ---------------------------------------------------------- */
+.masthead { padding-block: var(--s10) var(--s8); position: relative; }
+.lockup { display: flex; flex-direction: column; gap: .1rem; width: 11rem; margin-bottom: var(--s8); }
+.lockup .word { font-size: 2rem; font-weight: 700; letter-spacing: .03em; line-height: 1; }
+.lockup svg { width: 140%; margin-left: -20%; display: block; }
+.masthead-meta {
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
+  margin-top: var(--s6); font-size: .8125rem; color: var(--dim);
+}
+.masthead-meta b { color: var(--fg); font-weight: 700; }
+.tagline { margin-top: var(--s5); font-size: 1.125rem; color: var(--prose); max-width: 48ch; }
+.watermark { position: absolute; inset-inline: -10%; top: 8rem; z-index: 0; opacity: .05; pointer-events: none; }
+.watermark svg { width: 100%; display: block; }
+.masthead > * { position: relative; z-index: 1; }
+
+/* ---- règle de montage (sticky) ---------------------------------------- */
+.ruler {
+  position: sticky; top: 0; z-index: 50;
+  background: rgb(7 17 40 / .94); border-bottom: 1px solid var(--line);
+}
+.ruler-inner {
+  max-width: var(--maxw); margin-inline: auto; padding: var(--s3) var(--s5);
+  display: flex; align-items: center; gap: var(--s4);
+}
+@media (min-width: 1024px) { .ruler-inner { padding-inline: var(--s9); } }
+.ruler-word { font-weight: 700; letter-spacing: .03em; font-size: .9375rem; flex: none; }
+.ruler-track { flex: 1; display: flex; gap: 2px; height: 2.25rem; align-items: stretch; }
+.seg {
+  flex-grow: var(--w); flex-basis: 0; min-width: 6px;
+  border: 0; padding: 0; cursor: pointer; background: var(--seg-grade);
+  opacity: .34; border-radius: 2px; position: relative;
+  transition: opacity .18s ease-out;
+}
+.seg:hover { opacity: .7; }
+.seg[aria-current="true"] { opacity: 1; }
+.seg[aria-current="true"]::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -.4rem; height: 2px; background: var(--fg);
+}
+.seg-tip {
+  position: absolute; top: calc(100% + .55rem); left: 50%; translate: -50% 0;
+  background: var(--surface); color: var(--fg); font-size: .75rem;
+  padding: .3rem .6rem; border-radius: .5rem; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .14s ease-out; z-index: 2;
+}
+.seg:hover .seg-tip, .seg:focus-visible .seg-tip { opacity: 1; }
+.ruler-read {
+  flex: none; font-size: .8125rem; font-variant-numeric: tabular-nums;
+  color: var(--dim); text-align: right; line-height: 1.25;
+}
+.ruler-read b { display: block; color: var(--fg); font-size: .9375rem; }
+@media (max-width: 640px) { .ruler-word { display: none; } }
+
+/* ---- sections --------------------------------------------------------- */
+section { padding-block: var(--s10); }
+@media (min-width: 1024px) { section { padding-block: var(--s12); } }
+.sec-head { display: flex; flex-direction: column; gap: var(--s3); margin-bottom: var(--s8); }
+.rule { height: 1px; background: var(--line); border: 0; margin: 0; }
+
+/* ---- chiffres --------------------------------------------------------- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--s4); }
+.stat { background: var(--surface); border-radius: 1rem; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s1); }
+.stat .v { font-size: 1.8rem; font-weight: 700; letter-spacing: -.025em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.stat .u { font-size: .8125rem; color: var(--dim); }
+
+/* ---- cartes de plan --------------------------------------------------- */
+.plans { display: flex; flex-direction: column; gap: var(--s6); }
+.plan { background: var(--surface); border-radius: 1rem; overflow: hidden; scroll-margin-top: 5.5rem; }
+.plan-top { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .plan-top { grid-template-columns: 15rem 1fr; } }
+
+/* vignette : le dégradé EST l'étalonnage prévu du plan */
+.vignette {
+  min-height: 9rem; padding: var(--s5); background: var(--grade);
+  display: flex; flex-direction: column; justify-content: space-between; position: relative;
+}
+.vignette::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgb(7 17 40 / 0) 0%, rgb(7 17 40 / .64) 45%, rgb(7 17 40 / .92) 100%);
+}
+.vignette > * { position: relative; z-index: 1; }
+.vignette .pn { font-size: 2.5rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.vignette .tc { font-size: .75rem; color: var(--fg); font-variant-numeric: tabular-nums; opacity: .85; }
+
+.plan-body { padding: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+@media (min-width: 900px) { .plan-body { padding: var(--s6); } }
+.plan-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s3); }
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.chip {
+  font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: .3rem .6rem; border-radius: 999px; background: var(--hollow); color: var(--dim); white-space: nowrap;
+}
+.chip.fab-ia  { color: var(--info); }
+.chip.fab-mix { color: var(--warn); }
+.chip.fab-ok  { color: var(--ok); }
+
+.meterline {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--s3) var(--s5); padding-block: var(--s3);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.meterline div { display: flex; flex-direction: column; gap: .1rem; }
+.meterline .k { font-size: .625rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.meterline .v { font-size: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ---- blocs prompt ----------------------------------------------------- */
+.block { display: flex; flex-direction: column; gap: var(--s2); }
+.block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+pre {
+  margin: 0; background: var(--hollow); border-radius: .75rem; padding: var(--s4);
+  overflow-x: auto; font-family: var(--ff); font-size: .875rem; line-height: 1.6;
+  color: var(--prose); white-space: pre-wrap; word-break: break-word;
+}
+pre.neg { color: var(--dim); font-size: .8125rem; }
+.copy {
+  font: inherit; font-size: .6875rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--fg); background: transparent;
+  border: 0; padding: .4rem .7rem; border-radius: 999px; cursor: pointer;
+  transition: background .14s ease-out; flex: none;
+}
+.copy:hover { background: rgb(255 255 255 / .08); }
+.copy[data-done="1"] { color: var(--ok); }
+
+.reuse { border-left: 2px solid var(--line); padding-left: var(--s4); }
+
+/* ---- bandeau « avec photo du leurre » --------------------------------- */
+.withref {
+  display: flex; flex-direction: column; gap: .35rem;
+  background: rgb(232 176 70 / .12); border-left: 3px solid var(--warn);
+  border-radius: .5rem; padding: var(--s4);
+}
+.withref .t {
+  font-size: 1.0625rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--warn); line-height: 1.2;
+}
+.withref .d { font-size: .8125rem; color: var(--prose); }
+.noref { font-size: .8125rem; color: var(--dim); border-left: 2px solid var(--line); padding-left: var(--s4); }
+
+.raccord { display: grid; gap: var(--s3); }
+@media (min-width: 700px) { .raccord { grid-template-columns: 1fr 1fr; } }
+.raccord div { display: flex; flex-direction: column; gap: .2rem; }
+
+/* ---- signal « donnée manquante » -------------------------------------- */
+.todo {
+  display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .04em;
+  color: var(--warn); background: rgb(232 176 70 / .12);
+  padding: .1rem .45rem; border-radius: .35rem; white-space: nowrap;
+}
+
+/* ---- notice / étapes -------------------------------------------------- */
+.notice {
+  background: var(--surface); border-radius: 1rem; padding: var(--s6);
+  display: flex; flex-direction: column; gap: var(--s4); margin-bottom: var(--s8);
+}
+.notice h3 { font-size: 1.25rem; }
+ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: st; display: flex; flex-direction: column; gap: var(--s4); }
+ol.steps li { counter-increment: st; padding-left: 2.5rem; position: relative; color: var(--prose); max-width: 68ch; }
+ol.steps li::before {
+  content: counter(st); position: absolute; left: 0; top: .05rem;
+  width: 1.6rem; height: 1.6rem; border-radius: 999px;
+  background: var(--hollow); color: var(--fg);
+  font-size: .75rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  display: flex; align-items: center; justify-content: center;
+}
+ol.steps i { font-style: normal; color: var(--dim); }
+
+/* ---- beats de texte --------------------------------------------------- */
+.beats { display: grid; gap: var(--s4); }
+@media (min-width: 800px) { .beats { grid-template-columns: 1fr 1fr; } }
+.beat { background: var(--surface); border-radius: 1rem; padding: var(--s6); display: flex; flex-direction: column; gap: var(--s3); }
+.beat .os-label { font-size: .625rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--dim); }
+.beat .os-display { font-size: 1.75rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; line-height: 1.1; }
+.beat .os-body { font-size: 1rem; color: var(--prose); }
+.beat .lock { display: flex; flex-direction: column; gap: .1rem; width: 9rem; }
+.beat .lock .word { font-size: 1.75rem; font-weight: 700; letter-spacing: .03em; line-height: 1; }
+.beat .lock svg { width: 140%; margin-left: -20%; display: block; }
+
+/* ---- démo du sélecteur de coloris ------------------------------------- */
+.switcher {
+  background: var(--surface); border-radius: 1rem; padding: var(--s6);
+  display: grid; gap: var(--s6);
+}
+@media (min-width: 860px) { .switcher { grid-template-columns: 1.1fr 1fr; align-items: center; } }
+.stage {
+  background: linear-gradient(160deg, #071128 0%, #20293e 100%);
+  border-radius: .75rem; aspect-ratio: 4 / 3; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage img {
+  max-width: 82%; max-height: 82%; display: block;
+  transition: opacity .28s cubic-bezier(.22,.61,.36,1);
+}
+@media (prefers-reduced-motion: reduce) { .stage img { transition: none; } }
+.stage .badge {
+  position: absolute; top: var(--s3); left: var(--s3);
+  font-size: .625rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--warn); background: rgb(232 176 70 / .14); padding: .25rem .5rem; border-radius: .35rem;
+}
+.swatches { display: flex; flex-wrap: wrap; gap: var(--s3); margin-block: var(--s3); }
+.sw {
+  width: 44px; height: 44px; padding: 0; border: 0; background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 999px;
+}
+.sw span {
+  width: 32px; height: 32px; border-radius: 999px; display: block;
+  background-size: 260%; background-position: center;
+  outline: 2px solid transparent; outline-offset: 2px;
+  transition: outline-color .14s ease-out;
+}
+.sw:hover span { outline-color: var(--line); }
+.sw[aria-checked="true"] span { outline-color: var(--fg); }
+.sw:active span { scale: .97; }
+
+.specsheet { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: var(--s4); }
+.specsheet div { display: flex; flex-direction: column; gap: .15rem; }
+.specsheet .k { font-size: .625rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.specsheet .v { font-size: 1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ---- coloris ---------------------------------------------------------- */
+.coloris { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: var(--s4); }
+.col-card { background: var(--surface); border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; }
+.col-card img { width: 100%; display: block; aspect-ratio: 360 / 206; object-fit: cover; background: var(--hollow); }
+.col-card .cc { padding: var(--s4); display: flex; flex-direction: column; gap: var(--s1); }
+.col-card.out { opacity: .55; }
+.col-card.lead { outline: 2px solid var(--fg); outline-offset: -2px; }
+
+/* ---- tables ----------------------------------------------------------- */
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .875rem; min-width: 34rem; }
+th, td { text-align: left; padding: .7rem .9rem; vertical-align: top; }
+thead th { font-size: .625rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--line); }
+tbody tr + tr td { border-top: 1px solid var(--line); }
+tbody td:first-child { font-weight: 700; }
+td.n { font-variant-numeric: tabular-nums; }
+
+ul.clean { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s3); }
+ul.clean li { padding-left: var(--s5); position: relative; color: var(--prose); }
+ul.clean li::before { content: "—"; position: absolute; left: 0; color: var(--dim); }
+
+.qa { display: flex; flex-direction: column; gap: var(--s4); }
+.q { background: var(--surface); border-radius: 1rem; padding: var(--s5); display: flex; flex-direction: column; gap: var(--s2); }
+.q .qn { font-size: .625rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--warn); }
+
+footer { padding-block: var(--s9) var(--s10); border-top: 1px solid var(--line); color: var(--dim); font-size: .8125rem; }
+footer .lockup { width: 8rem; margin-bottom: var(--s5); }
+footer .lockup .word { font-size: 1.375rem; }
+</style>
+
+<div class="ruler" id="ruler">
+  <div class="ruler-inner">
+    <span class="ruler-word">ALURE.</span>
+    <div class="ruler-track" id="track" role="group" aria-label="Les 7 segments du hero"></div>
+    <div class="ruler-read"><b id="readTitle">—</b><span id="readTc">00:00:00</span></div>
+  </div>
+</div>
+
+<header class="masthead wrap">
+  <div class="watermark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 981 157" role="img" aria-label="Flèche Alure">
+
+<path fill="currentColor" fill-rule="evenodd" d="M594 0L699 20L767 29L808 37L892 46L969 49L979 52L981 57L965 68L952 71L866 80L754 101L649 117L563 135L535 136L532 135L531 131L548 114L559 110L569 103L571 99L566 98L548 103L421 122L341 140L223 157L189 155L187 151L188 143L203 139L245 119L271 110L278 106L277 103L239 103L199 108L166 108L161 110L33 121L20 121L12 116L0 113L2 104L9 100L49 92L89 79L167 50L175 44L184 41L287 41L381 38L543 40L570 36L610 34L611 31L607 27L583 12L585 4L589 4ZM678 31L676 32L677 46L672 50L664 50L657 45L649 44L600 51L540 56L379 54L331 57L199 57L113 83L108 85L107 88L224 83L344 83L356 78L367 78L374 84L374 93L299 119L294 124L310 124L348 115L389 110L486 92L614 76L621 73L634 74L639 80L638 85L633 85L630 94L620 99L620 102L624 103L675 93L883 62L882 59L764 47L699 37Z"></path>
+</svg></div>
+  <div class="lockup" aria-label="Alure">
+    <span class="word">ALURE.</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 981 157" role="img" aria-label="Flèche Alure">
+
+<path fill="currentColor" fill-rule="evenodd" d="M594 0L699 20L767 29L808 37L892 46L969 49L979 52L981 57L965 68L952 71L866 80L754 101L649 117L563 135L535 136L532 135L531 131L548 114L559 110L569 103L571 99L566 98L548 103L421 122L341 140L223 157L189 155L187 151L188 143L203 139L245 119L271 110L278 106L277 103L239 103L199 108L166 108L161 110L33 121L20 121L12 116L0 113L2 104L9 100L49 92L89 79L167 50L175 44L184 41L287 41L381 38L543 40L570 36L610 34L611 31L607 27L583 12L585 4L589 4ZM678 31L676 32L677 46L672 50L664 50L657 45L649 44L600 51L540 56L379 54L331 57L199 57L113 83L108 85L107 88L224 83L344 83L356 78L367 78L374 84L374 93L299 119L294 124L310 124L348 115L389 110L486 92L614 76L621 73L634 74L639 80L638 85L633 85L630 94L620 99L620 102L624 103L675 93L883 62L882 59L764 47L699 37Z"></path>
+</svg>
+  </div>
+  <p class="label">Spec de production · hero de landing · scroll-to-trigger</p>
+  <h1>Le&nbsp;lancer</h1>
+  <p class="tagline">Dix secondes. Un seul plan-séquence, sept segments, zéro coupe. Du lac au
+    bass à la vitesse à laquelle on scrolle un hero — puis la page passe aux specs et aux
+    coloris.</p>
+  <div class="masthead-meta">
+    <span>Statut&nbsp;: <b>brouillon</b></span>
+    <span>Version&nbsp;: <b>0.6</b></span>
+    <span>Mise à jour&nbsp;: <b>2026-08-06</b></span>
+    <span>Cadence&nbsp;: <b>24&nbsp;i/s</b></span>
+    <span>Charte&nbsp;: <b>V.02</b></span>
+  </div>
+</header>
+
+<main>
+
+<section class="wrap" id="montage">
+  <div class="sec-head">
+    <p class="label">Le chiffrage</p>
+    <h2>Dix secondes, 240&nbsp;images</h2>
+    <p class="prose">Un hero se traverse, il ne se regarde pas. Personne ne consacre 78&nbsp;s de
+      défilement à une intro avant d'arriver aux specs — la version précédente était un film de
+      marque, pas un hero. On garde la même histoire, on la coupe à l'os&nbsp;: <b>un
+      plan-séquence de 10&nbsp;s exactement, 8&nbsp;segments, 240&nbsp;images, zéro coupe</b>.
+      Sur une piste de scrub, une coupe se sent sous le doigt&nbsp;: il n'y en a aucune.</p>
+    <p class="prose">La piste de scroll fait <b>240&nbsp;vh</b> — soit <b>1&nbsp;vh = 1&nbsp;image</b>.
+      Deux écrans et demi de défilement, et on est aux specs. C'est dans la fourchette de la
+      charte pour une scène épinglée (150–220&nbsp;vh, on est juste au-dessus, sur la seule scène
+      épinglée de la page).</p>
+  </div>
+  <div class="stats" id="stats"></div>
+
+  <div class="notice" style="margin-top:var(--s8);margin-bottom:0">
+    <h3>Ce que la v0.5 change, et pourquoi</h3>
+    <p class="prose">La v0.4 a été testée en génération. Le constat, image par image&nbsp;: plans
+      «&nbsp;golden hour stock&nbsp;» sans signature, équipage qui change de taille et de sexe
+      d'un plan à l'autre, visages à moitié lisibles, leurre géant façon fusée au plan 05, paires
+      d'images presque identiques qui forcent le moteur à halluciner pour remplir ses
+      10&nbsp;secondes. La v0.5 corrige à la racine&nbsp;:</p>
+    <ul class="clean">
+      <li><b>Un plan-séquence, zéro cut.</b> Le hero est UNE seule traversée de caméra de
+        10&nbsp;s, découpée en 7 segments de génération. Chaque prompt vidéo commence par
+        «&nbsp;one continuous take&nbsp;» et chaque negative prompt exclut
+        <code>cut, scene change</code>.</li>
+      <li><b>Toutes les jonctions sont des fichiers partagés.</b> 8 keyframes pour
+        14&nbsp;emplacements&nbsp;: la dernière image du segment <i>n</i> est littéralement la
+        première du segment <i>n+1</i>. Le faux raccord devient impossible par construction.</li>
+      <li><b>L'ambiance est verrouillée : l'aube froide.</b> Lumière d'avant le lever du soleil,
+        eau noire vitreuse, brume épaisse dans chaque cadre, une seule lueur ambre pâle derrière
+        la crête de gauche. Silencieux, technique, légèrement menaçant — LA signature visuelle
+        de la marque, écrite dans le bloc d'ancrage.</li>
+      <li><b>L'équipage est fixe : exactement trois, uniforme identique, jamais un visage.</b>
+        Cagoule noire, casquette par-dessus, lunettes polarisantes, shell anthracite sans logo,
+        gants noirs. Zéro peau visible. La canette du plan 02 est supprimée — et la question
+        loi Évin tombe avec.</li>
+      <li><b>Un seul bateau, martelé partout</b> : <code>ONE black bass boat and NO OTHER
+        BOAT</code> dans l'ancrage, <code>second boat</code> dans chaque negative prompt.</li>
+      <li><b>Le leurre exact, tenu par 3 rendus joints à chaque génération.</b> Aucun modèle
+        vidéo ne lit un GLB&nbsp;: on rend trois vues de <code>leurre_truite.glb</code> (profil,
+        trois-quarts, dessus) et on les joint à <b>tous</b> les prompts. Son échelle —
+        6,5&nbsp;cm, minuscule — est ancrée dans chaque prompt contre un repère présent dans le
+        plan (scion, main gantée, gerbe d'impact, tête du bass). Plus de compositing
+        Blender&nbsp;: le pipeline tient sans logiciel 3D.</li>
+      <li><b>Un seul moteur vidéo : Veo 3</b>, en <i>first frame → last frame</i>. Il rend
+        ~10&nbsp;s par segment quoi qu'il arrive&nbsp;: chaque paire de keyframes décrit donc un
+        VRAI déplacement qui remplit ces 10&nbsp;s, et le segment se retime au montage. Kling
+        sort du pipeline.</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="plans">
+  <div class="sec-head">
+    <p class="label">Le découpage</p>
+    <h2>Un plan-séquence, sept segments</h2>
+    <p class="prose">Une seule traversée de caméra&nbsp;: plongée aérienne vers le seul bateau du
+      lac → la caméra franchit le tableau arrière et se cale derrière le lanceur → l'armé → le
+      lancer, la caméra fouette vers le haut et part <em>à la poursuite</em> du leurre → la
+      traversée de la brume → l'impact, la caméra crève la surface avec lui → la nage en S de
+      profil → le bass sort des algues et prend le leurre. Chaque segment porte ses prompts, prêts à coller.
+      Dans toutes les images générées, le leurre est <b>le vrai</b>, tenu par
+      <b>3 rendus de <code>leurre_truite.glb</code> joints à chaque génération</b> — jamais une
+      invention du modèle. Il porte le coloris <b>Truite</b> pendant tout le hero.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Le pipeline, et comment il s'enchaîne</h3>
+    <ol class="steps">
+      <li><b>Les 3 rendus de référence</b> — à produire <b>avant tout le reste</b>, une seule
+        fois, depuis <code>leurre_truite.glb</code> (voir la fiche dédiée plus bas). Ils se
+        joignent à chaque prompt d'image ET à chaque prompt vidéo, et ne changent jamais&nbsp;:
+        c'est ce qui empêche le leurre de muter d'un plan à l'autre.</li>
+      <li><b>Nano&nbsp;Banana</b> — les <b>8 keyframes</b>, dans l'ordre, chacune chaînée sur la
+        précédente (image jointe + prompt qui décrit ce qui change et rappelle ce qui ne bouge
+        pas). On ne passe à la suivante que quand la précédente est juste&nbsp;: une image se
+        juge en deux secondes et se rejette sans regret, un clip coûte une génération et se juge
+        mal.</li>
+      <li><b>Veo&nbsp;3</b> — chaque segment en <i>first frame → last frame</i> entre deux
+        keyframes adjacentes. Veo rend ~10&nbsp;s quoi qu'on lui demande&nbsp;: ce n'est pas un
+        problème, c'est le plan — les 10&nbsp;s contiennent le mouvement complet, on garde au
+        montage les 20 à 40 images qui portent l'action. Compter 3 à 5 essais par segment.</li>
+      <li><b>Montage</b> — retiming de chaque segment à sa durée cible (repères sous chaque
+        plan), étalonnage commun, export (cf. <code>spec-technique.md</code>).</li>
+    </ol>
+    <p class="small dim">Les rushes complets à ~10&nbsp;s, montés bout à bout, donnent un film
+      d'environ 80&nbsp;s pour les réseaux — sans une génération de plus. Ne pas les jeter.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Générer les vidéos — le modèle, le coût, l'ordre</h3>
+    <p class="prose"><b>La contrainte qui filtre tout&nbsp;: il faut du <i>first frame + last
+      frame</i>.</b> Toute l'architecture repose là-dessus — chaque segment relie deux keyframes
+      validées. Un modèle qui n'accepte que l'image de départ laisse la fin libre, donc il
+      invente&nbsp;: c'est exactement ce qu'on cherche à empêcher. Trois familles seulement
+      offrent l'entrée ET la sortie.</p>
+    <p class="prose"><b>Et le film est muet</b> (décision du 2026-08-05, <code>-an</code> à
+      l'encodage). L'audio natif se facture&nbsp;: chez Veo il double le prix à la seconde. Ne
+      jamais l'activer.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Modèle</th><th>Prix/s sans audio</th><th>Durée rendue</th><th>Coût par prise</th><th>Pour ce film</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Kling 3.0 Standard</b></td><td class="n">≈ 0,084 $</td><td class="n">10 s</td><td class="n"><b>≈ 0,84 $</b></td>
+            <td>Le meilleur rapport qualité-prix. Solide sur l'eau et les éclaboussures, entrée + sortie natives.</td>
+          </tr>
+          <tr>
+            <td>Kling 3.0 Pro</td><td class="n">≈ 0,112 $</td><td class="n">10 s</td><td class="n">≈ 1,12 $</td>
+            <td>Le repli si le Standard peine sur un segment précis.</td>
+          </tr>
+          <tr>
+            <td><b>Veo 3.1 First-Last</b></td><td class="n">≈ 0,20 $</td><td class="n">8 s</td><td class="n"><b>≈ 1,60 $</b></td>
+            <td>Le plus fort sur les mouvements de caméra amples. Deux fois le prix de Kling — et il rend 8 s, pas 10.</td>
+          </tr>
+          <tr>
+            <td>Seedance 2.0</td><td class="n">≈ 0,05–0,14 $</td><td class="n">~15 s</td><td class="n">≈ 0,75–2 $</td>
+            <td>Le moins cher selon le revendeur. Entrée + sortie supportées. À tester si le budget serre.</td>
+          </tr>
+          <tr>
+            <td>Luma Ray</td><td class="n">≈ 0,06 $</td><td class="n">court</td><td class="n">≈ 0,60 $</td>
+            <td>Réputé sur la physique de l'eau et les réflexions. Clips plus courts.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="withref" style="margin-top:var(--s5)">
+      <span class="t">Générer en 5 s, jamais en 10 s</span>
+      <span class="d">Le prix est <b>à la seconde</b>, et le plus long segment du film ne fait
+        que <b>1,92 s</b> au montage. Générer 10 s, c'est payer le double pour des images qu'on
+        jette. Choisir la durée la plus courte proposée par l'endpoint (5 s chez Kling) —
+        <b>ça divise la facture par deux</b>, et ça réduit d'autant la marge d'hallucination du
+        modèle, qui a moins de temps à meubler entre les deux keyframes.</span>
+    </div>
+    <div class="tablewrap" style="margin-top:var(--s4)">
+      <table>
+        <thead><tr><th>Ce qu'on achète</th><th>Kling Standard 5 s</th><th>Kling Standard 10 s</th><th>Veo 8 s</th></tr></thead>
+        <tbody>
+          <tr><td>Une prise, un segment</td><td class="n"><b>≈ 0,42 $</b></td><td class="n">≈ 0,84 $</td><td class="n">≈ 1,60 $</td></tr>
+          <tr><td>Le test comparatif du segment 02</td><td class="n" colspan="2">≈ 0,42 $ + 1,60 $ = <b>≈ 2 $</b></td><td class="n">—</td></tr>
+          <tr><td>Une passe complète des 7 segments</td><td class="n"><b>≈ 3 $</b></td><td class="n">≈ 6 $</td><td class="n">≈ 11 $</td></tr>
+          <tr><td>Le film fini (≈ 4 prises par segment)</td><td class="n"><b>≈ 12 $</b></td><td class="n">≈ 24 $</td><td class="n">≈ 45 $</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small dim" style="margin-top:var(--s4)"><b>Le premier essai ne coûte pas 20 $, il
+      coûte moins d'un demi-dollar.</b> Les 12 à 24 $ sont l'estimation du <em>film terminé</em>,
+      reprises comprises — pas un ticket d'entrée. On peut s'arrêter après n'importe quelle
+      prise.</p>
+    <p class="prose"><b>Où acheter&nbsp;: <a href="https://fal.ai">fal.ai</a>, au paiement à
+      l'usage.</b> Pas d'abonnement, les endpoints dédiés existent
+      (<code>fal-ai/veo3.1/first-last-frame-to-video</code>,
+      <code>fal-ai/kling-video/…/image-to-video</code>), et surtout on peut lancer <b>le même
+      couple d'images sur deux modèles</b> et comparer. Les interfaces grand public (Google Flow,
+      site Kling) fonctionnent aussi mais vendent de l'abonnement et masquent le coût réel à la
+      prise.</p>
+    <p class="prose"><b>La méthode&nbsp;: acheter la décision avant d'acheter le film.</b> Lancer
+      le <b>segment 02 seul</b>, une prise en Kling 5 s et une en Veo — environ 2 $. C'est le
+      segment le plus difficile&nbsp;; celui qui le passe passera les six autres. Puis s'y tenir,
+      pour que le grain et la colorimétrie restent d'une seule main.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Les sept segments par ordre de difficulté — où passer les prises</h3>
+    <p class="prose">Toutes les jonctions sont des fichiers partagés, donc aucun raccord ne peut
+      rater. Ce qui peut rater, c'est <b>l'intérieur</b> d'un segment. Les voici classés&nbsp;:
+      commencer par le plus dur, parce que c'est le seul qui pourrait obliger à retoucher une
+      keyframe — autant le découvrir avant d'avoir payé les six autres.</p>
+    <ul class="clean">
+      <li><b>Segment 02 — le plus dur, et de loin.</b> Trois choses à la fois&nbsp;: la caméra
+        traverse le bateau, le bateau déjauge et s'arrête, le pêcheur arme. Surtout, l'eau passe
+        d'un sillage plein gaz (<code>k2</code>) à un miroir parfait (<code>k3</code>) — ce qui,
+        physiquement, ne se fait pas en deux secondes. <b>Parade&nbsp;:</b> laisser le modèle
+        rendre ses 8–10 s complètes et ne garder au montage que les <b>46 dernières
+        images</b>, là où l'eau s'est le plus calmée.</li>
+      <li><b>Segment 06 — le deuxième.</b> Entre <code>k6</code> et <code>k7</code>, tout change
+        en même temps&nbsp;: l'échelle (petit → macro), l'assiette du leurre (nez en bas →
+        horizontal), le sens de la ligne (vers la surface → vers l'avant), et un massif d'algues
+        entre dans le cadre. C'est beaucoup, mais chaque changement est motivé par la
+        récupération qui démarre.</li>
+      <li><b>Segment 03 — moyen.</b> La caméra doit quitter le bateau entièrement. Le leurre
+        rétrécit fortement&nbsp;: c'est voulu, il s'éloigne — et c'est aussi ce qui masque
+        l'échelle trop généreuse de <code>k3</code>.</li>
+      <li><b>Segment 05 — moyen.</b> La traversée de surface. Bien maîtrisée par tous les
+        modèles, mais surveiller que l'éclaboussure reste à l'échelle d'un objet de 6,5 cm.</li>
+      <li><b>Segment 01 — facile.</b> Une descente continue. Vérifier seulement qu'aucun second
+        bateau n'apparaît sur le lac vide.</li>
+      <li><b>Segment 04 — facile.</b> Un vol en ligne à travers la brume.</li>
+      <li><b>Segment 07 — le plus sûr.</b> <code>k7</code> et <code>k8</code> partagent le
+        cadre, l'eau, la lumière et les algues&nbsp;; seul le bass entre. C'est le segment
+        idéal pour un premier essai si l'on veut valider la chaîne à moindre risque.</li>
+    </ul>
+    <p class="small dim"><b>Les prompts vidéo ne portent plus l'ancrage</b>, et c'est
+      volontaire&nbsp;: quand on fournit les deux keyframes, la lumière, l'eau, le bateau,
+      l'équipage et le leurre sont déjà décidés par les images. Les redécrire en texte, c'est
+      inviter le modèle à les redessiner. Chaque bloc vidéo tient donc en quatre
+      sections&nbsp;: <code>MOTION</code> (ce qui bouge), <code>HOLD</code> (ne rien réinventer),
+      <code>FRAMES</code> (quelle image en entrée, laquelle en sortie), <code>DO NOT</code>.
+      L'ancrage complet reste dans les prompts d'<em>image</em>, où il sert vraiment.</p>
+  </div>
+
+  <div class="notice">
+    <h3>État de la série V3 — validée pour la génération vidéo</h3>
+    <p class="prose">Les 8 keyframes de <code>assets/keyframe pour video scroll trigger/V3/</code>
+      sont <b>celles qui partent en génération</b>. Elles corrigent l'essentiel de la revue
+      précédente&nbsp;: 16:9 partout, fil de pêche présent et noué à l'œillet du nez, eau
+      redevenue froide sous la surface, matière du leurre enfin photographique, lanceur sur le
+      pont arrière et bateau à l'arrêt à l'armé, marquage du hors-bord quasi éliminé.</p>
+    <p class="prose"><b>Deux défauts sont acceptés en connaissance de cause</b> — les noter ici
+      évite qu'on les redécouvre dans trois semaines en croyant à une régression&nbsp;:</p>
+    <ul class="clean">
+      <li><b><code>k3</code> — le leurre y lit trop gros</b> (environ 40&nbsp;cm à l'échelle du
+        cadre). Plusieurs reprises n'ont pas suffi&nbsp;: le modèle refuse de le rapetisser à
+        cette distance. Accepté. Atténuation gratuite au montage&nbsp;: le segment 03 le fait
+        s'éloigner, donc il rétrécit — la décroissance rend l'écart moins lisible qu'une image
+        fixe ne le laisse craindre.</li>
+      <li><b><code>k4</code> et <code>k5</code> — le leurre vole nez vers la ligne</b>, donc
+        techniquement à reculons&nbsp;; un leurre lancé vole nez en avant. Accepté, pour une
+        raison qui compte&nbsp;: <b>les deux images sont cohérentes entre elles</b>, donc Veo
+        n'a pas à retourner le leurre en cours de vol. Le vrai risque — un morphing à
+        mi-trajectoire — est écarté. L'objet est petit et flou de vitesse pendant les
+        ~2&nbsp;s concernées.</li>
+    </ul>
+    <p class="small dim">Les prompts ci-dessous ont malgré tout été corrigés sur ces deux points
+      (règle du sens de vol dans les INVARIANTS, échelle de <code>k3</code> ancrée sur la main
+      gantée). Ils sont justes pour une éventuelle série V4&nbsp;; ils ne décrivent pas la V3
+      telle qu'elle est sur ces deux détails.</p>
+    <p class="small dim">Reste à faire à la main, hors génération&nbsp;: <b>recadrer le losange ✦
+      sur les 8 images</b> — il est présent partout et aucun negative prompt ne l'empêche.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Historique — la reprise depuis la série V2</h3>
+    <p class="prose">La série générée le 2026-08-06 a été passée en revue image par image.
+      <b>L'ambiance est acquise</b> — aube froide, brume, eau d'acier, trois silhouettes noires :
+      c'est reconnaissable et ça ne ressemble plus à du stock. Ce qui suit corrige la structure
+      et les défauts techniques, pas la direction artistique.</p>
+    <p class="prose"><b>La chaîne passe de 9 à 8 keyframes</b> : l'ancienne <code>k3</code>
+      disparaît, absorbée par la fusion des segments 02 et 03. Les fichiers se renumérotent.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nouveau</th><th>Ancien fichier</th><th>Action</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td><code>k1</code></td><td><code>k1</code></td><td><b>Garder</b></td><td>Rien à redire. Recadrer le ✦.</td></tr>
+          <tr><td><code>k2</code></td><td><code>k2</code></td><td><b>Regénérer</b></td><td>Le lanceur est sur le pont AVANT et il lance alors que le bateau déjauge — on ne lance pas d'un bateau en marche. Écusson de marque sur le capot du hors-bord.</td></tr>
+          <tr><td><code>k3</code></td><td><code>k4</code></td><td><b>Regénérer</b></td><td>Carré 1:1 au lieu de 16:9. Nuage d'éclaboussures flottant sans cause. Bateau à l'arrêt désormais.</td></tr>
+          <tr><td><code>k4</code></td><td><code>k5</code></td><td><b>Regénérer</b></td><td>Carré 1:1. Leurre beaucoup trop gros (lit comme 30 cm). Vole tête à droite alors que le lancer part à gauche.</td></tr>
+          <tr><td><code>k5</code></td><td><code>k6</code></td><td><b>Regénérer</b></td><td>Le bateau réapparaît alors que l'image précédente ne le montre plus — faux raccord franc. Et les trois sont debout alors que deux étaient assis.</td></tr>
+          <tr><td><code>k6</code></td><td><code>k7</code></td><td><b>Regénérer</b></td><td>Composition superbe mais l'eau tire au turquoise lumineux, presque tropical : la seule image qui décroche de l'aube froide.</td></tr>
+          <tr><td><code>k7</code></td><td><code>k8</code></td><td><b>Regénérer</b></td><td>Le leurre lit comme une illustration 3D posée sur une photo, et aucune ligne n'y est attachée.</td></tr>
+          <tr><td><code>k8</code></td><td><code>k9</code></td><td><b>Garder — renommer</b></td><td>Validée le 2026-08-06 : c'est exactement la prise en charge du leurre par le bass. Recadrer le ✦.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small dim" style="margin-top:var(--s4)"><b>Une seule manipulation de fichier</b>&nbsp;:
+      renommer l'ancienne <code>k9</code> en <code>k8</code>. Les six autres se regénèrent avec
+      les prompts ci-dessous, déjà corrigés.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Trois pièges techniques constatés en génération</h3>
+    <ul class="clean">
+      <li><b>Le format ne se règle pas dans le prompt.</b> Trois images sur neuf sont sorties en
+        carré 2048×2048 alors que le prompt disait 16:9. <b>Régler le ratio sur 16:9 dans
+        l'outil</b> avant d'envoyer — le texte ne suffit pas. Une keyframe carrée est
+        inutilisable&nbsp;: recadrée, elle perd sa composition ; telle quelle, elle donne à Veo
+        deux formats différents en entrée et en sortie.</li>
+      <li><b>Le losange ✦ apparaît sur toutes les images.</b> C'est la signature du générateur,
+        et à l'écran c'est une marque — la charte §7 l'interdit. Aucun negative prompt ne
+        l'empêche de façon fiable&nbsp;: <b>le recadrer à la main</b> sur chaque image avant de
+        la donner à Veo, sinon il se propage dans la vidéo.</li>
+      <li><b>Les marques du bateau passent au travers.</b> Vérifié sur <code>k2</code>&nbsp;: un
+        écusson en relief sur le capot du hors-bord et de petits logos sur les dossiers des
+        sièges. Les negative prompts les excluent, le modèle les remet quand même. À contrôler à
+        l'œil sur chaque image où le bateau est net.</li>
+    </ul>
+  </div>
+
+  <div class="notice">
+    <h3>Les 8 keyframes — une chaîne, pas des paires</h3>
+    <p class="prose">Quatorze emplacements, <b>huit fichiers</b>&nbsp;: chaque jonction entre deux
+      segments est un fichier partagé — la fin du segment <i>n</i> EST le début du segment
+      <i>n+1</i>. Chaque keyframe se fabrique en donnant à Nano&nbsp;Banana <b>la précédente en
+      pièce jointe</b>&nbsp;; le prompt décrit ce qui change et rappelle ce qui ne doit pas
+      bouger. C'est là, et nulle part ailleurs, que se gagne le plan-séquence.</p>
+    <ul class="clean">
+      <li><b>Les 3 rendus du leurre se joignent dès <code>k3</code></b> et à toutes les
+        keyframes suivantes — c'est là que le leurre entre à l'écran.</li>
+      <li><b><code>k1</code> est la seule image générée à froid</b> — l'image mère. Tout le film
+        sort d'elle&nbsp;: la lumière d'aube, l'eau noire, la brume et la palette des 239 autres
+        images. Ne pas avancer tant qu'elle n'est pas parfaite.</li>
+      <li><b><code>k2</code> à <code>k8</code></b> sont les sept jonctions partagées — de la
+        plongée derrière le bateau (<code>k2</code>) à la nage installée (<code>k8</code>).</li>
+      <li><b>Le poisson n'existe dans aucune keyframe sauf <code>k8</code></b>&nbsp;: le bass
+        sort du massif d'algues PENDANT le segment 07, c'est Veo qui produit ce mouvement entre
+        <code>k7</code> et <code>k8</code>.</li>
+      <li><b><code>k8</code> est l'image la plus importante des huit</b>&nbsp;: la frame d'arrêt
+        du hero, le poster de la vidéo et l'image fixe du mode animations réduites. Elle se finit
+        au niveau publication.</li>
+    </ul>
+    <p class="small dim">Rangement proposé&nbsp;: <code>assets/hero/frames/k1.png</code> …
+      <code>k8.png</code>.</p>
+  </div>
+
+  <div class="notice">
+    <h3>L'équipage — trois silhouettes identiques, jamais un visage</h3>
+    <p class="prose">C'est l'image de la marque, et elle ne se négocie dans aucun plan&nbsp;:
+      <b>exactement trois personnes à bord, toujours les mêmes trois, habillées strictement à
+      l'identique</b> — <b>tour de cou technique noir remonté sur le nez et la bouche</b>,
+      <b>casquette noire unie enfoncée</b>, <b>lunettes polarisantes sombres</b>, <b>veste shell
+      technique anthracite mat capuche relevée</b> (coupe minimale, zéro logo), pantalon
+      technique noir, <b>gants techniques noirs</b>, chaussures de pont sombres.</p>
+    <div class="withref">
+      <span class="t">Ne jamais écrire « balaclava » ni « cagoule » dans un prompt</span>
+      <span class="d">Le mot fait refuser la génération par Veo&nbsp;3 — trois silhouettes en
+        noir au visage entièrement couvert déclenchent le filtre «&nbsp;groupe masqué&nbsp;».
+        Le <b>tour de cou remonté</b> («&nbsp;neck gaiter pulled up over the nose and
+        mouth&nbsp;») donne exactement la même silhouette à l'écran, c'est du vocabulaire de
+        pêche parfaitement banal, et ça passe. Le look ne change pas d'un pixel&nbsp;; seul le
+        mot change.</span>
+    </div>
+    <p class="prose"><b>Aucun visage lisible, jamais.</b> Chacun est vu strictement de dos, en
+      trois-quarts arrière ou en silhouette&nbsp;; le tour de cou et les lunettes couvrent le
+      reste. C'est un critère d'acceptation («&nbsp;aucun visage n'est reconnaissable sur aucune
+      image&nbsp;»), pas une préférence de cadrage — et c'est ce qui rend le film utilisable sans
+      droit à l'image. La formulation à employer est <code>seen strictly from behind, never
+      turning toward the camera</code>&nbsp;; <b>éviter</b> <code>exposed skin</code>,
+      <code>bare hands</code>, <code>bare head</code> dans les negative prompts&nbsp;: un
+      classifieur ne lit pas la négation et ces termes déclenchent des refus.</p>
+    <p class="prose"><b>Les rôles ne changent jamais</b>&nbsp;: le pilote à la console, l'homme
+      de proue sur le pont avant, <b>le lanceur sur le pont arrière</b> — c'est lui qu'on suit
+      aux segments 02 à 04. L'uniforme rend l'équipage anonyme et interchangeable&nbsp;: ce qui
+      identifie le lanceur, c'est sa position et la canne, pas ses vêtements.</p>
+    <p class="prose"><b>Aucune marque, nulle part, sur rien.</b> Pas de logo, pas de décalque,
+      pas d'écusson, pas de broderie — ni sur la coque, ni sur le hors-bord, ni sur les écrans,
+      ni sur les vêtements, ni sur les lunettes, ni sur la canne. Toutes les surfaces sont nues.
+      C'est écrit en capitales dans le bloc d'ancrage et repris dans chaque negative
+      prompt&nbsp;: la charte §7 refuse tout élément de marque tierce, et c'est le défaut qu'un
+      modèle réintroduit à chaque génération. Pas de panoplie de mer non plus (waders, ciré,
+      salopette de quart)&nbsp;: c'est un lac, exclu nommément dans le negative commun.</p>
+    <p class="small dim">Le garde-fou contre la dérive «&nbsp;braquage&nbsp;» reste écrit dans
+      chaque prompt&nbsp;: «&nbsp;calm, precise, experienced anglers going to work at first
+      light&nbsp;». Juger sur <code>k2</code>/<code>k3</code>, ajuster, PUIS enchaîner — le
+      raccord ne pardonne pas un changement de tenue en cours de chaîne.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Les 3 rendus du leurre — à joindre à CHAQUE génération, sans exception</h3>
+    <p class="prose"><b>Aucun modèle vidéo ne lit un fichier GLB</b> — ni Veo, ni Kling, ni
+      Runway. Ils n'acceptent que des images. Le leurre exact entre donc à l'écran d'une seule
+      façon&nbsp;: on <b>rend trois vues de <code>leurre_truite.glb</code></b> une fois pour
+      toutes, et <b>ces trois fichiers sont joints à chaque prompt d'image et à chaque prompt
+      vidéo</b> — comme «&nbsp;ingredients&nbsp;» pour Veo&nbsp;3.1, en pièces jointes pour
+      Nano&nbsp;Banana. Ce sont toujours les mêmes trois&nbsp;; ils ne changent jamais d'un plan
+      à l'autre, c'est ce qui garantit que le leurre ne mute pas en cours de film.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Rendu</th><th>Orientation exacte</th><th>Ce que le modèle doit y prendre</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>A — profil</td>
+            <td><b>Profil droit strict</b> — <code>droite.png</code>. Caméra perpendiculaire,
+              corps aligné, articulation à plat.</td>
+            <td><b>La vue maîtresse.</b> Silhouette courte et ventrue, deux sections, les deux
+              axes métalliques apparents, dos jaune-olive, bande magenta-rose fondue, ventre
+              blanc nacré, caudale translucide fourchue, œil noir cerclé d'argent, anneau de tête
+              chromé, les deux triples.</td>
+          </tr>
+          <tr>
+            <td>B — de face</td>
+            <td><b>De face</b>, nez vers la caméra —
+              <code>face.png</code>. (Un trois-quarts avant ≈&nbsp;45°/30° serait légèrement
+              meilleur, mais il n'existe pas dans le dossier et la vue de face porte la même
+              information.)</td>
+            <td>Le <b>volume</b> du corps — à quel point il est profond et rond — et la façon
+              dont la lumière tourne du dos olive vers le ventre nacré. C'est ce qui empêche le
+              modèle d'aplatir le leurre en poisson-planche.</td>
+          </tr>
+          <tr>
+            <td>C — dessus</td>
+            <td><b>Plongée verticale</b> — <code>dessus.png</code>, à la perpendiculaire du
+              dos.</td>
+            <td>L'<b>épaisseur</b> vue de haut et surtout <b>comment les deux sections pivotent
+              autour de l'axe</b>. Sans cette vue, la nage en S du plan 07 n'est pas
+              crédible.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="withref" style="margin-top:var(--s5)">
+      <span class="t">Recadrer le losange ✦ avant de joindre</span>
+      <span class="d">Les six photos du dossier portent une signature ✦ en bas à droite. Une
+        signature présente dans une image de référence <b>se recopie dans l'image
+        générée</b> — ce serait une marque à l'écran, et la charte §7 l'interdit. Recadrer une
+        fois, garder les trois fichiers propres à côté, et ne joindre que ceux-là.</span>
+    </div>
+    <p class="prose"><b>Les fichiers, concrètement.</b> Ce sont les photos produit de
+      <code>assets/photos leurre pour 3d/photo finales leurre truite/</code> —
+      <code>droite.png</code>, <code>face.png</code>, <code>dessus.png</code>, recadrées du ✦.
+      Des rendus de <code>leurre_truite.glb</code> feraient le même travail (et permettraient une
+      vue trois-quarts et l'articulation fléchie, un peu meilleures)&nbsp;: les deux routes sont
+      valables, ce qui compte est que ce soient <b>toujours les mêmes trois fichiers</b>, d'un
+      bout à l'autre du film.</p>
+    <p class="prose"><b>L'échelle ne se joue pas dans les rendus, elle se joue dans les
+      mots.</b> Trois images d'un objet isolé ne disent rien de sa taille — c'est pour ça que le
+      leurre sortait géant. Chaque prompt ancre donc les 6,5&nbsp;cm contre un repère
+      présent dans le plan&nbsp;: l'anneau de tête du scion (<code>k3</code>), la main gantée,
+      la gerbe d'impact «&nbsp;scaled to a 6.5 cm object&nbsp;» (<code>k7</code>), et la tête du
+      bass dont la tête fait deux à trois fois le leurre (<code>k8</code>).</p>
+    <p class="small dim"><b>Le témoin blanc a été retiré.</b> Il n'existait que comme cible de
+      tracking pour un compositing Blender&nbsp;; sans compositing, il ne sert plus à rien — et
+      surtout, il créerait un conflit&nbsp;: une keyframe blanche avec des références colorées
+      demanderait au moteur de repeindre l'objet en cours de plan. Le vrai leurre est donc dans
+      les keyframes ET dans les références, ce qui est aussi la meilleure nouvelle pour
+      <code>k8</code>, le poster.</p>
+    <p class="small dim"><b>Le repli, si la fidélité ne suit pas sur 07–08.</b> Dans l'ordre&nbsp;:
+      relancer plusieurs prises et garder la bonne&nbsp;; sinon fabriquer <code>k7</code> et
+      <code>k8</code> avec un modèle d'image (bien plus fidèle à une référence qu'un modèle
+      vidéo) pour sécuriser au moins le poster&nbsp;; en dernier recours seulement, faire
+      compositer ces deux segments par quelqu'un dont c'est le métier.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Ce que les images doivent laisser libre</h3>
+    <p class="prose">Les deux beats de texte se posent sur ces images. La charte §6 impose que la
+      zone de texte tombe sur eau ou ciel homogène&nbsp;: ça se compose à la génération, ça ne se
+      rattrape pas au recadrage.</p>
+    <ul class="clean">
+      <li><b><code>k1</code>, <code>k2</code>, <code>k3</code></b> — le tiers haut du cadre reste
+        en ciel froid propre, sans crête ni nuage découpé en son centre&nbsp;: le lock-up s'y
+        pose, sur ≈&nbsp;40&nbsp;% de la largeur.</li>
+      <li><b><code>k7</code>, <code>k8</code></b> — la bande basse reste en pénombre bleu-vert
+        homogène, aucun détail net&nbsp;: c'est là que se lit «&nbsp;Deux sections, une nage en
+        S&nbsp;».</li>
+      <li><b>Les huit</b> — l'action, le leurre et le poisson tiennent entièrement dans la
+        <b>zone sûre 9:16 centrée</b> (test d'acceptation n°5, vérifié à 375&nbsp;px).</li>
+    </ul>
+  </div>
+
+  <div class="notice">
+    <h3>Bloc d'ancrage</h3>
+    <p class="small dim">Les prompts ci-dessous sont autonomes. Si le modèle dérive — lumière qui
+      se réchauffe, brume qui disparaît, quatrième personne, leurre qui grossit — colle ce bloc
+      en tête et regénère.</p>
+    <div class="block">
+      <div class="block-head"><h4>Ancrage commun aux 8 keyframes</h4>
+        <button type="button" class="copy" data-target="anchor-block">Copier</button></div>
+      <pre id="anchor-block">Photoreal cinematic film still, 16:9, full-frame cinema camera, filmic contrast, fine natural grain, deep clean shadows, no HDR, no oversaturation. Alpine lake at COLD BLUE DAWN, before sunrise: glassy dark steel-blue water, near-black forested shores, layered mountain ridges dissolving into a thick band of low mist lying on the water — the mist is present in every frame, it is the signature of this film. Cold grey-blue sky; the only warm thing in the world is one narrow pale-amber glow low behind the ridgeline on the LEFT, where the sun has not yet risen. That glow never moves and never gets stronger. Mood: silent, cold, precise, faintly menacing. Boat: ONE black metallic-flake bass boat and NO OTHER BOAT anywhere on the water — long, low and sporty, sharp raked bow, very low freeboard, wide flat dark casting decks fore and aft, two pedestal seats at a low console with two dark glowing electronics screens, one big black outboard centred on the transom on a jack plate between two vertical trim brackets, a bow-mounted electric trolling motor stowed flat on the front deck. Crew: EXACTLY THREE people aboard — never two, never four, always the same three — dressed strictly identically: a plain black technical neck gaiter pulled up over the nose and mouth against the cold, a plain black cap pulled low, dark polarised sunglasses, a matte charcoal-black technical shell jacket with a clean minimal cut and the hood up, black technical trousers, black technical gloves, dark deck shoes. They are calm, precise, experienced anglers going to work at first light, always seen from behind or as backlit silhouettes, never turning toward the camera, so no face is ever readable. Tackle: matte black casting rod, dark grey reel, olive-grey braided line, clear leader. The lure is EXACTLY the jointed swimbait shown in the three attached reference renders and nothing else: a short deep-bodied two-section swimbait, exactly 6.5 centimetres long — TINY, shorter than the width of a hand — olive-yellow back, soft magenta-pink flank band, pearl-white belly, two exposed metal hinge pins, translucent milky forked tail, large black eye in a silver ring, two dark treble hooks. Never invent a different lure, never change its colours, never enlarge it: its 6.5 cm scale must stay believable against everything near it — rod tip, gloved hand, splash, fish. ABSOLUTELY NO BRANDING ANYWHERE IN THE FRAME: no logo, wordmark, decal, sticker, patch, embroidery or printed label — not on the hull, the outboard, the screens, the clothing, the caps, the sunglasses, the rod or the reel. Every surface is plain. No text and no watermark of any kind.</pre>
+    </div>
+    <div class="block">
+      <div class="block-head"><h4>À exclure — commun aux 8 keyframes ET aux 7 segments</h4>
+        <button type="button" class="copy" data-target="anchor-neg">Copier</button></div>
+      <pre class="neg" id="anchor-neg"></pre>
+    </div>
+    <p class="small dim">Ce bloc n'est plus à coller à la main&nbsp;: sa version condensée est
+      déjà en tête de chacun des blocs de prompt ci-dessous, avec le negative et le mode d'emploi
+      des pièces jointes. Il ne sert que de filet — si un modèle dérive malgré tout, colle
+      celui-ci en entier par-dessus.</p>
+  </div>
+
+  <div class="notice">
+    <h3>Le bateau — un bass boat, pas une vedette de lac</h3>
+    <p class="prose">Références&nbsp;: <code>assets/references-bateau/</code>.
+      <b><code>photobateausportfinal.png</code> reste la référence principale de cadrage</b> pour
+      <code>k2</code>&nbsp;: bateau noir vu de dos, sillage en V large, brume posée sur l'eau
+      devant les crêtes. <b>Attention&nbsp;: sa lumière est golden hour — on garde le CADRAGE,
+      pas la lumière.</b> Si on la joint en référence, dire explicitement «&nbsp;use this image
+      for the boat and the framing only, NOT for the light&nbsp;».
+      <code>bateausport.png</code> et <code>bateausportvitesse.png</code> donnent le détail du
+      pont, de la console et des sièges.</p>
+    <p class="prose">Ce n'est pas le petit bateau blanc de promenade que produit
+      «&nbsp;speedboat&nbsp;»&nbsp;: c'est un <b>bass boat noir métallisé</b> — long, bas
+      sur l'eau, franc-bord très faible, <b>ponts de lancer plats et larges à l'avant et à
+      l'arrière</b>, deux sièges sur colonne devant une console basse à écrans sombres, un gros
+      hors-bord noir au tableau arrière sur sa platine entre deux vérins de trim, un moteur
+      électrique d'étrave replié sur le pont avant.</p>
+    <ul class="clean">
+      <li><b><code>k2</code> est écrite sur ce cadrage</b>&nbsp;: vue de dos, légèrement
+        au-dessus, sillage en V qui sort par les deux coins bas, brume et crêtes au-dessus du
+        bateau. Le prompt vidéo du segment 01 et le bloc d'ancrage ont été alignés dessus.</li>
+      <li><b>Le lanceur est debout, libre, sur un pont plat</b> — pas coincé derrière un plat-bord
+        haut. C'est ce qui rend l'armé et le lancer lisibles en une seconde, et c'est exactement ce
+        que montrent vos références.</li>
+      <li><b>La silhouette vue du ciel est basse et effilée</b>, pas une coque blanche ventrue&nbsp;:
+        au plan 01, c'est ce qui distingue un bateau de pêche sportive d'une vedette de
+        location.</li>
+      <li><b>Ces bateaux sont couverts d'adhésifs de marque</b> (coque, hors-bord, écrans). La
+        charte §7 refuse tout élément de marque tierce&nbsp;: les negative prompts excluent
+        désormais décalques, stickers de sponsor et logos d'électronique. À vérifier à l'œil sur
+        chaque image — c'est le défaut le plus probable de ce plan-là.</li>
+    </ul>
+  </div>
+
+  <div class="plans" id="planList"></div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="textes">
+  <div class="sec-head">
+    <p class="label">Ce qui s'écrit à l'écran</p>
+    <h2>Deux moments de texte</h2>
+    <p class="prose">On lit environ trois mots par seconde. Un texte posé sur un plan de
+      1,4&nbsp;s ne se lit pas — il clignote. Les deux beats ci-dessous couvrent donc chacun deux
+      plans, et rien d'autre n'apparaît pendant les dix secondes. Entrée sur la progression
+      [0.10&nbsp;–&nbsp;0.25] du beat, sortie sur [0.78&nbsp;–&nbsp;0.92], sur voile (charte §6).</p>
+  </div>
+  <div class="beats" id="beatList"></div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="apres">
+  <div class="sec-head">
+    <p class="label">Après les dix secondes</p>
+    <h2>Les specs, puis les coloris</h2>
+    <p class="prose">Le hero se dépingle, la vidéo s'arrête sur sa dernière image et la page
+      reprend son défilement normal. Deux sections suivent, sur aplat
+      <code>--color-background</code> — aucune vidéo, aucun scrub.</p>
+  </div>
+
+  <h3 style="margin-bottom:var(--s4)">Section 2 — la fiche</h3>
+  <div class="notice">
+    <p class="prose">Statique, en DOM, jamais en pixels. Les valeurs manquantes sont affichées
+      comme manquantes&nbsp;: tant qu'un exemplaire n'a pas été pesé et mesuré, rien ne s'écrit
+      ici. La VISION interdit d'inventer une spec produit, et c'est le seul endroit de la page
+      où la tentation existe.</p>
+    <div class="specsheet" id="specSheet"></div>
+  </div>
+
+  <h3 style="margin-bottom:var(--s4)">Section 3 — le sélecteur de coloris 3D</h3>
+  <p class="prose" style="margin-bottom:var(--s6)">C'est ici que les rendus 3D vivent désormais.
+    Pas de bascule imposée par un montage&nbsp;: la personne clique, le rendu change. Démo
+    ci-dessous avec les références fournisseur en guise de placeholder — les vrais rendus
+    restent à produire.</p>
+
+  <div class="switcher">
+    <div>
+      <div class="stage">
+        <span class="badge">Placeholder — rendu 3D à produire</span>
+        <img id="stageImg" src="" alt="">
+      </div>
+    </div>
+    <div>
+      <p class="label" id="swLabel">Coloris : Truite</p>
+      <div class="swatches" id="swatches" role="radiogroup" aria-label="Coloris"></div>
+      <p class="small prose" id="swDesc"></p>
+    </div>
+  </div>
+
+  <div class="tablewrap" style="margin-top:var(--s7)">
+    <table>
+      <thead><tr><th>Point</th><th>Valeur</th><th>Pourquoi</th></tr></thead>
+      <tbody>
+        <tr><td>Rendus par coloris</td><td class="n">36 images</td><td>Un tour complet par pas de 10°. Assez pour une rotation fluide au geste, assez peu pour tenir en poids.</td></tr>
+        <tr><td>Format</td><td>AVIF 800×800 + fallback WebP</td><td>Fond uni de la gamme (#071128 → #20293e), jamais de fond blanc e-commerce, jamais d'ombre dure (charte §7).</td></tr>
+        <tr><td>Poids par coloris</td><td class="n">≈ 290 Ko</td><td>36 × ~8 Ko. <b>Seule la séquence du coloris sélectionné se charge</b> — les autres attendent le clic.</td></tr>
+        <tr><td>Rotation</td><td>au geste, pas au scroll</td><td>Le scroll sert à descendre la page. Piloter une rotation avec lui à cet endroit vole le contrôle : ici c'est le doigt ou la souris qui tourne le leurre, et le scroll continue de faire défiler.</td></tr>
+        <tr><td>Changement de coloris</td><td>fondu 0,28 s</td><td>Charte §8.5 : anneau blanc 2px sur la pastille sélectionnée, nom mis à jour dans le label, galerie en fondu.</td></tr>
+        <tr><td>Pastilles</td><td>photo du coloris, 32 px</td><td>Jamais un aplat de couleur inventé — le coloris d'un leurre est un motif, pas une teinte (charte §8.5).</td></tr>
+        <tr><td>Animations réduites</td><td>une image fixe par coloris</td><td>Pas de rotation, pas de séquence. Le sélecteur reste utilisable, le contenu reste complet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="coloris">
+  <div class="sec-head">
+    <p class="label">La matière</p>
+    <h2>Les coloris</h2>
+    <p class="prose"><b>Truite est le coloris principal</b> — arrêté le 2026-08-05. C'est celui
+      que le leurre porte pendant les dix secondes du hero, et celui sélectionné par défaut dans
+      le sélecteur. Les autres sont à produire en rendu, dans un ordre encore à décider.</p>
+    <p class="prose">Références fournisseur ci-dessous, pour lecture interne uniquement&nbsp;:
+      elles servent à modéliser et à texturer, elles ne sont jamais publiées (droits, emballage
+      tiers visible).</p>
+  </div>
+  <div class="coloris" id="colorisGrid"></div>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="techno">
+  <div class="sec-head">
+    <p class="label">L'intégration</p>
+    <h2>Comment le scroll pilote l'image</h2>
+  </div>
+
+  <p class="prose" style="margin-bottom:var(--s6)">Une seule <code>&lt;video&gt;</code> muette,
+    <code>playsinline</code>, jamais lue en autonomie&nbsp;: le scroll écrit
+    <code>currentTime</code>, point. Lenis lisse le scroll, GSAP ScrollTrigger convertit la
+    progression de la piste en timecode, et le <code>currentTime</code> est amorti (lerp ≈ 0,12)
+    pour éviter le saccadé des seeks. À 240&nbsp;images, un fichier unique suffit — la découpe en
+    segments et le préchargement progressif de la version longue n'ont plus lieu d'être.</p>
+
+  <div class="tablewrap" style="margin-bottom:var(--s7)">
+    <table>
+      <thead><tr><th>Point</th><th>Valeur</th><th>Pourquoi</th></tr></thead>
+      <tbody>
+        <tr><td>Piste de scroll</td><td class="n">240 vh</td><td>1 vh = 1 image. Deux écrans et demi avant les specs.</td></tr>
+        <tr><td>Fichier</td><td>1 seul</td><td>240 images : rien à découper, rien à orchestrer.</td></tr>
+        <tr><td>Codecs</td><td>H.264 High + AV1</td><td>H.264 pour le seek fiable partout ; AV1 en source alternative pour le poids. HEVC seul : seek erratique sous Android.</td></tr>
+        <tr><td>Intervalle d'images-clés</td><td class="n">6 images</td><td>Un seek n'atterrit que sur une image-clé. À 6, le pire écart est 0,25 s — invisible. Au défaut (48), le scrub colle.</td></tr>
+        <tr><td>Définitions</td><td class="n">1920×1080 · 1280×720 · 960×540</td><td>Servies par <code>media</code>. Le mobile ne télécharge jamais le 1080p.</td></tr>
+        <tr><td>Budget de poids</td><td class="n">≤ 1 Mo</td><td>Définition mobile, keyframes denses comprises. Un hero doit être là avant que le doigt ne bouge.</td></tr>
+        <tr><td>Cadrage</td><td>16:9, zone sûre 9:16 centrée</td><td>Le recadrage mobile ne coupe jamais le leurre ni la ligne de texte. À vérifier plan par plan au montage.</td></tr>
+        <tr><td>Son</td><td>aucun</td><td><code>-an</code> à l'encodage. Décision du 2026-08-05, elle vaut aussi pour un éventuel export réseaux.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:var(--s3)">Ce que voit quelqu'un qui a désactivé les animations</h3>
+  <p class="prose" style="margin-bottom:var(--s4)">En <code>prefers-reduced-motion</code>, GSAP et
+    Lenis ne sont <b>pas initialisés</b> (pas « mis en pause »). La page reste complète, lisible,
+    achetable&nbsp;:</p>
+  <ul class="clean" style="margin-bottom:var(--s7)">
+    <li>Le hero devient une image fixe — <code>k8</code>, le bass qui prend le leurre — avec le
+      beat de texte 2 posé dessus et le beat 1 au-dessus.</li>
+    <li>Le lecteur vidéo reste disponible avec ses contrôles natifs&nbsp;: lire les dix secondes
+      est un choix, jamais une boucle imposée.</li>
+    <li>Le sélecteur de coloris perd sa rotation, garde son changement d'image et ses pastilles.</li>
+    <li>Test d'acceptation&nbsp;: page parcourue en reduced-motion — aucun contenu manquant,
+      aucun espace vide, le CTA atteignable.</li>
+  </ul>
+
+  <h3 style="margin-bottom:var(--s3)">Le bonus gratuit</h3>
+  <p class="prose">Les 7 segments sont générés à ~10&nbsp;s chacun et retimés court. Les rushes
+    complets, montés bout à bout, donnent <b>un film d'environ 80&nbsp;s</b> pour Instagram et
+    TikTok — sans une génération de plus, et toujours sans une seule coupe. Ce n'est pas dans le
+    périmètre de cette spec, mais il ne faut pas jeter les rushes.</p>
+</section>
+
+<hr class="rule">
+
+<section class="wrap" id="ouvert">
+  <div class="sec-head">
+    <p class="label">Avant de lancer la production</p>
+    <h2>Ce qui bloque, ce qui attend</h2>
+  </div>
+  <div class="qa" id="qaList"></div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <div class="lockup" aria-label="Alure">
+    <span class="word">ALURE.</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 981 157" role="img" aria-label="Flèche Alure">
+
+<path fill="currentColor" fill-rule="evenodd" d="M594 0L699 20L767 29L808 37L892 46L969 49L979 52L981 57L965 68L952 71L866 80L754 101L649 117L563 135L535 136L532 135L531 131L548 114L559 110L569 103L571 99L566 98L548 103L421 122L341 140L223 157L189 155L187 151L188 143L203 139L245 119L271 110L278 106L277 103L239 103L199 108L166 108L161 110L33 121L20 121L12 116L0 113L2 104L9 100L49 92L89 79L167 50L175 44L184 41L287 41L381 38L543 40L570 36L610 34L611 31L607 27L583 12L585 4L589 4ZM678 31L676 32L677 46L672 50L664 50L657 45L649 44L600 51L540 56L379 54L331 57L199 57L113 83L108 85L107 88L224 83L344 83L356 78L367 78L374 84L374 93L299 119L294 124L310 124L348 115L389 110L486 92L614 76L621 73L634 74L639 80L638 85L633 85L630 94L620 99L620 102L624 103L675 93L883 62L882 59L764 47L699 37Z"></path>
+</svg>
+  </div>
+  <p>Spec de production — <code>docs/specs/video/</code>. Source canonique des prompts&nbsp;:
+    <code>prompts-plans.md</code>. Cette page en est la vue de travail&nbsp;: toute correction
+    part du <code>.md</code>.</p>
+  <p style="margin-top:var(--s3)">Rendue ici en Futura/Century&nbsp;Gothic. La police de
+    production est <b>Glacial Indifference</b>, self-hostée — deux graisses, jamais plus.</p>
+</footer>
+
+<script>
+/* =========================================================================
+   Données. Un plan = un objet. Timecodes, cumuls et plages de scroll se
+   calculent à partir d'ici — aucun chiffre n'est écrit deux fois.
+   f : nombre d'images à 24 i/s.
+   ========================================================================= */
+const NEG_COMMON = `text, watermark, logo, brand name, signature, subtitles, caption, golden hour, warm sunny light, midday light, visible sun disc, orange sky filling the frame, HDR look, oversaturated colours, blown-out sky, face turned toward the camera, readable face, portrait framing, uncovered face, second boat, another boat, extra boats, kayak, canoe, jet ski, sailboat, pontoon boat, white fibreglass runabout, cabin cruiser, high freeboard hull, four people, fifth person, crowd, waders, oilskins, foul-weather bibs, fly fishing vest, hi-vis clothing, bright coloured clothing, casual streetwear, beer can, clothing logos, sponsor patches, team jersey, embroidered logo, printed label, brand sticker, boat brand decals, outboard engine branding, electronics brand logos, buildings, resorts, roads, power lines, birds, aircraft, contrails, rainbow, anamorphic flare stars, cartoon, illustration, 3d render look, plastic CGI water, warped anatomy, extra fingers, extra limbs, oversized lure, giant lure, lure bigger than a hand, different lure, restyled lure, changed lure colours, extra hooks, three hooks, single-piece lure, no joint, slim elongated glide bait, duplicated lure, lure with no line attached, leader tied to a hook, leader trailing from the tail, line pointing the wrong way, square crop, 1:1 aspect ratio, vertical crop, cut, jump cut, scene change, cross dissolve, montage`;
+
+const FPS = 24;
+const TRACK_VH = 240;   /* 1 vh = 1 image */
+
+const PLANS = [
+{
+  n:1, titre:"Le lac", f:34, fab:"ia", moteur:"Veo 3",
+  grade:"linear-gradient(160deg,#0a1a30 0%,#2e4560 45%,#7d93a8 80%,#d9a06b 100%)",
+  intention:"Poser le monde en une seconde et demie : l'aube froide, la brume, et UN bateau noir — la seule présence humaine du paysage. La caméra plonge déjà : le plan-séquence est en mouvement dès sa première image.",
+  imgIn:{t:"k1", sub:"Générée à froid — la seule des huit. C'est l'image mère : la lumière d'aube froide, l'eau noire et la brume qu'elle fixe tiennent les 239 autres images. VALIDÉE — ne pas la regénérer.",
+    p:`Photoreal cinematic film still, 16:9 widescreen, full-frame cinema camera, filmic contrast, fine natural grain, deep clean shadows, no HDR. Very high aerial view over a vast alpine lake at COLD BLUE DAWN, before sunrise, camera tilted about 45 degrees down along its flight path, already moving. The dark steel-blue water fills most of the frame, glassy and still; a thick white band of low mist lies across the middle distance in front of the far ridges. Near-black forested shores frame the water; three layers of ridges fade upward into cold haze; one narrow pale-amber pre-dawn glow sits low behind the LEFT-HAND ridgeline, clearly on the left third of the frame — the only warmth in the world, and it never moves. ONE black bass boat, tiny in the lower centre, is the only human presence in the landscape — at speed, dragging a long thin white wake diagonally toward the lower-left corner, the brightest line in the whole frame. The upper third of the frame is clean, even, cold grey-blue sky with no cloud shapes in its centre. 24mm equivalent, f/4, deep focus, natural light only.`,
+    neg:`low altitude, close-up boat, visible people, white hull, warm golden light, busy sky, centred horizon, amber glow on the right, square crop, 1:1 aspect ratio`},
+  imgOut:{t:"k2", sub:"Chaînée sur k1. Fin de P01 ET début de P02. À REGÉNÉRER : dans la version actuelle le lanceur est sur le pont AVANT et il lance alors que le bateau déjauge — on ne lance pas d'un bateau en marche. Ici il tient seulement sa canne, sur le pont ARRIÈRE.",
+    p:`Using the attached frame as the exact starting point, keep the cold dawn light, the water colour, the mist band and the ridgelines identical. The camera has dived and closed in: it now flies just behind and above the boat, about 30 degrees down, still moving. The black bass boat sits in the lower centre, about a third of the frame wide, running at speed straight away from the camera: we look down its length from behind, the big black outboard centred on the transom between its two trim brackets in the near foreground, the wide flat dark REAR casting deck just beyond it, white water churning under the hull, the wake opening in a wide white V that runs out through the two bottom corners. EXACTLY THREE anglers, dressed identically in black neck gaiters pulled up over the nose and mouth, black caps and matte charcoal hooded shell jackets: TWO seated low in the pedestal seats at the console with the faint glow of two dark screens in front of them, and ONE standing on the REAR casting deck closest to the camera, seen from behind, simply holding a matte black rod low and across his body — he is NOT casting, the line is not out, the lure is clipped to the rod's hook keeper and far too small to read at this distance. Nobody casts from a boat running on plane. No face, no skin. The pale-amber glow stays low on the LEFT horizon; the top of the frame stays clean cold sky. 24mm equivalent, f/4, slight motion blur in the foam.`,
+    neg:`casting, line in the air, rod bent, angler on the front deck, angler on the bow, visible faces, two people, four people, level horizon, static hover, warm golden light, white hull, brand badge on the outboard cowling, emblem on the engine, logos on the seat backs, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 1 of a single unbroken camera move — no cut anywhere. Cinematic aerial shot over a vast alpine lake at cold blue dawn, before sunrise: glassy dark steel-blue water, near-black forested shores, a thick band of low mist lying on the water, one narrow pale-amber glow behind the left ridgeline. The camera starts very high, already moving, and dives fast and smoothly toward the ONLY boat on the water: a black bass boat at speed dragging a long white V wake. It ends close behind and above the boat, looking down its length from astern, where THREE identical anglers — black neck gaiters up against the cold, black caps, charcoal hooded shell jackets, all seen from behind — ride through the cold air: two seated at the console, one standing on the rear deck holding a rod low, not casting. Natural light only, 24 fps, filmic contrast, fine grain. Fast continuous descent, no orbit, no hesitation, no cut.`,
+  neg:`orbit, static hover, second boat, golden hour, birds, casting from a moving boat, cut, scene change`,
+  entree:"Ouverture sur noir, 4 images de fondu — pas 8 : à cette durée, un fondu long mange le plan.",
+  sortie:"La caméra est calée derrière le bateau, les trois silhouettes lisibles (= k2).",
+  arret:"Image 24 — le sillage traverse le cadre en diagonale."
+},
+{
+  n:2, titre:"À bord, et l'armé", f:46, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(160deg,#0a1a30 0%,#243b56 55%,#8fa3b5 92%,#d9a06b 100%)",
+  intention:"Le segment fusionné — c'est la correction majeure de cette version. La caméra traverse le bateau entre les trois silhouettes, le bateau déjauge et s'arrête, l'eau se calme, et le lanceur arme dans la foulée. Un vrai déplacement de caméra ET une action : de quoi remplir les dix secondes de Veo sans qu'il invente. Avant, deux segments se partageaient un cadre immobile où seul un bras bougeait — Veo comblait le vide.",
+  imgIn:{t:"k2", reuse:"Aucune image à générer : le début de P02 = k2, la fin de P01 — le même fichier. Chaque jonction du plan-séquence est un fichier partagé : le faux raccord est impossible par construction."},
+  imgOut:{t:"k3", sub:"Chaînée sur k2. Fin de P02 ET début de P03 — l'armé maximal. À REGÉNÉRER : l'ancienne k4 était en carré 1:1 et portait un nuage d'éclaboussures flottant sans cause. Ici, format 16:9, bateau à l'arrêt, eau lisse.",
+    p:`Using the attached frame as the exact starting point, keep the cold dawn light, the mist band, the boat and the three identical anglers. The camera has crossed the transom, glided low across the wide flat rear casting deck and settled close behind the standing angler, slightly below shoulder height, on the same axis. THE BOAT IS NOW STOPPED AND DRIFTING: no wake, no foam, the water around it flat and glassy, the mist band untouched. He fills the right third of the frame from mid-thigh up, seen strictly from behind — black neck gaiter over the nose and mouth, a plain black cap pulled low, a matte charcoal hooded shell jacket, black gloves. He has swept the rod back to its loading peak: the blank bends into a deep C above and behind him, the braid pulled dead straight. The 6.5 cm lure is swung back and up near the top-left of the frame and it is TINY: it hangs several metres from the camera, so on screen it must read SMALLER THAN THE ANGLER'S GLOVED HAND and no bigger than the diameter of the reel — a small pale shape the size of a matchbox, never a large object. A lure that reads bigger than the angler's head is the single most common failure of this frame. The clear leader is knotted to the CHROME EYELET ON ITS NOSE and runs taut from that nose toward the rod tip, so the lure is visibly being dragged nose-first by the line: the line is never attached to a hook and never trails from the tail. The two other anglers are soft dark shapes lower left, seated at the console. The pale-amber glow stays on the LEFT. Air is still, no spray in mid-air. 40mm equivalent, f/2.2, focus held on the rod tip and the lure.`,
+    neg:`floating cloud of spray in mid air, unexplained water burst, boat still moving, wake, foam, visible faces, broken rod, snapped line, slack line, line tied to a hook, leader trailing from the tail, no line at all, oversized lure, lure bigger than the angler's hand, lure bigger than the angler's head, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 2 — one unbroken camera move, no cut. Continuing its dive, the camera crosses the transom of the black bass boat, glides low and fast along the wide flat casting deck between the three identical anglers — dark figures in black caps, black neck gaiters and charcoal hooded shell jackets, all seen from behind, two seated at the console with their screens glowing faintly — and settles close behind the one standing on the rear deck, just below his shoulders. As the camera settles, the boat comes off plane, slows and stops: the wake dies away, the water goes flat and glassy, the mist band stands still. Then, in the same continuous shot, he loads the cast in real time: the rod sweeps back, the blank bends into a deep C, the braid snaps dead straight, and the tiny 6.5 cm lure swings back and up on its leader — the clear leader knotted to the chrome eyelet on its nose, taut, dragging it nose-first. Cold blue dawn, thick mist ahead, pale-amber glow far left. 24 fps, filmic contrast, no cut.`,
+  neg:`beer can, drinking, party, visible faces, fourth person, casting while the boat is moving, boat still on plane at the end, slow motion, two-handed overhead cast, fly casting, cut, scene change`,
+  entree:"Continuité pure — le début de P02 est k2, le même fichier que la fin de P01.",
+  sortie:"L'armé maximal, bateau arrêté, scion à sa flexion la plus forte (= k3).",
+  arret:"Image 30 — les trois silhouettes lisibles, le lanceur au tiers droit.",
+  note:"Segment le plus long du film après la nage : c'est lui qui absorbe l'ancien P03. Il contient trois choses — la traversée, l'arrêt du bateau, l'armé — donc de la matière pour dix secondes. Premier segment où les 3 photos de référence du leurre sont obligatoires."
+},
+{
+  n:3, titre:"Le lancer", f:20, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(160deg,#0a1a30 0%,#31485f 55%,#9fb2c2 100%)",
+  intention:"Le pivot du film. Le scion se détend, le leurre part — et au lieu de couper, la caméra fouette vers le haut et PART AVEC LUI. C'est le moment où le film quitte le monde des hommes pour celui du leurre, en un seul mouvement.",
+  imgIn:{t:"k3", reuse:"Aucune image à générer : le début de P03 = k3, la fin de P02 — le même fichier. La caméra ne coupe pas : elle part avec le leurre."},
+  imgOut:{t:"k4", sub:"Chaînée sur k3 (lumière et décor seulement). Fin de P03 ET début de P04 : la poursuite est lancée, le bateau est derrière la caméra. À REGÉNÉRER : l'ancienne k5 était en carré 1:1, le leurre y était énorme et volait dans le mauvais sens.",
+    p:`Using the attached frame only for its cold dawn light, its dark water and its mist band, the cast has fired and the camera has whipped up off the boat and launched forward after the lure: we are now low over the open water, flying fast toward the thick wall of mist. In the centre of the frame, a few metres ahead, the 6.5 cm lure flies in a flat arc AWAY from the camera and deeper into the frame. ITS NOSE POINTS IN THE DIRECTION IT IS TRAVELLING, away from the boat and away from the line — it flies nose-first, like a thrown dart. The clear leader is knotted to the chrome eyelet on that nose and STREAMS BACK from it, running past the lure's own body and out toward the lower corner where the boat is: the line is always behind the lure, never ahead of its nose. It is TINY — a small pale tracer no wider than a thumb against the huge lake, never a large object filling the frame. Below: dark glassy water rushing past, streaked with faint cold reflections. Ahead: the wall of mist, tall and soft, its left side faintly warmed by the pale-amber glow. The boat is GONE from the frame, behind the camera now. 35mm equivalent, f/2.8, strong forward motion blur at the frame edges, the lure sharp.`,
+    neg:`boat visible, angler visible, oversized lure, giant lure, lure filling a third of the frame, missile, rocket, lure flying tail-first, lure flying backwards, nose pointing back toward the line, leader in front of the nose, no line at all, warm golden light, birds, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 3 — no cut. The cast fires: the rod whips forward, the blank straightens, the line rips off the reel, and the tiny 6.5 cm lure launches out over the water, nose-first, the clear leader streaming back from the eyelet on its nose. In the same second the camera whips up off the boat and accelerates after the lure, leaving the boat behind and below, out of frame: now flying low over dark glassy water at cold blue dawn, chasing a small pale tracer straight toward the thick wall of mist. The lure stays small against the lake — it is a 6.5 cm object, not a projectile. Strong controlled speed, frame edges motion-blurred, the lure sharp. 24 fps, one unbroken accelerating move, no cut.`,
+  neg:`tangled line, backlash, rod breaking, lure hitting the boat, camera staying on the boat, oversized lure, missile, lure flying tail-first, cut, scene change`,
+  entree:"Continuité pure sur k3 — la coupe n'existe pas : la caméra part avec le leurre.",
+  sortie:"En poursuite au ras de l'eau, le leurre net au centre, la brume qui approche (= k4).",
+  arret:"Image 15 — le leurre net, le mur de brume plein cadre devant."
+},
+{
+  n:4, titre:"La brume", f:32, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(180deg,#9fb2c2 0%,#c7d2da 45%,#8fa3b5 78%,#d9a06b 100%)",
+  intention:"Le seul segment qui respire — le battement onirique du film, DANS sa signature : le leurre traverse la brume de l'aube. Le monde devient doux et silencieux une seconde, puis s'ouvre : l'eau noire attend.",
+  imgIn:{t:"k4", reuse:"Aucune image à générer : le début de P04 = k4, la fin de P03 — le même fichier. La poursuite entre dans la brume sans coupe."},
+  imgOut:{t:"k5", sub:"Chaînée sur k4. Fin de P04 ET début de P05 : la sortie de brume, la bascule vers l'eau. À REGÉNÉRER : l'ancienne k6 faisait réapparaître le bateau et les trois personnes DEBOUT — un faux raccord franc, puisque l'image précédente ne montre plus le bateau du tout.",
+    p:`Using the attached frame as the exact starting point, keep the cold light, the mist and the water identical. The camera and the lure have crossed the mist band and come out the far side: the wall of mist now fills the rear third of the frame behind the lure, torn veils still curling where they crossed it. THE BOAT IS NOT IN THIS FRAME AT ALL — no hull, no anglers, no rod, nothing but open water, mist and sky. The 6.5 cm lure is at the top of its arc in the centre of the frame. The camera has closed in on it during the flight, so it reads larger on screen than in the previous frame — but it must still read unmistakably as a small 6.5 cm object against a huge lake, never as a big fish-sized body. IT STILL FLIES NOSE-FIRST, its nose pointing forward in the direction of travel and never back toward the line; the clear leader streams BACK from the eyelet on that nose, running past its body and disappearing into the mist behind it. Its nose is just tipping down toward the water. Below and ahead: open dark glassy water, very close now, smooth as black glass, holding a faint pale reflection of the mist. The pale-amber glow stays far LEFT, diffused by the mist like a lantern behind frosted glass. 35mm equivalent, f/2.8, the lure sharp, the mist soft.`,
+    neg:`boat, hull, anglers, people, rod, second boat, clouds seen from above, aerial view of clouds, oversized lure, giant lure, lure the size of a real fish, lure flying tail-first, nose pointing back toward the line, missile, warm sunlight, birds, no line at all, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 4 — no cut. Flying alongside the tiny 6.5 cm lure as it arcs through the thick band of dawn mist lying over the lake: veils of grey-blue vapour tear past the camera and curl off the lure, the clear leader streaming back from its nose, the world turning soft and silent inside the mist, the pale-amber glow diffusing through from the left like a lantern behind frosted glass. Then the far side: the mist opens, the air clears, and the lure comes out over open black-glass water at the top of its arc, nose starting to tip down, the camera arcing over with it. The boat never comes back into frame. 35mm equivalent, f/2.8, smooth fast tracking, 24 fps, one unbroken move through the mist, no cut.`,
+  neg:`above the clouds, cloud deck, god rays through cumulus, boat, hull, anglers, rod, oversized lure, birds, cut, scene change`,
+  entree:"Continuité pure sur k4 — la poursuite entre dans la brume.",
+  sortie:"Sortie de brume, le leurre bascule nez vers l'eau, aucun bateau au cadre (= k5).",
+  arret:"Image 24 — la sortie de brume, les voiles qui se déchirent."
+},
+{
+  n:5, titre:"L'impact", f:30, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(180deg,#c7d2da 0%,#5b7186 40%,#16304a 82%,#081527 100%)",
+  intention:"Chute, impact, et la caméra crève la surface AVEC le leurre, sans s'arrêter. La charnière entre les deux mondes — l'air froid et l'eau — en un seul mouvement. L'éclaboussure est PETITE : c'est un objet de 6,5 cm qui tombe, pas un plongeur.",
+  imgIn:{t:"k5", reuse:"Aucune image à générer : le début de P05 = k5, la fin de P04 — le même fichier. La chute est déjà amorcée."},
+  imgOut:{t:"k6", sub:"Chaînée sur k5 (lumière et température seulement). Fin de P05 ET début de P06 : sous la surface. À REGÉNÉRER : l'ancienne k7 était superbe mais son eau tirait au turquoise lumineux, presque tropical — c'est la seule image qui décrochait de l'aube froide.",
+    p:`Using the attached frame only for its cold light and colour temperature, the camera has hit the water with the lure and crossed the surface. We are just under water, looking slightly up. THE WATER IS COLD AND DARK: deep steel blue-green, desaturated, dim like a lake twenty minutes before sunrise — never bright turquoise, never tropical, never sunlit. The underside of the surface is a rippling ceiling of pale silver-blue with the collapsing crown of a small, tight impact splash still printed on it. A modest column of fine white bubbles — scaled to a 6.5 cm object, not a cannonball — trails down toward the camera, thinning into drifting particles. Faint cold light shafts angle down, weak and diffuse. In the centre, the 6.5 cm lure hangs nose-down amid the last bubbles, sinking gently; the clear leader is knotted to the chrome eyelet on its nose and runs UP from that nose toward the surface and out of frame, taut and straight — it is what will pull the lure. The water darkens to near-black blue-green at the bottom of the frame. No fish anywhere. 24mm equivalent, f/2.8, high-speed water detail.`,
+    neg:`bright turquoise water, tropical water, sunlit lagoon, warm orange light through the surface, huge splash, tidal wave, explosion of foam, frozen droplet cliché, murky brown water, silt, debris, fish, bass, aquarium glass, gravel, oversized lure, no line at all, leader trailing from the tail, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 5 — no cut. Falling with the tiny 6.5 cm lure toward the black-glass water at cold blue dawn: the surface rushes up holding a pale reflection of the mist, then the impact — a small, tight splash scaled to a 6.5 cm object, a burst of fine bubbles — and the camera punches through the surface WITH the lure in the same continuous movement. Under water the world is cold, dark and desaturated, deep steel blue-green, never tropical: the surface becomes a rippling silver ceiling above, a modest bubble column trails down, faint cold light shafts angle through, and the lure sinks nose-down through drifting particles with the clear leader running up from its nose toward the surface. No fish yet. 24 fps, high-speed water detail, one unbroken move across the surface, no cut.`,
+  neg:`cut at the surface, scene change at impact, huge cinematic splash, bright turquoise water, tropical water, warm underwater glow, fish visible, bass visible`,
+  entree:"Continuité pure sur k5 — la chute est déjà amorcée.",
+  sortie:"Sous la surface, la couronne d'impact au plafond, le leurre qui coule (= k6).",
+  arret:"Image 24 — juste sous la surface, la couronne d'impact au-dessus."
+},
+{
+  n:6, titre:"La nage", f:40, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(170deg,#0d2438 0%,#16465e 50%,#2e7d8a 100%)",
+  intention:"Le segment le plus long du hero, et c'est volontaire : c'est l'argument produit. La ligne se tend, le leurre se retourne et part, l'articulation travaille, la nage en S se lit de profil. Cadrage MACRO — caméra proche, faible profondeur de champ, particules larges au premier plan : c'est ce qui rend 6,5 cm crédible.",
+  imgIn:{t:"k6", reuse:"Aucune image à générer : le début de P06 = k6, la fin de P05 — le même fichier. La caméra se cale à hauteur de leurre."},
+  imgOut:{t:"k7", sub:"Chaînée sur k6. Fin de P06 ET début de P07 : la nage installée. AUCUN poisson ici. À REGÉNÉRER : l'ancienne k8 avait une bonne composition mais le leurre y lisait comme une illustration 3D posée sur une photo, et il n'y avait aucune ligne attachée.",
+    p:`Using the attached frame as the exact starting point, keep the cold dark blue-green water, the faint light shafts and the drifting particles identical. The camera has settled at lure depth, turned to a profile framing and now tracks sideways: the 6.5 cm lure swims side-on in the centre-left, horizontal, moving left across the frame, its rear section angled off the hinge mid-kick. THE LURE MUST READ AS A REAL PHYSICAL OBJECT PHOTOGRAPHED UNDER WATER, not as a 3D render or an illustration pasted onto a photo: same grain, same slight softness, same water haze and same particles in front of it as everything else in the frame, wet specular highlights on its painted flanks, faint refraction at its edges. The clear leader is knotted to the chrome eyelet on its nose and runs FORWARD from that nose, taut and straight, out of the left edge of the frame — it is visibly what is pulling the lure, and it never trails from the tail. This is a MACRO framing — camera close, shallow depth of field, drifting particles reading large in the foreground. The background slides past: a dark weed bed to the RIGHT, dense enough for something large to be hiding in it, and deeper gloom opening beyond. A faint trail of micro-bubbles crosses the frame behind the lure. The bottom band of the frame is even, dark blue-green, with no sharp detail. 60mm equivalent macro, f/2.8, camera at lure height, matching its speed. No fish anywhere.`,
+    neg:`any fish, bass, pike, 3d render look, cgi look, illustration, painted cartoon lure, lure pasted on the photo, lure sharper than the water around it, no line at all, leader trailing from the tail, line tied to a hook, oversized lure, wide landscape framing, aquarium glass, gravel substrate, tropical fish, busy lower band, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 6 — no cut. Under water at cold blue dawn, in dark desaturated blue-green water, the camera settles to lure depth and swings smoothly to a macro profile framing as the line comes tight: the tiny 6.5 cm two-section lure turns nose-first and settles into an S-shaped swim, the rear section kicking around the hinge while the head holds a steady line. The clear leader runs forward from the eyelet on its nose, taut, visibly pulling it. The camera tracks sideways at lure height, matching its speed — macro clarity on the lure, shallow depth of field, drifting particles large in the foreground, a dark weed bed sliding past on the right, a faint trail of micro-bubbles. The lure looks like a real object filmed under water, wet and slightly hazed by the water, never like a 3D render. 24 fps, one unbroken tracking move, no cut.`,
+  neg:`fish, bass, pike, 3d render look, cgi look, illustration, single-piece lure, no joint, stiff lure, oversized lure, no line, camera cutting to a new angle, cut, scene change`,
+  entree:"Continuité pure sur k6 — la caméra se cale à hauteur de leurre.",
+  sortie:"La nage en S installée, cadrage macro de profil, massif d'algues à droite (= k7).",
+  arret:"Image 30 — le leurre de profil, articulation en pleine flexion.",
+  note:"C'est ici que le leurre est jugé : net, de profil, plein cadre. Les 3 photos de référence ne sont pas optionnelles. Deux points à surveiller sur les rushes — la MATIÈRE (le leurre doit être photographié, pas incrusté) et la LIGNE (tendue, partant du nez vers l'avant). La bande basse porte le beat 2 : la garder homogène."
+},
+{
+  n:7, titre:"Le bass", f:38, fab:"ref", moteur:"Veo 3",
+  grade:"linear-gradient(170deg,#08202f 0%,#173f44 45%,#39584a 100%)",
+  intention:"La fin du film change de nature : on ne coupe plus sur la traque, on montre la prise en charge. Le bass sort d'un massif d'algues, se referme sur le leurre et l'emporte. C'est plus fort et plus honnête pour vendre un leurre — la preuve, pas la promesse — et la page bascule aux specs sur cette image-là.",
+  imgIn:{t:"k7", reuse:"Aucune image à générer : le début de P07 = k7, la fin de P06 — le même fichier, SANS poisson. Le bass entre pendant le segment : c'est le seul changement que Veo doit produire."},
+  imgOut:{t:"k8", sub:"Chaînée sur k7. C'est la keyframe la plus importante des huit : frame d'arrêt du hero, poster de la vidéo et image fixe du mode animations réduites. VALIDÉE — c'est ton ancienne k9, à renommer en k8. Ne pas la regénérer.",
+    p:`Using the attached frame as the exact starting point, keep the cold dark blue-green water, the light shafts, the drifting particles and the weed bed identical. The moment has arrived: a very large largemouth black bass has come out of the weed bed on the right and is taking the lure. It fills the right half of the frame, side-on, moving left toward the lure — deep-bodied and thick across the shoulders, dark olive-green mottled back, bronze-green flank broken by a ragged dark horizontal band, pale belly, spiny front dorsal then soft rear dorsal, pectoral fins fanned, one dark eye ringed with bronze locked forward. Its big jaw is open and closing on the rear of the lure, engulfing the tail section — the lure is one mouthful for it. The 6.5 cm lure is still sharp in the centre-left, its head clear of the fish, the clear leader running forward from the chrome eyelet on its nose and out of the left edge, taut. Keep the fish credible for the species: a very big largemouth is about 50 cm, so its head reads roughly two to three times the length of the lure — never five times, never pike-sized. No blood, no hook in the flesh, no angler, no net. The bottom band of the frame stays even and dark with no sharp detail. 60mm equivalent, f/2.8.`,
+    neg:`blood, hooked fish, hook in the flesh, angler hands, net, pike, northern pike, long duckbill snout, muskellunge, trout, carp, barracuda, shark, tropical fish, small bass, bass the same size as the lure, bass longer than one metre, giant fish, lure bigger than the bass's head, no line at all, square crop, 1:1 aspect ratio`},
+  prompt:`One continuous take, segment 7 — no cut, one unbroken camera move. Same macro profile framing as the previous segment, in cold dark blue-green water: the tiny 6.5 cm lure keeps its S-swim in the sharp centre-left, the clear leader running forward from its nose, taut. Then the ambush: a very large largemouth black bass powers out of the dark weed bed on the RIGHT — deep-bodied and thick across the shoulders, dark olive-green mottled back, bronze-green flank with a ragged dark band, pectoral fins fanned, one dark eye locked forward — accelerates across the frame toward the lure, opens its big jaw at the last moment and takes the lure, engulfing the rear section. The lure is one mouthful for it. The shot ends on that instant: jaw closed on the lure, the fish's mass filling the right of the frame, particles swirling in the wake of the strike. Keep the fish credible for the species — a very big largemouth is about 50 cm, its head roughly two to three times the length of the lure. No blood, no hook, no angler, no net. 24 fps, one unbroken move, no cut.`,
+  neg:`blood, hooked fish, hook in the flesh, angler hands, net, fish jumping out of the water, morphing fish, extra fins, pike, northern pike, long duckbill snout, muskellunge, trout, carp, small bass, bass longer than one metre, giant fish, cut, scene change`,
+  entree:"Continuité pure sur k7 — le massif d'algues à droite s'anime, la masse en sort.",
+  sortie:"Le bass a le leurre en gueule, la page se dépingle sur cette image.",
+  arret:"Image 38 — la prise en charge. Poster + image du mode animations réduites.",
+  note:"Le changement d'intention est ici : la version précédente interdisait l'attaque (« strike, bite, mouth closing » étaient dans les exclusions). Ils en sont retirés — c'est désormais le sujet du plan. Restent exclus le sang, l'hameçon planté, les mains et l'épuisette : on montre la prise en charge, jamais la capture. Garder l'échelle sous contrôle sur les rushes : Veo a tendance à faire grossir le poisson, or au-delà d'environ 50 cm un black-bass n'existe plus."
+}
+];
+
+const BEATS = [
+  {
+    n: 1,
+    couvre: "Segments 01 → 02",
+    images: 80,
+    lock: true,
+    label: "",
+    display: "ALURE.",
+    body: "Un leurre articulé, deux sections.",
+    note: "Lock-up complet — wordmark et flèche dessous, cadrés comme sur l'affiche A4 n°2 : haut de cadre, centrés, blancs sur le ciel froid, largeur ≈ 40 % du cadre, zone de protection 0,5x. C'est la seule apparition de la flèche dans tout le hero. 80 images = 3,33 s, la fusion des segments 02–03 a allongé ce beat d'une seconde : c'est du confort de lecture gagné. k1, k2 et k3 gardent le tiers haut en ciel homogène.",
+  },
+  {
+    n: 2,
+    couvre: "Segments 06 → 07",
+    images: 78,
+    lock: false,
+    label: "La nage",
+    display: "Deux sections, une nage en S",
+    body: "",
+    note: "78 images = 3,25 s. Six mots, lisibles sans effort. Le corps de texte est volontairement vide : ajouter une phrase ici la rendrait illisible. k7 et k8 gardent la bande basse en pénombre bleu-vert homogène. Formulation à valider par un test en eau réelle avant publication — c'est une affirmation sur le produit.",
+  },
+];
+
+const FAB = {
+  ia: { label: "IA vidéo", cls: "fab-ia" },
+  ref: { label: "IA + réf. 3D", cls: "fab-ok" },
+};
+
+const SPECS = [
+  ["Longueur", null, "à mesurer"],
+  ["Poids", null, "à mesurer"],
+  ["Sections", "2, articulation métal", null],
+  ["Hameçons", "2 triples", "taille à vérifier"],
+  ["Flottabilité", null, "à vérifier"],
+  ["Nage", "en S", null]
+];
+
+const COLORIS = [
+  {k:"ayu",    nom:"Truite",      desc:"Ventre blanc nacré, dos jaune-olive, bande latérale magenta-rose, caudale translucide fourchue. <b>Le coloris principal</b> — celui du hero, et le coloris sélectionné par défaut.", img:"data:image/webp;base64,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", statut:"principal"},
+  {k:"perche", nom:"Perche fluo", desc:"Chartreuse vif, barres et pointillés or-brun. Le coloris « eau teintée » — celui qui se voit de loin.", img:"data:image/webp;base64,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", statut:"candidat"},
+  {k:"arete",  nom:"Arête",       desc:"Noir mat, gueule dentée et squelette blancs. Le coloris de contre-jour et de ciel bas. En rendu, il demandera une rim light renforcée : un noir mat sur fond bleu nuit disparaît sans elle.", img:"data:image/webp;base64,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", statut:"candidat"},
+  {k:"feu",    nom:"Feu",         desc:"Dégradé orange à rouge, finition brillante. Le plus agressif, et le plus proche de la lumière du hero.", img:"data:image/webp;base64,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", statut:"candidat"},
+  {k:"nacre",  nom:"Nacre",       desc:"Blanc perle intégral, phosphorescent. Le plus discret du lot — à voir s'il tient à l'écran sur fond sombre.", img:"data:image/webp;base64,UklGRtgXAABXRUJQVlA4IMwXAAAQmwCdASpoAc4APqFGnkwmIyMwI3INCgAUCWUIkU4ZmQ008jvVCLyy+g79LPAPivjbaU2frcPz4/rto5PC+BPURJ85O17XKVYDqGlPWF+0FG4qoLFh/LVDyk/uucObPHvUL8mSg5bROpdPbJYB9OJqR5nFwFatGze5JWT3KljlN7MQv7F8qADCJU2NQ5Cq9kltw++f2Y/rCCVCiZznN9j7kwovNIZTU9Vo4QjUsgpHrz7ruRGe+NX56+BIV9CI7Ca+jT4hKNyRbDWuAdcazb+9B8CMfbS0TtPHalI2RZ4JMDq3E6QYQ8UI4Y5Rb5MqEgG+eR3i7CriC992qBnvG0ryoo3Qw2xSDSbaEZNibepR9a9MEGWsuzYXi9Fjfhfqj4KM1gPp7BTIQMuVizXj1xfjqMl+TOam3/XIUE7vbOPFMjeIrgn+sPPLGonGu+5S4qU3l0uqwclO8yDODM/QY2T5mD9JG38ICY6o+c7/+TwyR8q9Tnrfof7C8UpKJZoWT0qX0FLZhs2n1V2mN+Fn/wfGZUCF2v0GXR6YuJJ3+W2/exSli1xwII9mWmr34A5dRYIZNs+BzbiBJE+dBSEYODPK/+lElkXD3NHYA50nKDyXR+huT7RcUvrdpU/6h2YXtAKJV727eSBaR55dgGGhENR+ABSHcpLly8/C859F3OG+xHn6MU22zwBZMXLUIrD2O1f7XPTNn3MXoWdr3e9bS3VWW5xJlFIidD5502NgW/u3v9Ye4tbNMEdaxK8R+J1FU9YPU1PHVBwd69Lr0uVCgZKcjONYWXp9NVpn2LWbDFa17+Uxt6odzcDUSrIiJJKS7/o/bvJ7ImFGoaBNyHvarWzVt1O6MWVq+SvQk7MveSkYyX74uj3te26YJS3iLJzsUK7hjglT48vwajRfn/YHGXfWmUkeRUuxSymEUOFfoE7HmZT1J8hRxelEjYPHqi5sJuq0huTvYGt/67e+2gi1WpKlU9625SogDU9DQDeIrl1thgrbgGdnVtLYAw7X6G21ZMmQ7jzBOog4yLNyR8CTih+YhFLG3UUEVkYIrt+t5heY6x/mBwKj/kjbqvQZ/U5LsKMjUGkCONdA/AajjN9x77J4mN7+hY0sqcBYC1GemKkfk53iy4a++rULN0Ug3hpX8VYyMc4uZPXUxUhqt/fgDWKKYvNwDohXFMdwjzBjGp84NESVt4OYOLRScYIFDZtGCP/Qn3PKEW69lY5JqEIPi3KkNvfkz5ypZYFAXDHMdKfcAC+l/yph6YqC6Czynk607/PFMgdICDnEUbehIWUsest/rdOn0F1LDV7gKxuni9qCzaL0+iaessrXZDmBVRHEC5oENrodvIakhWGt9rh9She0cHzI3aY7GPbjEEh3m4PIG7A3fq3mSprP7k8MBimDj7YfRsCd4hBme8OA45imVvKUDe/tX6cJXtthAR1KCMReVzPWllHRyVOHCI/qSnPl4x+KSOntEJCJVQEqwlXSsVUdQclPNpS2+grhLlDUf11JDfevc4cT/SEuEobpGl38oMpOc3ljbOutyz6q5ktQ7vvWLexENaH2gN1yrLyg1Cum0GR0D7Zi7u6DMgu92haaTl4XBUuuGU/nb0FGeXM5IPqJjhWxCdUia/NfkwemcyG5CQaVCD0WTKhbhdgklHTrSW/AAP76r8axRYfikv1m1nNFkCT5sWqZvRCB88Jiiyf6jjOEkMtaUMSWpI74OY2Rge4YeO08v3C42OyuZkAS2KeNfGCAzVccJ6/ejgijdko845SwnJezo9Hl+xMoD/7VrOqlUORQv+sJMBwoe0+OAob3/kH0FMzMZ+rSUMEv4yDKU1NZ6sVs/2SnjaJD/7JArNKuXUZ7waDSzCN/JjhQb7J9x7yTpDJF2pLaqih4me83wEM7HLtxBKC+Rp9RPXb1eXoOahOVV3KWnFaxxXSWlDLt6HX39ZOi/3x/ZPMo1+sK6XGPSnQCZRqwJvloSBNNVRkCVFtOA9D+nNIourENU6Nt9OW8UN1ZsSiv80IetfKOYpOygu5meiBT9qPqvTquCsirpgq+BxJGbCRNYDUN9QMJ3ZRVa4xHvSxl7QoQxz4cijPaez0XY9TGKmQUpdK/srX/pNOohpAtGNre7rbQGRURGb73lATDeEzONI3t5BFBbGauLFeLCoL9xe0+vFLdD/dMiJ/rngSxAaaSozbhN8X3aiZcv1OJkgIwwTPkh9C0MsqT6pQfvCyLFURelye5ZH9ZmlzLkyUzK0ZMvmj45H76BqRg9axgZnIDVQctRH8GK0BPOHiitBgQrDmFJpPx7c7bcMGmGryltpQkfHU3sSs8E4FLBH2QPzvGpXhNhzeBEdZdQY7yKlDZa48jKxfbUrVECG2GDI7mi7cKWTfLpY1TfCcaN/QHe1AhizH1sj6tU0z2xnNaie6HHmyq3xhS7VD612fYvRM02Tw5ZdvZsFyt2gaRYleTyiHqiP6VclLojR+cE3cJeH3QDLu7Ov3CYUgp6i5pL8AHotfPXa6qYRwY93DzfY0D6vPHKl3jeLukHtdxbV/FEsIYxu2X7Ibv5EV2i1fdGgZtosGhiYSK/pmSdZdstru31jH4WdWaLBypOHj+QcPm/sv07spzoNfRg/cCmwSWz8FN4GiABZw5zSuNfAcbiYUHsy/LZy4BRH4ZtsLjGmEPph+2HnU6CKDOHO0E4RvVKGTMuA1/M4W5pFwzp+qODkk3bRDSb4SZp7iznRSl8fP1rJnTMXDkHYMBsxqbWk0uVLWj6iguyh8IXC50jv6TJKyc7EAVjlh3HBwwtkJZllMKrRETsfaFaWP/sMOd9eHOrvr72K0IaFSy1R8gWm1zuWEkVLk/TXx2RUVvqxhmybn7R9UvEAdKlT/LKyTINEtMXoPXp7CJynmFBxuH6FCwLsN0LEfXyD1Opa944tY2I+wuQ3IfyoKPInt9V8WQ3FeGcN15gS5HZ3lUsLRlwNteITELEKOBttgPXcXi9URideaPj+0zOQc0fvUjIBhxDq5NuJRZB+vcdrhfMSTZvVkKy5VchDPWyYZMpPNMdyAOfjUT6WVbn/dWVFewCPtzVE+5INliIwhjnA1rHsjSBqQFyJL3zQ2QWflzh6o5VIRHx8qCUY/LGGXC6/DSyJx8uQ4iOYOFAGduoxRNeb2PRWa0zwaI9at4hlPYRwzVFWdQ9WyU6s5z+1JPvrptcIyjQWOV4rGRbD+p/ewiOeD4C79qaAIbjdqsP+0j3jP6D5hRb9O8EhbXE+KD9Eug7SBh88qNa/eJKWpcd5Wo+a0nvwSzjEVsQ5dPTFL7LEKtflt5Kx/JjX5mXhyikOL5zYvGYEruZ9WLRKSbG3Yvin3mKYmV15BcrIKpb1N+9G+FzBE5MY+QWRxRxgBJUrszc498xPVXrMWovzI55OLJK93wjgZwLfvc9xU2/C1tNBGSWAIX0pv1qotxxM0UVrgGVb01xHWLRJFYh0IvB7ko2lLE5lo+e1VIOwubl6GDWDIB9eC3p94+nCMVXWbzDAT0a3lm4/NQRyjrKR0EfRL8yHdKfobV9igX+swkq0mIlsXZVqqs2peLLBDNxe8K2Yn/YHXMvYLplWFlD9np+JqTjAFIV/DbN3Bx8I6G+Wu3nC7BhsLklVj9OeWno2PVxZjouq9td1iX5DwZmlWGVvpSmNUJr48fO/RiSWL18ezQhuvsNIByPZXSCUx4meXk7M6QBIIvWKdv6Jug36MPOeaLlNrzlgrbxmUK6ICbOwUUdLj2pHWmeEaAUx5xu47WPKYig+ECuh4G4esOgVd2FP2uqruENKEFynF33ZOD/TaToE4pg/BkKhJixfZ5ByarbDXLbHI9J5nVsQ/Pm1K/MI+wntXUZYVnSrMTBZEp3W7lBVF7TQwjnpr/DvP/xber6CJY2YNgDUTl23BDlFTACpwXECSSesMsk64P2m69YPlrGFrwzTJXryG+J/oUChGJmkEL2fl+xQpGiFmEO1LCx4fifG/cGN5bEIh+JV2Sx0IBDfA3mQQ46P5AAqtH7uIi/xMZWUKPrkhiWDmcaQS/KJW0CmhS8zXmKG0o0dLqq+rzxX1uxAGpVBW+nkRLMA8DBuR+weYppCVAteSh5/S3n09RyqOIX06rscw39pJ94ormpzbnC1fClIkGQbGFrHGQWkiIOG7w7eLg0uUhScRe+HJCce2lYn0iW2ImIrk6KCJxHjGA2uhkPVoR6yGqOWqVxz2G+MXXeApS63BRjtBoUgYRLPnYYsW9vd9rjkrxnAdd3Lg51t94zmms+Y+89uw1NV6Ipc0cQKc04jZOpml8/EOPPAjb4AR6tB6ftgRPsl9nURoHxSzl1iotpm8QW6kCBgfr3494lUMci3H4rCHxr0kg7b0fTUupp1RPahu2sYsJm4PWBHLGOYW2BIapteK2ICH+RIl+co7kSNa4Kz/DcT9JW/qZCIbB3/WfgvgR2ZbGhkEEhjgyBQVm2h6vxFzC5IRDmY9bLidpff3DKEpj+/fVygvr1QJGQ7lxBNqrjjRIDAEDRpkB8D240dj1lp9PZ5EGoEDQyPHRBurXOysKuwSr4uRifPhH6Fbi5IzDa+b/rYxCGspkIpPXmQw/LNRZ+psBSH9koXaEHv1WHZeKTm7fW52P+wu8RAs+7w+Jy0a6naRSHb4BGDwD62tVC1DPxKVoEXMxYxjukz03ANZAV2GSMhBkpO6bIUoTldTt9VsJZsWio/NjePMhFxfkcieT4idzkpgqTFvtyJTcMX8DOSD0Ejjvp/I37n1/ZzjZ3gn2PgqYUvNOXKeUtiFlNoEyf5WIvs629+/w/jhaJ3H3RjSbG9dgRyijrX2Ww7xLdudCWrHvZ+LBEar9bQL3MlOqkr2kKgQhQO0e+E3YEjbhU6hZiQlWeomwx7TSFN6n3sAIhXLgv8xpCnx+LkjPTM9pwVDSUgG5PPqk3noSGHpWz9MzLodt07xzHOvBkHUG/juN4xy+wwmGmXesIEFX3mTHjYz+VSBHLXwfbEj/RFA4LCteu1U11MM3TJ2nBCdPS+lN1vvfE2uc+1SEIWKvu0v0A1ScGXPrNP6RQNj7tPTcf3Z0mAg6WZuO5MG1TV1YPnZqYso6IE8wQmQWtXIRJg7PqPRimb6vBdIrWlYbyM76Md49g4cJ4Nma6gxjWIFq2Rm++hafCraBIXeia+zoOnBfdXk+yyyE/QKQU/cPOSYL8jA1ldXnyUUWR9mq1YxjNJwHKLTdrtijqd0YzA/2qGETOSl2517ozlTuq1JieeJAk1PLRx+yKEnNaG8Qe0FU0i2Wt+1y9ydKJ0V2mrb6Mn/m6AUMsjk+0QHGu6G3qEqTdfmEMyD+uuJReKmWDdC/nxkW6luNYgWyOjTp2GrON8A1sjYbVvFOSoN5hC2fWCJaMD2aLFRIu8Dm+isOEnurwpkAMGSzbvdyy9GCEzKvhZ9EZdEN+RX+F6ZhxxURtqc2EumlNRUUWlG0QWg1b3Tpgc7T7XgilLzdLrw/jidzVvEoXIeQvXsI9L+bHRNzNlAp+7bPNzc7iwjVw1NUiPtd5KOWQVIYvzfE8XD0fL8SIYI0LhZTSRn39Avi7FDA9Y2v95tsCDh5IWeGs39djMHYBb4r5Z3Zte5yXFVZTOm615gbtAwaikBSwDZvsdIWfk/CpQ4/IjmPKiYLkRg1rOtVyI10jUmpxPL3dQ/9R8fbwuZy70DbXjBBRLjSMUiEJyh0Viujh2s3/txQGMHpTez4ipXm9sl6MaiRzKdKget1WEGhfFNcJePpE2v00t+0lWz7KeF+YLZjB46m/ownSZWGogQ5GPTYJiMrz2INeF9TFLaglg9mRK35dB6TMKVwwCMRTuOySKNbmAUGCvM4i/bgs7sVyAFbZY86pdUayWKhlXrZxhJ7np5v8re7+xgiTR/lae43jTPMbz/7mJsW57sPRdseb6TPSholbHPp8Q5LjP9CgltKiP6iqUre3WX81J8eQ9lv53ND4/skkRctpiKip7sXaHUfID6x/q8z6CofHqvlfOQzxh98Fxc8qqwSkIsrcitCtYXMmhs0c/+rZNgp5UNPTARM7nq13AD8UeCnfKrjPb3CpVnUYxb61sUaatju8N2x8P/1K7tnFKCMzJJUTaZS5q/wXJoTNHUYIFA8tzUBHwL5Yc/3i2jMUbq4vyRL9MdXoxxC003j5a0AsRALPJeAlH3SeeWSh3Izm412o3ujQRnfv0hGtkBLONAiOG5qEOWx7B5AnRXA7HcwuIdYaEtky/aaLcEL0tquttO8+PHdyMmACRQYaAu+pp82IFn7YpQA2uIRKqZRXFc7/fQMNDfTH9b0f3qk4xtqpsI2LhLAjqoqBSZlTl3R2F2n/W0Jlp7ZnP97bHC69TaITyWgr2gQkiLEeWjlIB7wHAwXVnwsdCoEMOzp2EODueHBr4dW8fnVq6926uVxuZyIH+s5yeqOnukEWQnjtoI+4HHVKhYHpnXUWlAohfGhQWnWe6GETcdJhFOQulzduKTdV3peLZy0QwkU/7D3Z+ShPaTSR8Ossr5yDsZUnTKYRjN3FB4V6/ZgeOWmWch4SnVqg1HBhwsjYDBqY/mKgbh/FVqGxTQaGmgZbqfFazRj/TH/T5efnGjXXEahZsrSw8c7pVp+sjHhp4lW1alaau8QZNhcCRvgpu2YK7WZ+MzxfR8CyjIxcVkgmUqZKGwEZ2CZpBD3v8iVwaaBpwO+RjRm/ys60//uVBunI0xXx45JC/+5LFsGFeQRzrmonyy8wSG+fpvZHQAdrxHqcyKwABFsMXj+dlw1F/T5RhRKALhFo84iqQJKIaLh1/8erJVD7THbdQ7h+XddE8IBnQ6ZGELV6iuhuQUJ1BXQY3nzuKI32EHSLxuKptmOukYK47mm1WC5qtoMKuMTK+uDGAdayhRkK3rFutic3bzcz9+J+WqaWj7k30B4qN4cQk0lm9XxyhSkhpDofRiUxIO+XIolT9n2f0xgg15MIvEmBtsNuBg4FgPBp3S/WOePDBTVqb0WEgczuSIhBCog0uamlN0Ck6cJph8gAqlUHwyYH/4vud7xgRzCNFnuuUP+AoZnBCtg52aQfr1HTyDOJCldXYc33qcpXmKIvaKHE7mDQSIzPH2ptVOYQUp3b62dvvSBILXElBOcsNh0wrWL5HmRBEuEKViKEckfvOi6eCmjpRsh2aU0QXrXgwncp0Kb+MiAiP8Vm+ZlVnWnQNhf+aA4IFp6ErVNbljLu1GIrtRvMC41FZV02xprqNWwYK0ozJK8AInJLX8tysbx3sTPy6a1Egl4jjap4adBpKE1wS3dvIOmz7jg8HIrEMnIgvJr0YHUfQbniPDJMCBpbyrDQQTq1DVB9I9zBbUueAcQsHmx+KQVntE2SDLfNLW1TOnTnruam6FA85ik6zoDLECBrgl1XJPn9+g2PJezlw/kAW/4AHxGESAU/X06qduXUN795fXXab4EWzjdRKKCnrjfC7d6l4bvo54a/c7SdTyvVXUyVhGGKign0leGEol2wanlAOQ9rt7Sy1bTtovvNtV6z/YHpWMoErJtq5AaQnL9YdJG5yxBG1HtA4jp44qXuZUp9Bk7aCAJiZZVit810LdWrtn8jEhhIffocYh6CXqevlN625KAxOH6YDGzg1zONiIA9WNKnSUXh2pspXTz78Ubetzo2mxT4r/8bFZ3lI0f1h1rXDnNhedpJA5l+oprGduGAgLQ1ycCjELHERsBl0PDjs+aKU6pTMaHa9HMJWzl1/kDiOMd2+HVSZM9pyJmLko9if7yCKnvx4C9Od5+TqKD+jaHNRp6qNk1BdAov9nHyptZZcO85jUDlvqM4luwV/aKhnXjjNA1wuLUh61S7q34YnUCagK4hSC7cr0xR6qdffLFaq35Yh/cXXir10BdetRmihACzg8NmtGwpHE6dTIXx9yjl1IdPwzEM+rHk7NTagMjKRBm6RDz0N0xXu0dXx1q4B62N3D1QNkBdaCICSEpxwOlRAMoGqqRD8SkJ3UJEeexx0wGCkkFZryVlXDtcwXi+qB9G+glssfIl3IrxWc7LrkGsviCpxYmCaC5Lqq4dG5oOvKPFGq1YROF/1BVnyms3QSqmWg/35tFVKURyCkeTPN0eSSKnPQoe9JBAAVgAA==", statut:"candidat"}
+];
+
+const QUESTIONS = [
+  {
+    n: "Bloquant",
+    q: "Les specs réelles du leurre.",
+    t: "La fiche de la section 2 attend longueur, poids, flottabilité et taille des hameçons. Le 6,5 cm des prompts est une mesure de travail, pas une spec certifiée. La VISION interdit d'inventer une spec produit — la section ne peut pas être écrite tant qu'un exemplaire n'a pas été pesé et mesuré. Elle n'empêche ni le hero ni les rendus 3D d'avancer.",
+  },
+  {
+    n: "Bloquant",
+    q: "L'affirmation du beat 2.",
+    t: "« Deux sections, une nage en S » décrit un comportement produit, et c'est le seul texte du hero à porter un argument. Une vidéo générée n'en est pas une preuve. Soit vous validez après un test en eau réelle, soit le beat 2 se réduit au nom du produit.",
+  },
+  {
+    n: "Résolu",
+    q: "Le mot « balaclava » faisait refuser la génération.",
+    t: "Constaté sur le segment 01 : Veo 3 refuse purement et simplement (« I can't generate that video ») dès que le prompt décrit trois personnes en noir au visage entièrement couvert par une cagoule. Corrigé le 2026-08-06 : la tenue s'écrit désormais « a plain black technical neck gaiter pulled up over the nose and mouth », vocabulaire de pêche banal, silhouette identique à l'écran. Retiré aussi du negative commun les termes que les classifieurs lisent sans leur négation (exposed skin, bare hands, bare head, shirtless). Règle générale à retenir : un negative prompt n'est pas un espace neutre — ce qu'on y écrit est lu.",
+  },
+  {
+    n: "À trancher",
+    q: "Combien de coloris dans le sélecteur.",
+    t: "Truite est arrêté. Les quatre autres sont candidats. Le sélecteur est spécifié pour N options, donc rien ne bloque techniquement — mais chaque coloris retenu, c'est un jeu de 36 rendus à produire et à texturer. Le choix est un coût de production, pas une décision de design.",
+  },
+  {
+    n: "À trancher",
+    q: "Ce qui vient après le sélecteur.",
+    t: "Cette spec s'arrête au sélecteur de coloris. La suite de la landing — bandeau de délai, réassurance, CTA « Voir le leurre » — reste à cadrer, et c'est elle qui détermine si le hero doit finir sur la prise en charge du leurre par le bass — ce qui est déjà un argument — ou enchaîner sur un appel plus direct.",
+  },
+];
+
+/* =========================================================================
+   Rendu
+   ========================================================================= */
+const TOTAL = PLANS.reduce((a,p)=>a+p.f, 0);
+const CUM = (()=>{ let a=0; return PLANS.map(p=>{ const s=a; a+=p.f; return {start:s, end:a}; }); })();
+
+function tc(frames){
+  const m = Math.floor(frames/FPS/60), s = Math.floor((frames/FPS)%60), ff = Math.round(frames%FPS);
+  return [m,s,ff].map(x=>String(x).padStart(2,"0")).join(":");
+}
+function secs(frames){
+  const v = frames/FPS;
+  return (v % 1 === 0 ? v : v.toFixed(2).replace(/0$/,"").replace(".",",")) + " s";
+}
+const vhAt = frames => Math.round(frames / TOTAL * TRACK_VH);
+function esc(s){ return s.replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+/* --- chiffres clés --- */
+function renderStats(){
+  document.getElementById("stats").innerHTML = [
+    ["Durée du hero", secs(TOTAL), "à 24 i/s"],
+    ["Images à produire", TOTAL, "contre 1 884 en v0.2"],
+    ["Segments", PLANS.length, "un seul plan-séquence, zéro cut"],
+    ["Keyframes", 9, "la sortie d'un segment = l'entrée du suivant"],
+    ["Segment le plus long", secs(Math.max(...PLANS.map(p=>p.f))), "la nage — l'argument produit"],
+    ["Piste de scroll", TRACK_VH + " vh", "1 vh = 1 image"],
+    ["Poids visé", "≤ 1 Mo", "définition mobile"]
+  ].map(([k,v,u])=>`<div class="stat"><span class="u">${k}</span><span class="v">${v}</span><span class="u">${u}</span></div>`).join("");
+}
+
+/* --- règle de montage --- */
+function renderRuler(){
+  const track = document.getElementById("track");
+  track.innerHTML = PLANS.map((p,i)=>`
+    <button type="button" class="seg" style="--w:${p.f};--seg-grade:${p.grade}"
+            data-i="${i}" aria-label="Plan ${String(p.n).padStart(2,"0")} — ${p.titre}">
+      <span class="seg-tip">P${String(p.n).padStart(2,"0")} · ${p.titre} · ${secs(p.f)}</span>
+    </button>`).join("");
+  track.querySelectorAll(".seg").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      document.getElementById("plan-"+PLANS[+b.dataset.i].n).scrollIntoView({
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start"
+      });
+    });
+  });
+}
+
+/* --- cartes de plan --- */
+
+/* Les invariants : rappelés en tête de CHAQUE bloc, pour qu'un prompt soit
+   autonome. Version condensée de l'ancrage — assez pour tenir le film, assez
+   courte pour ne pas diluer la description du plan. */
+const INV_BASE = `INVARIANTS — true in every single shot of this film, never change them: cold blue dawn before sunrise; glassy dark steel-blue water; a thick band of low mist lying on the water, present in every frame; one narrow pale-amber glow low behind the LEFT ridgeline and no other warm light anywhere; ONE black bass boat and no other boat on the water; EXACTLY THREE anglers aboard — never two, never four — dressed strictly identically in cold-weather fishing kit: a plain black technical neck gaiter pulled up over the nose and mouth against the cold, a plain black cap pulled low, dark polarised sunglasses, the hood of a matte charcoal shell jacket up, black technical gloves. They are calm, precise, experienced anglers going to work at first light. They are always seen from behind or as backlit silhouettes and never turn toward the camera, so no face is ever readable. Framing is 16:9 widescreen, never square.`;
+
+const INV_LURE = ` The lure is exactly the jointed swimbait shown in the attached reference photos, 6.5 cm long — TINY, shorter than the width of a hand, and it never grows. It is always tied to a clear fluorocarbon leader knotted to the CHROME EYELET ON ITS NOSE — never to a hook, never to the tail. The leader always behaves like a real line under tension: in the air during the cast the lure flies NOSE-FIRST in its direction of travel and the leader streams BACK from the nose eyelet, running past the lure's own body toward the rod behind it — the lure never flies tail-first and its nose never points back toward the line. Under water on the retrieve the leader runs FORWARD from the nose, taut and straight, because that is what is pulling the lure. It is thin and discreet but it is always there — a lure swimming with no line is the mistake to avoid.`;
+
+const INV_TAIL = ` No logo, decal, sticker, patch or text on any surface anywhere in the frame. Photoreal cinematic film look, filmic contrast, fine natural grain, deep clean shadows, no HDR, no oversaturation.`;
+
+const invariants = lure => INV_BASE + (lure ? INV_LURE : "") + INV_TAIL;
+
+/* Les trois rendus du .glb — les mêmes trois à chaque génération. */
+const REFS_LEURRE = [
+  {c:"A", t:"lure, strict right-side profile, body straight",
+   d:"THE master view — the lure may never look like anything else. Copy exactly: the short deep-bodied two-section shape, the two exposed metal hinge pins between the sections, the olive-yellow back, the soft magenta-pink flank band fading into a pearl-white belly, the two small olive dorsal fins, the large black eye in its silver ring, the chrome nose eyelet, the translucent milky-white forked tail, the two dark treble hooks on split rings."},
+  {c:"B", t:"lure, straight-on front view",
+   d:"Copy the body volume — how deep and how wide the body is, and the way the olive back, the magenta flank band and the pearl belly meet. This is what stops the lure being flattened into a flat cut-out fish."},
+  {c:"C", t:"lure, top view",
+   d:"Copy the body thickness seen from above and the position of the joint between the two sections. This is what makes the S-swim believable."}
+];
+
+/* Le negative des VIDÉOS : plus court que celui des images. Tout ce qui touche au
+   cadrage, au format ou au style est déjà fixé par les deux keyframes fournies — n'y
+   restent que les dérives que le modèle peut introduire PENDANT le mouvement. */
+const NEG_VIDEO = `a second boat, another boat appearing, four people, a fourth person, a face turned toward the camera, uncovered face, bare head, the lure changing size, the lure growing, the lure changing shape or colours, a different lure, the lure flying tail-first, the lure with no line attached, the leader detaching, warm golden light, sunrise, the mist disappearing, any logo or text appearing, cut, jump cut, scene change, cross dissolve, speed ramp, slow motion, camera jumping to a new angle, morphing, warping, flickering`;
+
+/* La ligne de tenue : deux phrases, pas un ancrage complet. Les deux keyframes portent
+   déjà le décor — le répéter en texte pousse le modèle à le réinventer. */
+const HOLD = `HOLD — Everything in this shot is already defined by the two attached keyframes: the light, the water, the mist, the boat, the three identical anglers and the lure. Do not redesign any of it, do not add anything that is not already in those two images. Change ONLY what the MOTION paragraph describes. Exactly three people, one boat, one 6.5 cm jointed lure always tied to its line, no branding anywhere, and one single continuous camera move with no cut.`;
+
+const kn = t => parseInt(t.slice(1), 10);          /* "k3" -> 3 */
+const LURE_FROM = 3;                               /* le leurre entre à l'écran en k3 */
+
+/* Le mode d'emploi des pièces jointes, écrit POUR le modèle. */
+function refSection({chain, first, last, lure}){
+  const L = [];
+  if (chain) L.push(`• Attached keyframe ${chain} — the exact starting point of this shot. Keep its light, colours, water, mist, boat, crew, tackle and framing strictly identical; change only what the SHOT paragraph asks to change.`);
+  if (first && last) L.push(`• First-frame slot: keyframe ${first}. Last-frame slot: keyframe ${last}. The generated motion must start exactly on the first and land exactly on the last, as ONE continuous camera move with no cut in between.`);
+  if (lure) REFS_LEURRE.forEach(r => L.push(`• Reference render ${r.c} — ${r.t}: ${r.d}`));
+  if (!L.length) return "";
+  const tail = lure
+    ? "\nThe lure in these renders is the only lure that may appear. It is 6.5 cm long — tiny, shorter than the width of a hand. Never enlarge it, never restyle it, never change its colours, never add or remove a hook."
+    : "";
+  return "ATTACHED IMAGES — use each one exactly as described below, do not reinterpret them:\n" + L.join("\n") + tail;
+}
+
+/* Deux formes de bloc, parce que les deux tâches n'ont rien à voir.
+   — IMAGE : le modèle FABRIQUE la scène, il a besoin de tout l'ancrage.
+   — VIDÉO : les deux keyframes fixent déjà la scène. Ne reste que le mouvement,
+     une ligne de tenue, et les dérives à exclure. Répéter l'ancrage ici, c'est
+     inviter le modèle à redessiner ce qu'il a déjà sous les yeux. */
+function assemble(body, neg, refOpts){
+  return [
+    invariants(!!refOpts.lure),
+    "SHOT — " + body,
+    refSection(refOpts),
+    "NEGATIVE PROMPT — none of the following may appear anywhere in the image or the motion:\n" + NEG_COMMON + (neg ? ", " + neg : "")
+  ].filter(Boolean).join("\n\n");
+}
+
+/* Un negative qui répète un terme n'en devient pas plus fort — juste plus long à lire
+   pour le modèle. On dédoublonne en gardant l'ordre. */
+function dedupe(list){
+  const seen = new Set();
+  return list.split(",").map(t => t.trim()).filter(t => {
+    const k = t.toLowerCase();
+    if (!t || seen.has(k)) return false;
+    seen.add(k); return true;
+  }).join(", ");
+}
+
+function assembleVideo(body, neg, first, last){
+  return [
+    "MOTION — " + body,
+    HOLD,
+    `FRAMES — First frame: the attached keyframe ${first}. Last frame: the attached keyframe ${last}. The motion must start exactly on the first and land exactly on the last, in one unbroken move.`,
+    "DO NOT — " + dedupe(NEG_VIDEO + (neg ? ", " + neg : ""))
+  ].join("\n\n");
+}
+
+/* Le bandeau lisible par un humain : quoi joindre, concrètement. */
+function attachBanner({chain, first, last, lure}){
+  const items = [];
+  if (chain) items.push(`la keyframe <code>${chain}</code>`);
+  if (first && last) return `<div class="withref"><span class="t">À joindre — rien d'autre</span>
+              <span class="d"><code>${first}.png</code> en <b>première image</b>, <code>${last}.png</code> en <b>dernière image</b>. Pas de photo du leurre&nbsp;: les deux keyframes le montrent déjà, et l'endpoint « first-last frame » n'accepte que deux images.</span>
+            </div>`;
+  if (lure) items.push("les <b>3 photos du leurre</b> (A profil · B face · C dessus)");
+  if (!items.length) return `<p class="noref">Rien à joindre : image générée à froid.</p>`;
+  return `<div class="withref"><span class="t">À joindre avant d'envoyer</span>
+              <span class="d">${items.join(" &nbsp;+&nbsp; ")}</span></div>`;
+}
+
+function imgBlock(id, kind, titre, o, chain){
+  if (!o) return "";
+  const head = `${titre} — <code>${o.t}</code>`;
+  if (o.reuse) return `
+          <div class="block">
+            <h4>${head}</h4>
+            <p class="small dim reuse">${o.reuse}</p>
+          </div>`;
+  const uid = `${id}-img-${kind}`;
+  const refOpts = { chain, lure: kn(o.t) >= LURE_FROM };
+  return `
+          <div class="block">
+            <div class="block-head"><h4>${head}</h4>
+              <button type="button" class="copy" data-target="${uid}">Copier le bloc entier</button></div>
+            <p class="small dim">${o.sub}</p>
+            ${attachBanner(refOpts)}
+            <pre id="${uid}">${esc(assemble(o.p, o.neg, refOpts))}</pre>
+          </div>`;
+}
+
+function renderPlans(){
+  document.getElementById("planList").innerHTML = PLANS.map((p,i)=>{
+    const fab = FAB[p.fab], nn = String(p.n).padStart(2,"0"), id = "p"+p.n, c = CUM[i];
+    return `
+    <article class="plan" id="plan-${p.n}">
+      <div class="plan-top">
+        <div class="vignette" style="--grade:${p.grade}">
+          <span class="pn">${nn}</span>
+          <span class="tc">${tc(c.start)} → ${tc(c.end)}</span>
+        </div>
+        <div class="plan-body">
+          <div class="plan-title">
+            <h3>${p.titre}</h3>
+            <span class="chip ${fab.cls}">${fab.label}</span>
+            <span class="chip">${p.moteur}</span>
+          </div>
+
+          <div class="meterline">
+            <div><span class="k">Durée</span><span class="v">${p.f} i · ${secs(p.f)}</span></div>
+            <div><span class="k">Timecode</span><span class="v">${tc(c.start)}</span></div>
+            <div><span class="k">Scroll</span><span class="v">${vhAt(c.start)}–${vhAt(c.end)} vh</span></div>
+            <div><span class="k">Part du hero</span><span class="v">${Math.round(p.f/TOTAL*100)} %</span></div>
+          </div>
+
+          <div class="block"><h4>Intention</h4><p class="prose">${p.intention}</p></div>
+
+          ${imgBlock(id, "in", "Keyframe d'entrée", p.imgIn, null)}
+          ${imgBlock(id, "out", "Keyframe de sortie", p.imgOut, p.imgIn.t)}
+
+          <div class="block">
+            <div class="block-head"><h4>Prompt vidéo — segment ${nn}</h4>
+              <button type="button" class="copy" data-target="${id}-prompt">Copier le bloc entier</button></div>
+            ${attachBanner({first:p.imgIn.t, last:p.imgOut.t, lure: kn(p.imgOut.t) >= LURE_FROM})}
+            <pre id="${id}-prompt">${esc(assembleVideo(p.prompt, p.neg, p.imgIn.t, p.imgOut.t))}</pre>
+          </div>
+
+          <div class="block">
+            <h4>Raccords</h4>
+            <div class="raccord">
+              <div><span class="small dim">Entrée</span><span class="small">${p.entree}</span></div>
+              <div><span class="small dim">Sortie</span><span class="small">${p.sortie}</span></div>
+              <div><span class="small dim">Frame d'arrêt</span><span class="small">${p.arret}</span></div>
+            </div>
+          </div>
+
+          ${p.note ? `<div class="block"><h4>Note de production</h4><p class="small prose">${p.note}</p></div>` : ""}
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+
+  document.querySelectorAll(".copy").forEach(b=>{
+    b.addEventListener("click", async ()=>{
+      const src = document.getElementById(b.dataset.target);
+      try { await navigator.clipboard.writeText(src.textContent); }
+      catch(e){
+        const r = document.createRange(); r.selectNodeContents(src);
+        const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+        document.execCommand("copy"); s.removeAllRanges();
+      }
+      const old = b.textContent;
+      b.textContent = "Copié"; b.dataset.done = "1";
+      setTimeout(()=>{ b.textContent = old; b.dataset.done = "0"; }, 1600);
+    });
+  });
+}
+
+/* --- beats de texte --- */
+function renderBeats(){
+  const arrow = document.querySelector(".masthead .lockup svg").outerHTML;
+  document.getElementById("beatList").innerHTML = BEATS.map(b=>`
+    <div class="beat">
+      <div class="plan-title">
+        <h4>Beat ${b.n}</h4>
+        <span class="chip">${b.couvre}</span>
+        <span class="chip">${b.images} images · ${secs(b.images)}</span>
+      </div>
+      ${b.lock
+        ? `<div class="lock" aria-label="Alure"><span class="word">ALURE.</span>${arrow}</div>`
+        : `${b.label ? `<span class="os-label">${b.label}</span>` : ""}
+           <span class="os-display">${b.display}</span>`}
+      ${b.body ? `<span class="os-body">${b.body}</span>` : ""}
+      <p class="small dim">${b.note}</p>
+    </div>`).join("");
+}
+
+/* --- fiche specs : les inconnues sont affichées comme inconnues --- */
+function renderSpecs(){
+  document.getElementById("specSheet").innerHTML = SPECS.map(([k,v,todo])=>`
+    <div><span class="k">${k}</span><span class="v">${
+      v ? v + (todo ? ` <span class="todo">${todo}</span>` : "") : `<span class="todo">${todo}</span>`
+    }</span></div>`).join("");
+}
+
+/* --- démo du sélecteur de coloris --- */
+function renderSwitcher(){
+  const host = document.getElementById("swatches");
+  const img = document.getElementById("stageImg");
+  const lab = document.getElementById("swLabel");
+  const desc = document.getElementById("swDesc");
+
+  host.innerHTML = COLORIS.map((c,i)=>`
+    <button type="button" class="sw" role="radio" aria-checked="${i===0}"
+            data-i="${i}" aria-label="Coloris ${c.nom}">
+      <span style="background-image:url('${c.img}')"></span>
+    </button>`).join("");
+
+  function select(i){
+    const c = COLORIS[i];
+    host.querySelectorAll(".sw").forEach((b,j)=> b.setAttribute("aria-checked", String(j===i)));
+    const swap = () => { img.src = c.img; img.alt = "Référence du coloris " + c.nom; img.style.opacity = "1"; };
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { swap(); }
+    else { img.style.opacity = "0"; setTimeout(swap, 140); }
+    lab.textContent = "Coloris : " + c.nom;
+    desc.innerHTML = c.desc;
+  }
+  host.querySelectorAll(".sw").forEach(b=> b.addEventListener("click", ()=> select(+b.dataset.i)));
+  select(0);
+}
+
+/* --- coloris --- */
+function renderColoris(){
+  document.getElementById("colorisGrid").innerHTML = COLORIS.map(c=>`
+    <div class="col-card${c.statut==="principal"?" lead":""}">
+      <img src="${c.img}" alt="Référence fournisseur du coloris ${c.nom}">
+      <div class="cc">
+        <div class="plan-title" style="gap:var(--s2)">
+          <h3>${c.nom}</h3>
+          <span class="chip${c.statut==="principal"?" fab-ok":""}">${c.statut === "principal" ? "Principal" : "Candidat"}</span>
+        </div>
+        <p class="small prose">${c.desc}</p>
+        ${c.statut==="candidat" ? `<p class="small"><span class="todo">rendus à produire</span></p>` : ""}
+      </div>
+    </div>`).join("") + `
+    <div class="col-card out">
+      <div style="aspect-ratio:360/206;background:var(--hollow);display:flex;align-items:center;justify-content:center;padding:var(--s4)">
+        <span class="small dim" style="text-align:center">Jaune type Pikachu</span>
+      </div>
+      <div class="cc">
+        <div class="plan-title" style="gap:var(--s2)"><h3>Exclu</h3></div>
+        <p class="small prose">Présent sur les références fournisseur, écarté d'office :
+          contrefaçon. Il n'apparaît ni dans le hero, ni dans le sélecteur, ni dans un rendu.</p>
+      </div>
+    </div>`;
+}
+
+/* --- questions --- */
+function renderQuestions(){
+  document.getElementById("qaList").innerHTML = QUESTIONS.map((q,i)=>`
+    <div class="q">
+      <span class="qn">${q.n} · Question ${i+1}</span>
+      <h3>${q.q}</h3>
+      <p class="small prose">${q.t}</p>
+    </div>`).join("");
+}
+
+/* --- suivi du scroll : la page démontre son propre mécanisme --- */
+let ticking = false;
+function updateRead(){
+  ticking = false;
+  const segs = document.querySelectorAll(".seg");
+  const cards = PLANS.map(p=>document.getElementById("plan-"+p.n));
+  const readT = document.getElementById("readTitle");
+  const readC = document.getElementById("readTc");
+  if (!cards[0]) return;
+
+  const mid = innerHeight * 0.42;
+  let cur = 0;
+  cards.forEach((el,i)=>{ if (el && el.getBoundingClientRect().top <= mid) cur = i; });
+  if (cards[0].getBoundingClientRect().top > innerHeight * 0.8) cur = -1;
+
+  segs.forEach((s,i)=> s.setAttribute("aria-current", String(i === cur)));
+  if (cur < 0){ readT.textContent = "—"; readC.textContent = "00:00:00"; return; }
+  readT.textContent = "P" + String(PLANS[cur].n).padStart(2,"0");
+  readC.textContent = tc(CUM[cur].start);
+}
+addEventListener("scroll", ()=>{ if(!ticking){ ticking = true; requestAnimationFrame(updateRead); } }, {passive:true});
+addEventListener("resize", ()=>{ if(!ticking){ ticking = true; requestAnimationFrame(updateRead); } }, {passive:true});
+
+document.getElementById("anchor-neg").textContent = NEG_COMMON;
+renderStats(); renderRuler(); renderPlans(); renderBeats(); renderSpecs();
+renderSwitcher(); renderColoris(); renderQuestions(); updateRead();
+</script>

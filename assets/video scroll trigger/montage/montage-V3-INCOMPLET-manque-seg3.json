@@ -1,0 +1,59 @@
+{
+  "source": "assets/video scroll trigger/V3",
+  "complete": false,
+  "breaks": [
+    {
+      "after": 2,
+      "before": 4,
+      "expected": "k3.png",
+      "found": "k4.png",
+      "missing": 1
+    }
+  ],
+  "durationSeconds": 30.25,
+  "method": "stream-copy",
+  "segments": [
+    {
+      "number": 1,
+      "file": "seg1-k1-k2.mp4",
+      "title": "Le lac — descente sur le bateau",
+      "frameIn": "k1.png",
+      "frameOut": "k2.png"
+    },
+    {
+      "number": 2,
+      "file": "seg2-k2-k3.mp4",
+      "title": "À bord — l'armé",
+      "frameIn": "k2.png",
+      "frameOut": "k3.png"
+    },
+    {
+      "number": 4,
+      "file": "seg4-k4-k5.mp4",
+      "title": "Le vol — au plus près du leurre",
+      "frameIn": "k4.png",
+      "frameOut": "k5.png"
+    },
+    {
+      "number": 5,
+      "file": "seg5-k5-k6.mp4",
+      "title": "L'impact — la caméra passe sous l'eau",
+      "frameIn": "k5.png",
+      "frameOut": "k6.png"
+    },
+    {
+      "number": 6,
+      "file": "seg6-k6-k7.mp4",
+      "title": "La nage — le profil",
+      "frameIn": "k6.png",
+      "frameOut": "k7.png"
+    },
+    {
+      "number": 7,
+      "file": "seg7-k7-k8.mp4",
+      "title": "L'attaque — le black-bass",
+      "frameIn": "k7.png",
+      "frameOut": "k8.png"
+    }
+  ]
+}

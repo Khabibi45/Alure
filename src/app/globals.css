@@ -1,0 +1,342 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens — LA source unique des couleurs/fonts/rayons du site.
+ * Tailwind v4 : tout se déclare ici via @theme (PAS de tailwind.config.ts —
+ * il ne serait pas chargé, cf. docs/standards/WEB-REFERENCE.md).
+ * Chaque token @theme génère les utilitaires (bg-primary, text-foreground…).
+ *
+ * DEUX COUCHES (cf. docs/standards/FONDATION-PASTEL.md) :
+ *  - COUCHE 2 (par site) : les VALEURS des couleurs + les fonts. À remplacer au
+ *    cadrage (web-product) — les valeurs ci-dessous sont des témoins.
+ *  - COUCHE 1 (fondation Pastel, invariante) : rayons, ombres, échelle, motion,
+ *    surligneur, grain. NE PAS modifier localement — s'amende dans web-dev-kit.
+ */
+@theme {
+  /* ── COUCHE 2 · Couleurs sémantiques — DA Alure, charte graphique V.02 (2026-08-05).
+     Source de vérité : docs/product/CHARTE-GRAPHIQUE-V02.md §3 (tokens) et §11 (contrastes
+     calculés). Thème sombre unique, aucune couleur d'accent : le CTA est blanc sur bleu. */
+  --color-background: #071128; /* Black Pearl */
+  --color-foreground: #ffffff; /* White */
+  --color-surface: #20293e; /* Mirage */
+  --color-border: #394153; /* Oxford Blue — séparateur 1px UNIQUEMENT (1,8:1 : jamais en texte) */
+
+  /* Dérivés validés (aucune teinte inventée) */
+  --color-muted: #141d31; /* creux : inputs, skeletons, segmented */
+  --color-muted-foreground: #9aa7bd; /* secondaire — 7,7:1 fond / 6,0:1 surface */
+  --color-prose-foreground: #d5dbe6; /* lecture longue (légal, FAQ ouverte) — 13,5:1 */
+
+  /* Action : blanc sur bleu, comme le logo */
+  --color-primary: #ffffff;
+  --color-primary-foreground: #071128;
+  --color-accent: #ffffff;
+  --color-accent-foreground: #071128;
+  /* Surligneur : mix(white 24%, background) résolu. Blanc dessus : 10,1:1.
+     À ajuster entre 20 % et 28 % au premier rendu réel (charte §13.4). */
+  --color-accent-soft: #384257;
+
+  /* États système (charte §3 — luminance homogène, ≥ 4,5:1 sur fond ET surface) */
+  --color-danger: #e5484d; /* NON-TEXTE : 3,7:1 sur surface — anneaux, icônes */
+  --color-danger-text: #f56b6f; /* texte d'erreur — 6,4:1 / 5,0:1 / 5,8:1 */
+  --color-success: #4cc38a; /* commande confirmée — 8,5:1 / 6,5:1 */
+  --color-info: #8fb8e8; /* information, délai de livraison — 9,1:1 / 7,0:1 */
+
+  /* Focus & photo */
+  --color-ring: #ffffff; /* anneau de focus : outline 2px, offset 3px, partout */
+  --color-scrim: rgb(7 17 40 / 0.64); /* voile texte sur photo — 5,7:1 pire cas */
+
+  /* ── COUCHE 1 · Rayons — trois valeurs, aucune autre (contrôles = rounded-full). */
+  --radius-card: 1rem;
+  --radius-row: 0.75rem;
+
+  /* ── COUCHE 1 · Ombres — une ombre diffuse par surface, jamais dure. */
+  --shadow-card: 0 10px 26px -14px rgb(20 30 25 / 0.25);
+  --shadow-card-hover: 0 16px 32px -14px rgb(20 30 25 / 0.3);
+  --shadow-lifted: 0 2px 8px -2px rgb(20 30 25 / 0.2);
+
+  /* ── COUCHE 1 · Courbes motion (les 2 seules). */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-brisk: cubic-bezier(0.55, 0, 0.72, 0.35);
+
+  /* ── COUCHE 1 · Échelle des chiffres/labels (text-stat, text-label). */
+  --text-stat: 1.8rem;
+  --text-stat--line-height: 1.15;
+  --text-stat--letter-spacing: -0.025em;
+  --text-stat--font-weight: 600;
+  --text-label: 0.625rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.15em;
+  --text-label--font-weight: 600;
+}
+
+/* Typographie : mappe le token Tailwind sur la variable posée par next/font
+   dans layout.tsx (`variable: '--font-inter'`). Le bloc `inline` référence la
+   variable au runtime — ne pas fusionner avec le @theme de valeurs ci-dessus.
+   COUCHE 2 : la famille change par site ; JAMAIS de mono dans l'UI (fondation §4). */
+/* COUCHE 2 · Typographie — TRANCHÉ le 2026-08-05 : Glacial Indifference (SIL OFL) pour TOUT le
+   site. Colette et Horizon (demandées par la charte) sont écartées : licence webfont non
+   vérifiable. La famille n'a que Regular et Bold — la hiérarchie se fait par la taille, la casse
+   et l'interlettrage, jamais par une pile de graisses.
+   La variable --font-glacial sera posée par next/font dans layout.tsx en LOT 1 ; d'ici là, la
+   pile système prend le relais (aucun fetch runtime). */
+@theme inline {
+  --font-sans: var(--font-glacial), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-glacial), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* COUCHE 1 · Durées motion — les 3 seules (fondation §6). Hors @theme :
+   consommées par les classes px-* et src/lib/motion.ts, pas par des utilitaires. */
+:root {
+  --dur-micro: 0.14s;
+  --dur-element: 0.28s;
+  --dur-page: 0.42s;
+}
+
+/* Cadrage 2026-08-05 : thème sombre UNIQUE (les tokens ci-dessus sont déjà sombres).
+   Pas de variante claire, pas de toggle — ne pas ajouter de bloc prefers-color-scheme. */
+
+:root {
+  /* Voile dégradé (bas de photo) : le texte ne vit que là où l'opacité ≥ 0.64
+     (charte §6 — hero et scènes de la landing). */
+  --gradient-scrim: linear-gradient(
+    180deg,
+    rgb(7 17 40 / 0) 0%,
+    rgb(7 17 40 / 0.64) 45%,
+    rgb(7 17 40 / 0.92) 100%
+  );
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Accessibilité : focus visible par défaut sur tout élément focusable (charte §3).
+   Offset 3px : l'anneau blanc reste visible même autour du CTA blanc.
+   Ne JAMAIS le neutraliser sans remplacement équivalent. */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 3px;
+}
+
+/* ── COUCHE 2 · compléments de composants (charte V.02) ─────────────────── */
+
+/* Bouton principal désactivé (charte §8.1) : jamais d'opacité sur le blanc. */
+.px-btn--primary:disabled {
+  background: var(--color-surface);
+  color: var(--color-muted-foreground);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Lecture longue — pages légales & réponses FAQ (charte §8.15). */
+.prose-legal {
+  color: var(--color-prose-foreground);
+  line-height: 1.75;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FONDATION PASTEL — classes px-* (couche 1, cf. FONDATION-PASTEL.md).
+   Consommées par les composants src/components/ui/ — ne pas recoder à la main.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Le surligneur (§3) — inline, sous la ligne de base, toujours penché. */
+.px-marker {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+}
+.px-marker::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -0.15em;
+  right: -0.25em;
+  bottom: 0.06em;
+  height: 0.48em;
+  background: var(--color-accent-soft);
+  border-radius: 0.18em 0.42em 0.24em 0.36em;
+  transform: rotate(-1.4deg) skewX(-7deg);
+  transform-origin: 0 100%;
+}
+/* Tracé différé : le surligneur arrive EN DERNIER dans une transition (§6). */
+.px-marker-draw::before {
+  animation: px-marker-draw var(--dur-element) var(--ease-out-soft) both;
+  animation-delay: var(--px-marker-delay, 0.3s);
+}
+@keyframes px-marker-draw {
+  from {
+    transform: scaleX(0) rotate(-1.4deg) skewX(-7deg);
+  }
+  to {
+    transform: scaleX(1) rotate(-1.4deg) skewX(-7deg);
+  }
+}
+/* Version bloc — UNIQUEMENT pour l'item de nav actif (§3). */
+.px-marker-block {
+  background: var(--color-accent-soft);
+  border-radius: 6px 13px 8px 11px;
+}
+
+/* Le grain papier (§5) — opacité 0.02, LE dosage validé. Poser sur la racine. */
+.px-grain {
+  position: relative;
+}
+.px-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Le chiffre qui « tombe en place » au changement de donnée (§6) — re-poser la
+   classe via JS/clé React pour rejouer. */
+.px-pop {
+  animation: px-pop var(--dur-element) var(--ease-out-soft) both;
+}
+@keyframes px-pop {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+}
+
+/* Boutons fondation (§2, §6) — pill, press qui répond avant de rebondir. */
+.px-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: calc(infinity * 1px);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    transform var(--dur-element) var(--ease-out-soft),
+    box-shadow var(--dur-element) var(--ease-out-soft),
+    background-color var(--dur-element) var(--ease-out-soft);
+}
+.px-btn:active {
+  transform: scale(0.97);
+  transition-duration: var(--dur-micro);
+}
+.px-btn--md {
+  height: 2.25rem;
+  padding-inline: 1rem;
+  font-size: 0.8125rem;
+}
+.px-btn--lg {
+  height: 2.75rem;
+  padding-inline: 1.25rem;
+  font-size: 0.9375rem;
+}
+.px-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.px-btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px color-mix(in oklab, var(--color-primary) 50%, transparent);
+}
+.px-btn--primary:active {
+  transform: scale(0.97);
+}
+.px-btn--ghost {
+  background: var(--color-muted);
+  color: var(--color-foreground);
+}
+.px-btn--ghost:hover {
+  box-shadow: var(--shadow-lifted);
+}
+
+/* Carte fondation (§2) — surface tonale, zéro bordure, une ombre diffuse. */
+.px-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+.px-card--hover {
+  transition:
+    transform var(--dur-element) var(--ease-out-soft),
+    box-shadow var(--dur-element) var(--ease-out-soft);
+}
+.px-card--hover:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Stat (§4) — label sur-titre + chiffre plafonné + unité + hint. */
+.px-label {
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  font-weight: var(--text-label--font-weight);
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+.px-stat {
+  font-size: var(--text-stat);
+  line-height: var(--text-stat--line-height);
+  letter-spacing: var(--text-stat--letter-spacing);
+  font-weight: var(--text-stat--font-weight);
+  font-variant-numeric: tabular-nums;
+}
+.px-unit {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--color-muted-foreground);
+  margin-left: 0.1875rem;
+}
+.px-hint {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}
+
+/* Segmented control classique (§2) — fond creux, sélection = surface posée. */
+.px-seg {
+  display: inline-flex;
+  gap: 0.375rem;
+  background: var(--color-muted);
+  border-radius: calc(infinity * 1px);
+  padding: 0.25rem;
+}
+.px-seg > button {
+  border: none;
+  background: transparent;
+  border-radius: calc(infinity * 1px);
+  padding: 0.4375rem 0.875rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-element) var(--ease-out-soft),
+    color var(--dur-element) var(--ease-out-soft),
+    box-shadow var(--dur-element) var(--ease-out-soft);
+}
+.px-seg > button[aria-pressed='true'] {
+  background: var(--color-surface);
+  color: var(--color-foreground);
+  font-weight: 600;
+  box-shadow: var(--shadow-lifted);
+}
+
+/* Accessibilité : version réduite globale pour les animations CSS.
+   (Les animations framer-motion utilisent useReducedMotion() en plus.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

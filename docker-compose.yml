@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    # TODO(kit): renommer le conteneur/réseau selon le projet.
+    container_name: mon-site
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.local
+    restart: unless-stopped

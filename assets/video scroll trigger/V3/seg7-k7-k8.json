@@ -1,0 +1,22 @@
+{
+  "segment": 7,
+  "title": "L'attaque — le black-bass",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k7.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k8.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nFrom the dark weeds behind, a huge largemouth bass surges forward and strikes: it closes on the swimming lure head-on with its mouth wide open, gill plates flaring, water swirling off its flanks, dwarfing the small lure. The camera holds the profile framing as the bass fills the right of frame, natural largemouth bass anatomy, dark olive scales, sunlight shafts above, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nFrom the dark weeds behind, a huge largemouth bass surges forward and strikes: it closes on the swimming lure head-on with its mouth wide open, gill plates flaring, water swirling off its flanks, dwarfing the small lure. The camera holds the profile framing as the bass fills the right of frame, natural largemouth bass anatomy, dark olive scales, sunlight shafts above, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fdaff-fe03-7ae3-8a98-feacce6fe805",
+  "seed": 1115691907,
+  "generatedAt": "2026-08-07T06:59:25.404Z"
+}

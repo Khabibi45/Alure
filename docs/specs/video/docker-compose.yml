@@ -1,0 +1,8 @@
+services:
+  storyboard:
+    build: .
+    image: alure-storyboard:latest
+    container_name: alure-storyboard
+    ports:
+      - "8080:80"
+    restart: unless-stopped

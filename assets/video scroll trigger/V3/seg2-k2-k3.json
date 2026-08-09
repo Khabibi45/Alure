@@ -1,0 +1,22 @@
+{
+  "segment": 2,
+  "title": "À bord — l'armé",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k2.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k3.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nThe boat glides to a stop, its wake fading, the water turning to glass. The standing angler, seen strictly from behind, sweeps his spinning rod back and up to load a cast: the blank bends into a deep curve and the line swings a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) up into the air above and left of the boat, hanging at the top of the backswing. Camera holds steady behind the boat, slight forward drift, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nThe boat glides to a stop, its wake fading, the water turning to glass. The standing angler, seen strictly from behind, sweeps his spinning rod back and up to load a cast: the blank bends into a deep curve and the line swings a small two-section jointed swimbait (olive-yellow back, soft pink flank band, pearl-white belly, translucent forked tail, two exposed metal pin joints, two dark treble hooks) up into the air above and left of the boat, hanging at the top of the backswing. Camera holds steady behind the boat, slight forward drift, no cut.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fd7e1-bc00-7af2-bc57-48d5d4060e79",
+  "seed": 1447675038,
+  "generatedAt": "2026-08-06T16:24:16.861Z"
+}

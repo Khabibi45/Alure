@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Lint, type-check, test & build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Une clé Stripe committée est la première cause de prise de contrôle de
+      # compte (source : référence sécurité Stripe). Le filet coûte 2 secondes.
+      # Les motifs exigent une vraie longueur de clé : la doc peut écrire
+      # « sk_test_… » sans faire échouer la CI.
+      - name: Aucun secret Stripe/Resend ni fichier .env commité
+        run: |
+          if git grep -nIE '(sk|rk)_(test|live)_[A-Za-z0-9]{20,}|whsec_[A-Za-z0-9]{20,}|re_[A-Za-z0-9]{24,}' \
+               -- . ':(exclude).github/workflows/ci.yml'; then
+            echo "::error::Une clé Stripe ou Resend est présente dans un fichier suivi. Roulez-la immédiatement (dashboard.stripe.com/apikeys ou resend.com/api-keys), puis retirez-la du code ET de l'historique."
+            exit 1
+          fi
+          if git ls-files | grep -E '^\.env' | grep -v '^\.env\.example$'; then
+            echo "::error::Un fichier .env est suivi par git. Seul .env.example (sans valeurs) doit l'être."
+            exit 1
+          fi
+
+      # Un prix écrit en dur dans un composant survit à tout changement de tarif et
+      # ment au client. Les montants viennent de PRODUCT.pricing via formatEuros().
+      # Restreint aux .tsx : les .ts en contiennent légitimement dans des commentaires.
+      - name: Aucun prix en dur dans un composant
+        run: |
+          if git grep -nIE '[0-9]+([.,][0-9]+)?[[:space:]]*€' -- 'src/**/*.tsx'; then
+            echo "::error::Un montant en euros est écrit en dur dans un composant. Utilisez formatEuros() sur une valeur issue de PRODUCT.pricing (src/lib/shop/product.ts) — sinon le prix ne suivra pas le prochain changement de tarif."
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint .
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+  # Déploiement : Vercel (décision du cadrage 2026-08-05) — Vercel build et
+  # déploie depuis GitHub via son intégration Git ; cette CI reste le garde-fou.

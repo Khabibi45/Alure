@@ -1,0 +1,22 @@
+{
+  "segment": 1,
+  "title": "Le lac — descente sur le bateau",
+  "model": "bytedance/seedance-2.0/image-to-video",
+  "sourceFrames": {
+    "in": "assets\\keyframe pour video scroll trigger\\V3\\k1.png",
+    "out": "assets\\keyframe pour video scroll trigger\\V3\\k2.png"
+  },
+  "input": {
+    "resolution": "720p",
+    "duration": "5",
+    "aspect_ratio": "auto",
+    "generate_audio": false,
+    "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nAerial drone shot descending fast toward a single black bass boat cutting across the calm lake, its white wake trailing behind. The drone dives and closes in from behind and above, dropping until it flies just above the churning wake at deck height, ending framed on the back of the boat: two anglers seated at the console, one standing at the bow holding a spinning rod, all seen strictly from behind as dark silhouettes, mountains and the fog bank ahead.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+    "image_url": "(upload fal)",
+    "end_image_url": "(upload fal)"
+  },
+  "prompt": "Photoreal cinematic footage, dawn on a misty alpine lake, cold blue light, a pale amber band low on the horizon, a long bank of low fog lying on the water, filmic contrast, fine natural grain, real time, no slow motion, 24 fps look.\n\nAerial drone shot descending fast toward a single black bass boat cutting across the calm lake, its white wake trailing behind. The drone dives and closes in from behind and above, dropping until it flies just above the churning wake at deck height, ending framed on the back of the boat: two anglers seated at the console, one standing at the bow holding a spinning rod, all seen strictly from behind as dark silhouettes, mountains and the fog bank ahead.\n\nAvoid entirely: text, captions, watermark, logo, brand name, extra fish, extra boats, birds, morphing lure, changing lure colour, extra hooks, duplicated lure, readable human face, cartoon look, HDR oversaturation.",
+  "requestId": "019fd7de-f5bc-7162-82b0-c17beb594f00",
+  "seed": 298441641,
+  "generatedAt": "2026-08-06T16:22:01.467Z"
+}
