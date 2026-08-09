@@ -27,6 +27,13 @@ puis « le scroll to trigger doit être en full screen, standardise tout ».
   `SiteHeader.tsx`, `LangSwitcher.tsx`, `HeroBrand.tsx`.
 - Vérifié au viewport réel 375×812 et desktop : plein écran aux trois moments (ouverture,
   séquence, relais 3D), console propre, FAQ inchangée.
+- **Le décor derrière les leurres 3D passe en profondeur de champ** (demande Camil : « un
+  carré flou super visible derrière les leurres, surtout sur téléphone »). La rustine qui
+  efface le leurre filmé de la boucle (`backdrop-clean.mp4`) restait un rectangle visible —
+  criant en portrait où `object-cover` zoome dessus. Le cadre entier passe en `gblur` sigma 8
+  APRÈS la rustine (jugé sur prototypes 6/12) : rustine indétectable, leurres 3D nets sur
+  fond bokeh, et la boucle tombe à 0,9 Mo. Poster régénéré assorti.
+  `scripts/hero-mobile.mjs` (partie 2), vérifié en 375×812 et desktop.
 - **Modèle 3D « Orange feu » remplacé** (nouvel export Camil, `assets/3d models/leurre_orange.glb`)
   et redérivé par `npm run models` : 26,9 Mo → 8,2 Mo servi. La nage s'applique génériquement à
   tout modèle chargé (`lure-stage.ts`) — vérifié au navigateur : le nouveau coloris s'affiche et
