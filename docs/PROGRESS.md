@@ -3,6 +3,27 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-09 (midi) — Le site est sur GitHub et en pré-prod Vercel
+
+Le dépôt et la mise en ligne de pré-production sont branchés (demande Camil, en
+attendant l'achat du nom de domaine) :
+
+- **GitHub** : commit initial `26bc577` poussé sur `https://github.com/Khabibi45/Alure.git`
+  (branche `main`, 637 fichiers). `.env.local` bien ignoré — seuls `.env.example` et les
+  assets utiles sont versionnés.
+- **Vercel** : projet `alure` (compte `khabibi45`), déployé en production sur
+  **https://alure-beta.vercel.app**. `STRIPE_SECRET_KEY` (clé restreinte TEST) posée en
+  variable « Sensitive » (Production + Preview). Vérifié : accueil 200 + titre correct,
+  `/de/faq` 200.
+- **Correctif requis par Vercel** : `next.config.ts` — `output: 'standalone'` (Docker)
+  casse le packaging Vercel (`ENOENT next-server.js.nft.json`) ; rendu conditionnel
+  (`process.env.VERCEL ? undefined : 'standalone'`).
+- **Reste à faire** : déclarer l'endpoint webhook Stripe du dashboard vers
+  `https://alure-beta.vercel.app/api/stripe-webhook` et poser son `whsec_…` dans Vercel
+  (le secret local vient de `stripe listen`, invalide en prod — la clé restreinte
+  `rkcs_` ne permet pas de le créer par API) ; configurer Resend
+  (`RESEND_API_KEY`, `ORDER_NOTIFICATIONS_EMAIL`) quand le domaine email sera prêt.
+
 ## 2026-08-09 (matin) — Le multilingue est en ligne, le footer prend de l'ampleur
 
 La décision commerciale du multilingue est tombée (Camil) : le socle prévu par

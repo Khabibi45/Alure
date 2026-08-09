@@ -13,8 +13,10 @@ const FRAME_EXTRA: string[] = []
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Build autonome pour Docker : l'image finale lance `node server.js`,
-  // sans réinstaller TypeScript pour lire ce fichier.
-  output: 'standalone',
+  // sans réinstaller TypeScript pour lire ce fichier. Désactivé sur Vercel
+  // (qui définit VERCEL=1) : la plateforme fait son propre packaging et le
+  // mode standalone y casse le build (ENOENT next-server.js.nft.json).
+  output: process.env.VERCEL ? undefined : 'standalone',
   images: {
     // Aucune image distante, par choix : tous les visuels sont servis par
     // notre domaine. Un hôte ne s'ajouterait ici qu'avec le service qui l'exige.
