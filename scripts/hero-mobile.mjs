@@ -9,11 +9,14 @@
  *    morcelait l'écran du téléphone en rubans (flou / net / flou) — un
  *    recadrage assumé remplit l'écran comme un vrai format vertical.
  * 2. `public/hero-video/backdrop-clean.mp4` — la boucle du décor SANS le leurre
- *    filmé. La boucle d'origine (`backdrop.mp4`) contient le leurre, petit, au
- *    centre du cadre : sous le leurre 3D on voyait DEUX leurres dès que la vue
- *    3D (dessus, devant…) amincissait la silhouette. `delogo` efface la zone en
- *    la fondant dans l'eau environnante — la nuée de bulles rend l'emprunt
- *    invisible.
+ *    filmé, en FLOU DE PROFONDEUR DE CHAMP. Deux problèmes, un traitement :
+ *    la boucle d'origine (`backdrop.mp4`) contient le leurre, petit, au centre
+ *    du cadre (sous le leurre 3D on voyait DEUX leurres), et la rustine de flou
+ *    qui l'efface restait un RECTANGLE visible — criant en portrait, où le
+ *    `object-cover` zoome pile dessus. Le décor entier passe donc en flou doux
+ *    (`gblur`) APRÈS la rustine : du flou dans du flou, la rustine devient
+ *    indétectable, et le leurre 3D net ressort devant un fond en bokeh — le
+ *    langage photo produit standard.
  * 3. `public/hero-video/backdrop-poster.webp` — une image FIXE de ce décor
  *    NETTOYÉ : le repli du décor animé (autoplay refusé, mouvement réduit).
  *
@@ -65,7 +68,10 @@ console.log(`ok ${OUT_MOBILE}`)
 // ── 2. La boucle du décor, débarrassée du leurre filmé ──────────────────────
 // Pas de `delogo` : son interpolation laisse une grille visible sur une zone de
 // cette taille. Deux anneaux de flou — large et doux puis serré et fort — font
-// fondre le leurre dans l'eau, comme une zone hors focale.
+// fondre le leurre dans l'eau ; puis le cadre ENTIER passe en profondeur de
+// champ (`gblur`) pour noyer les bords de la rustine. Sigma 8 : jugé sur
+// prototypes (6 = rustine encore devinable en mouvement, 12 = soupe sans
+// texture) — les bulles et rais de lumière restent lisibles.
 const outer = {
   x: LURE_BOX.x - 37,
   y: LURE_BOX.y - 25,
@@ -84,7 +90,7 @@ execFileSync(
       `[base][w]overlay=${outer.x}:${outer.y}[a];` +
       `[a]split[a1][a2];` +
       `[a2]crop=${LURE_BOX.w}:${LURE_BOX.h}:${LURE_BOX.x}:${LURE_BOX.y},avgblur=24[s];` +
-      `[a1][s]overlay=${LURE_BOX.x}:${LURE_BOX.y}`,
+      `[a1][s]overlay=${LURE_BOX.x}:${LURE_BOX.y},gblur=sigma=8`,
     '-c:v', 'libx264', '-crf', '21', '-preset', 'medium', '-pix_fmt', 'yuv420p',
     '-movflags', '+faststart', '-an',
     OUT_CLEAN,
