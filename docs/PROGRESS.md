@@ -3,6 +3,31 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-09 (soir) — Leurres 3D ×2 sur téléphone, captures refaites, filigrane retiré
+
+- **Filigrane du générateur retiré** (demande Camil : « je veux plus le logo gemini en bas à
+  droite »). L'étoile ✦ statique (~x1160 y600) n'existait QUE dans la boucle du décor
+  (`backdrop.mp4`) et dans `marque-scene.webp` — `hero.mp4` vérifié propre sur 4 instants,
+  les captures produit le rognent hors cadre. Vidéo : `delogo` ciblé ajouté au pipeline
+  (`hero-mobile.mjs` partie 2, avant la rustine leurre et le flou) → `backdrop-clean.mp4` et
+  son poster régénérés propres. Image : texture de feuillage clonée par-dessus (sharp),
+  bords fondus. Vérifié au navigateur 16:9 : plus d'étoile derrière les leurres.
+
+- **Leurre 3D deux fois plus grand en portrait** (demande Camil) : `PORTRAIT_ZOOM = 2` dans
+  `lure-stage.ts` — la caméra s'approche (jamais l'échelle du modèle, la nage est une fraction
+  de la longueur du corps). Le leurre passe de ~40 % à ~81 % de la largeur d'écran, tient
+  entier, les voisins sortent du cadre. Le viewer produit (`aspect-square`, ratio 1) n'est
+  pas concerné par la branche `aspect < 1`.
+- **Captures produit régénérées** (`public/produit/leurre-{truite,perche,orange}.webp`) :
+  elles montraient l'ancien décor net (rustine visible) et l'ancien coloris orange. Refaites
+  en pose neutre garantie — Chrome piloté par `playwright-core`
+  (`scratchpad/capture-lures.mjs`) avec émulation native `prefers-reduced-motion`
+  (swimTime figé à 0 → leurre droit, décor au poster bokeh), capture ×2 retina sur
+  `/hero-video`, recadrage 4:3 → 700×525 WebP. Le daemon browse de gstack crashait (OOM,
+  ~1 Go de bitmaps de la séquence) — playwright-core + Chrome local est la voie fiable.
+- Servies comme vignettes 56px du sélecteur de coloris (`BuyBox`) ; le visuel principal de
+  la page produit reste le viewer 3D live.
+
 ## 2026-08-09 (après-midi) — Le hero téléphone refait : plein écran, recadrage central
 
 Demande Camil : « revoit complètement le format de la vidéo sur le responsive téléphone »
