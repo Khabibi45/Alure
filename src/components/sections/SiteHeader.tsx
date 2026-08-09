@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LangSwitcher, type LangOption } from './LangSwitcher'
@@ -12,6 +12,14 @@ import type { NavItem } from '@/lib/i18n/chrome'
  * flèche ici (territoires étanches §2, le lock-up vit au footer et au hero
  * landing). Item actif = `.px-marker-block` (3ᵉ emplacement du surligneur).
  * Client pour l'état actif (usePathname) et l'ombre après 24px de scroll.
+ *
+ * Sur l'ACCUEIL, le header est une SURCOUCHE (`fixed`, fond transparent en
+ * haut de page) : le hero occupe l'écran entier dès le premier pixel — mobile
+ * comme desktop. Défiler vers le bas l'efface (la scène règne seule) ;
+ * remonter le rappelle, sur fond plein. Le hero pose un voile dégradé sous le
+ * chrome pour la lisibilité sur les plans clairs de la vidéo. Les autres pages
+ * gardent le header `sticky` classique : il fait partie du flux, rien ne passe
+ * dessous.
  *
  * Les libellés arrivent PRÉPARÉS du serveur (`@/lib/i18n/chrome`) : le client
  * n'embarque aucun dictionnaire.
@@ -27,9 +35,24 @@ export function SiteHeader({
 }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
+  /** Accueil uniquement : `true` = le header s'est effacé (défilement vers le bas). */
+  const [hidden, setHidden] = useState(false)
+  const lastYRef = useRef(0)
+  const isHome = pathname === localePath(locale, '/')
+  /** Surcouche transparente sur le hero : les liens passent au blanc plein —
+   *  le gris `muted` se noie sur les plans clairs de la vidéo. */
+  const overlay = isHome && !scrolled
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => {
+      const y = window.scrollY
+      setScrolled(y > 24)
+      // Un seuil de 4px filtre le bruit du défilement ; sous 96px on ne cache
+      // jamais — le header ne doit pas clignoter dès le premier geste.
+      if (y > lastYRef.current + 4 && y > 96) setHidden(true)
+      else if (y < lastYRef.current - 4) setHidden(false)
+      lastYRef.current = y
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -37,9 +60,15 @@ export function SiteHeader({
 
   return (
     <header
-      className={`sticky top-0 z-50 bg-background transition-shadow duration-[var(--dur-element)] ${
-        scrolled ? 'shadow-lifted' : ''
-      }`}
+      className={
+        isHome
+          ? `fixed inset-x-0 top-0 z-50 duration-[var(--dur-element)] motion-safe:transition-[transform,background-color,box-shadow] ${
+              hidden ? '-translate-y-full' : 'translate-y-0'
+            } ${scrolled ? 'bg-background shadow-lifted' : 'bg-transparent'}`
+          : `sticky top-0 z-50 bg-background transition-shadow duration-[var(--dur-element)] ${
+              scrolled ? 'shadow-lifted' : ''
+            }`
+      }
     >
       {/* `min-h` + `flex-wrap` : la navigation passe sous le wordmark sur les
           petits écrans au lieu de déborder — sans menu burger. Le sélecteur de
@@ -65,7 +94,9 @@ export function SiteHeader({
                       className={`inline-flex min-h-11 items-center px-2.5 text-[0.8125rem] font-bold tracking-[0.08em] uppercase transition-colors duration-[var(--dur-micro)] ${
                         active
                           ? 'px-marker-block text-foreground'
-                          : 'text-muted-foreground hover:text-foreground'
+                          : overlay
+                            ? 'text-foreground/90 hover:text-foreground'
+                            : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       {item.label}
@@ -75,7 +106,11 @@ export function SiteHeader({
               })}
             </ul>
           </nav>
-          <LangSwitcher buttonLabel={switcher.buttonLabel} options={switcher.options} />
+          <LangSwitcher
+            buttonLabel={switcher.buttonLabel}
+            options={switcher.options}
+            tone={overlay ? 'overlay' : 'default'}
+          />
         </div>
       </div>
     </header>

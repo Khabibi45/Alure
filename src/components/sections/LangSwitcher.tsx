@@ -22,10 +22,13 @@ export type LangOption = { code: Locale; label: string }
 export function LangSwitcher({
   buttonLabel,
   options,
+  tone = 'default',
 }: {
   /** « Changer de langue — actuellement Français » (aria, dans la langue courante). */
   buttonLabel: string
   options: readonly LangOption[]
+  /** `overlay` : posé sur le hero transparent — le gris `muted` s'y noierait. */
+  tone?: 'default' | 'overlay'
 }) {
   const pathname = usePathname()
   const { locale: current, path } = splitLocalePath(pathname)
@@ -57,7 +60,9 @@ export function LangSwitcher({
         aria-expanded={open}
         aria-haspopup="listbox"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex min-h-11 items-center gap-1 px-2.5 text-[0.8125rem] font-bold tracking-[0.08em] text-muted-foreground uppercase transition-colors duration-[var(--dur-micro)] hover:text-foreground"
+        className={`inline-flex min-h-11 items-center gap-1 px-2.5 text-[0.8125rem] font-bold tracking-[0.08em] uppercase transition-colors duration-[var(--dur-micro)] hover:text-foreground ${
+          tone === 'overlay' ? 'text-foreground/90' : 'text-muted-foreground'
+        }`}
       >
         {current.toUpperCase()}
         <span aria-hidden className="text-[0.625rem]">

@@ -14,9 +14,11 @@ import { AlureArrow } from '@/components/ui/AlureArrow'
  */
 export function HeroBrand() {
   return (
+    // `top` plus bas sur téléphone : le header en surcouche s'y étale sur trois
+    // lignes — le lock-up respire dessous, sans toucher le splash au centre.
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 top-[14svh] z-30 flex justify-center"
+      className="pointer-events-none absolute inset-x-0 top-[21svh] z-30 flex justify-center sm:top-[14svh]"
     >
       {/* Couleur SOMBRE (demande du 2026-08-09) : le bleu nuit de la marque sur
           les plans clairs du lac ; le halo clair le garde lisible quand la
