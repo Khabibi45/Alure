@@ -5,6 +5,7 @@ import { SITE } from '@/lib/site-config'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { organizationSchema, webSiteSchema } from '@/lib/schemas'
 import { SiteHeader } from '@/components/sections/SiteHeader'
+import { SplashScreen } from '@/components/ui/SplashScreen'
 import { SiteFooter } from '@/components/sections/SiteFooter'
 import { headerNav, langSwitcher } from '@/lib/i18n/chrome'
 
@@ -49,6 +50,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       {/* px-grain : le grain fondation (0.02) se pose UNE fois, sur la racine. */}
       <body className={`${glacial.variable} px-grain font-sans antialiased`}>
         <JsonLd data={[organizationSchema(), webSiteSchema()]} />
+        {/* PROTOTYPE : le splash de démarrage — la flèche se dessine sur une
+            durée définie à chaque chargement complet, puis se dissout. */}
+        <SplashScreen />
         <SiteHeader locale="fr" navItems={headerNav('fr')} switcher={langSwitcher('fr')} />
         {children}
         <SiteFooter locale="fr" />

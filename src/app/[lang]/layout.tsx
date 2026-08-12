@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/seo/JsonLd'
 import { organizationSchema, webSiteSchema } from '@/lib/schemas'
 import { SiteHeader } from '@/components/sections/SiteHeader'
 import { SiteFooter } from '@/components/sections/SiteFooter'
+import { SplashScreen } from '@/components/ui/SplashScreen'
 import { headerNav, langSwitcher } from '@/lib/i18n/chrome'
 import {
   getDictionary,
@@ -77,6 +78,9 @@ export default async function LangLayout({
       {/* px-grain : le grain fondation (0.02) se pose UNE fois, sur la racine. */}
       <body className={`${glacial.variable} px-grain font-sans antialiased`}>
         <JsonLd data={[organizationSchema(), webSiteSchema()]} />
+        {/* PROTOTYPE : le splash de démarrage (cf. layout fr). Libellé neutre :
+            le splash part avant que quoi que ce soit se lise. */}
+        <SplashScreen label="Loading." />
         <SiteHeader locale={locale} navItems={headerNav(locale)} switcher={langSwitcher(locale)} />
         {children}
         <SiteFooter locale={locale} />

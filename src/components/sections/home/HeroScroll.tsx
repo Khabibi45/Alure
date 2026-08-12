@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { AlureLoader } from '@/components/ui/AlureLoader'
 import { HeroBackdrop } from './HeroBackdrop'
-import { HeroBrand } from './HeroBrand'
 import { HERO_FADE_LEAD_S, HERO_FADE_MS } from './HeroVideo'
 import { useIsPortrait } from './use-portrait'
 import { HERO_VIDEO, HERO_VIDEO_MOBILE } from '@/lib/hero-variant'
@@ -276,7 +276,6 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
     }
   }, [manifest, reducedMotion, draw])
 
-  const progressPercent = manifest ? Math.round((loaded / manifest.count) * 100) : 0
   /** En mouvement réduit, la 3D est là d'emblée : le fondu vaut 1, toujours. */
   const blendValue = reducedMotion ? 1 : blend
 
@@ -309,9 +308,9 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
         )}
 
         {status === 'loading' && (
-          <p className="absolute inset-x-0 top-8 px-6 text-center text-sm text-muted-foreground">
-            Chargement de la séquence… {progressPercent}%
-          </p>
+          <div className="absolute inset-0 flex items-center justify-center text-foreground">
+            <AlureLoader progress={manifest ? loaded / manifest.count : null} />
+          </div>
         )}
 
         {/* Le carrousel 3D, révélé par le fondu. `pointer-events` désactivés tant
@@ -357,14 +356,26 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
             >
               <source src={introSrc} type="video/mp4" />
             </video>
-            {/* Le lock-up de marque, solidaire de la vidéo : même fondu, même sortie. */}
+            {/* PROTOTYPE — à la place du lock-up FIXE : le logo-chargement qui
+                se dessine à la progression RÉELLE de la séquence (elle se
+                télécharge pendant la vidéo). Solidaire de la vidéo : même
+                fondu, même sortie. Couleur et halo du lock-up d'origine. */}
             <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-[21svh] z-30 flex justify-center sm:top-[14svh]"
               style={{
                 opacity: introPhase === 'playing' ? 1 : 0,
                 transition: `opacity ${HERO_FADE_MS}ms var(--ease-out-soft)`,
               }}
             >
-              <HeroBrand />
+              <AlureLoader
+                progress={manifest ? loaded / manifest.count : null}
+                // Chargement accompli → le logo redevient le lock-up : ALURE.
+                label={manifest && loaded >= manifest.count ? 'Alure.' : 'Chargement.'}
+                showPercent={!manifest || loaded < manifest.count}
+                className="text-background drop-shadow-[0_0_16px_rgba(255,255,255,0.35)]"
+                arrowClassName="w-64 sm:w-80"
+              />
             </div>
           </>
         )}

@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { AlureLoader } from '@/components/ui/AlureLoader'
 import { HeroBackdrop } from './HeroBackdrop'
-import { HeroBrand } from './HeroBrand'
 import { useIsPortrait } from './use-portrait'
 import { HERO_LAST_FRAME, HERO_VIDEO, HERO_VIDEO_MOBILE } from '@/lib/hero-variant'
 
@@ -112,17 +112,22 @@ export function HeroVideo({
           <source src={videoSrc} type="video/mp4" />
         </video>
 
-        {/* Le lock-up de marque, solidaire de la vidéo : même fondu, même sortie.
+        {/* PROTOTYPE — à la place du lock-up FIXE : le logo-chargement (cette
+            variante n'a pas de séquence à mesurer : tracé en boucle).
             Toujours monté — le démonter à blend=1 le ferait DISPARAÎTRE au début
             du fondu au lieu de se dissoudre avec la vidéo. */}
         <div
           aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-[21svh] z-30 flex justify-center sm:top-[14svh]"
           style={{
             opacity: 1 - blend,
             transition: `opacity ${HERO_FADE_MS}ms var(--ease-out-soft)`,
           }}
         >
-          <HeroBrand />
+          <AlureLoader
+            className="text-background drop-shadow-[0_0_16px_rgba(255,255,255,0.35)]"
+            arrowClassName="w-64 sm:w-80"
+          />
         </div>
 
         {failed && (

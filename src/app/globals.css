@@ -328,6 +328,22 @@ body {
   box-shadow: var(--shadow-lifted);
 }
 
+/* Le rideau de démarrage (SplashScreen) : filet de sécurité SANS JavaScript.
+   Si l'hydratation tarde (compilation dev, réseau lent), le rideau rendu par le
+   serveur s'efface TOUT SEUL — une page ne doit jamais rester cachée. Le
+   déroulé normal (React) le retire avant la fin de cette animation ; la
+   version mouvement réduit ci-dessous la réduit à 0,01 ms : aucun rideau. */
+@keyframes px-splash-failsafe {
+  0%,
+  76% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 /* Accessibilité : version réduite globale pour les animations CSS.
    (Les animations framer-motion utilisent useReducedMotion() en plus.) */
 @media (prefers-reduced-motion: reduce) {
