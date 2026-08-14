@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkoutSchema, CHECKOUT_MAX_BYTES } from '@/lib/shop/checkout-schema'
-import { orderableError } from '@/lib/shop/product'
+import { giftOrderableError, orderableError } from '@/lib/shop/product'
 import { createCheckoutSession } from '@/lib/shop/stripe'
 import { PaymentNotConfiguredError } from '@/lib/shop/errors'
 
@@ -73,6 +73,15 @@ export async function POST(request: NextRequest) {
     const unorderable = orderableError(parsed.data.coloris)
     if (unorderable) {
       return NextResponse.json({ error: unorderable }, { status: 400 })
+    }
+
+    // Le 4e offert suit la même règle : un coloris épuisé ne se choisit pas
+    // (le collector, lui, ne connaît pas la rupture).
+    if (parsed.data.cadeau !== undefined) {
+      const ungiftable = giftOrderableError(parsed.data.cadeau)
+      if (ungiftable) {
+        return NextResponse.json({ error: ungiftable }, { status: 400 })
+      }
     }
 
     const url = await createCheckoutSession(parsed.data, request.nextUrl.origin)

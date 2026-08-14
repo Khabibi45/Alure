@@ -12,7 +12,8 @@ vi.mock('@/lib/shop/stripe', () => ({
 
 import { POST } from './route'
 
-const valid = { coloris: PRODUCT.colorways[0].id, offre: 'collection' }
+// L'offre groupée exige le choix du 4e offert (cadeau) — ici le collector.
+const valid = { coloris: PRODUCT.colorways[0].id, offre: 'collection', cadeau: PRODUCT.collector.id }
 let ipCounter = 0
 
 function makeReq(body: unknown, ip?: string) {

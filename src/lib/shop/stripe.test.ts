@@ -7,15 +7,21 @@ import { OFFER_IDS, PRODUCT, totalCents, checkoutLines, getOffer } from './produ
  * comportement. C'est le dernier point avant que l'argent soit demandé au client.
  */
 const create = vi.fn()
+const list = vi.fn()
 vi.mock('stripe', () => {
   class MockStripe {
-    checkout = { sessions: { create: (...args: unknown[]) => create(...args) } }
+    checkout = {
+      sessions: {
+        create: (...args: unknown[]) => create(...args),
+        list: (...args: unknown[]) => list(...args),
+      },
+    }
     static errors = { StripeSignatureVerificationError: class extends Error {} }
   }
   return { default: MockStripe }
 })
 
-import { createCheckoutSession } from './stripe'
+import { countPaidOrders, createCheckoutSession } from './stripe'
 
 type LineItem = {
   quantity: number
@@ -48,13 +54,16 @@ describe('createCheckoutSession — le montant demandé au client', () => {
     expect(items[0].price_data.unit_amount).toBe(PRODUCT.pricing.soloCents)
   })
 
-  it('facture la collection en une ligne, plus le collector à 0,00 €', async () => {
-    await createCheckoutSession({ coloris, offre: 'collection' })
+  it('facture « 3 achetés, le 4e offert » : 3 × l’unité, puis le cadeau à 0,00 €', async () => {
+    await createCheckoutSession({ coloris, offre: 'collection', cadeau: PRODUCT.collector.id })
     const items = lastLineItems()
     expect(items).toHaveLength(2)
-    expect(items[0].price_data.unit_amount).toBe(getOffer('collection').amountCents)
+    expect(items[0].quantity).toBe(getOffer('collection').paidCount)
+    expect(items[0].price_data.unit_amount).toBe(PRODUCT.pricing.soloCents)
     expect(items[1].price_data.unit_amount).toBe(0)
     expect(items[1].price_data.product_data.name).toMatch(/offert/i)
+    // Le choix de l'acheteur se lit sur le reçu — jamais un cadeau anonyme.
+    expect(items[1].price_data.product_data.name).toContain(PRODUCT.collector.label)
   })
 
   it('reste aligné sur checkoutLines — une seule source de barème', async () => {
@@ -77,11 +86,15 @@ describe('createCheckoutSession — le montant demandé au client', () => {
     expect(lastLineItems()[0].price_data.product_data.name).toContain(colorway.label)
   })
 
-  it('ne livre qu’en France et transmet l’offre au webhook', async () => {
-    await createCheckoutSession({ coloris, offre: 'collection' })
+  it('ne livre qu’en France et transmet l’offre ET le cadeau au webhook', async () => {
+    await createCheckoutSession({ coloris, offre: 'collection', cadeau: PRODUCT.collector.id })
     const session = create.mock.calls[0][0]
     expect(session.shipping_address_collection.allowed_countries).toEqual(['FR'])
-    expect(session.metadata).toMatchObject({ coloris, offre: 'collection' })
+    expect(session.metadata).toMatchObject({
+      coloris,
+      offre: 'collection',
+      cadeau: PRODUCT.collector.id,
+    })
     expect(session.mode).toBe('payment')
   })
 
@@ -104,5 +117,42 @@ describe('createCheckoutSession — les URLs de retour', () => {
     expect(session.cancel_url).not.toContain('attaquant.example')
     expect(session.success_url).toContain('/merci')
     expect(session.cancel_url).toContain('/leurre')
+  })
+})
+
+/** Le SDK expose la pagination en itérable asynchrone : on la simule telle quelle. */
+function asAsyncIterable(sessions: { payment_status: string }[]) {
+  return {
+    async *[Symbol.asyncIterator]() {
+      yield* sessions
+    },
+  }
+}
+
+describe('countPaidOrders — le chiffre vrai du bandeau', () => {
+  it('ne compte que les sessions payées (un tunnel terminé non payé ne compte pas)', async () => {
+    list.mockReturnValueOnce(
+      asAsyncIterable([
+        { payment_status: 'paid' },
+        { payment_status: 'unpaid' },
+        { payment_status: 'paid' },
+        { payment_status: 'no_payment_required' },
+      ])
+    )
+    await expect(countPaidOrders()).resolves.toBe(3)
+    // Seules les sessions TERMINÉES sont demandées à Stripe.
+    expect(list.mock.calls[0][0]).toMatchObject({ status: 'complete' })
+  })
+
+  it('zéro session → zéro, pas une valeur par défaut', async () => {
+    list.mockReturnValueOnce(asAsyncIterable([]))
+    await expect(countPaidOrders()).resolves.toBe(0)
+  })
+
+  it('échoue bruyamment si Stripe échoue — jamais un chiffre inventé', async () => {
+    list.mockImplementationOnce(() => {
+      throw new Error('Stripe indisponible')
+    })
+    await expect(countPaidOrders()).rejects.toThrow(/indisponible/i)
   })
 })

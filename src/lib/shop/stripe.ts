@@ -1,7 +1,7 @@
 import 'server-only'
 import Stripe from 'stripe'
 import { SITE } from '@/lib/site-config'
-import { PRODUCT, getColorway, checkoutLines, formatSpecs } from './product'
+import { PRODUCT, getColorway, checkoutLines, formatSpecs, giftLabel } from './product'
 import {
   PaymentNotConfiguredError,
   WebhookNotConfiguredError,
@@ -66,13 +66,15 @@ export async function createCheckoutSession(
   if (!colorway) throw new Error(`Coloris inconnu après validation : ${input.coloris}`)
 
   const base = returnBaseUrl(devOrigin)
+  // Le 4e offert, choisi par l'acheteur — son libellé s'affiche sur le reçu.
+  const chosenGift = input.cadeau ? (giftLabel(input.cadeau) ?? undefined) : undefined
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     locale: 'fr',
-    // Deux lignes dès 2 leurres (barème dégressif) : la remise se lit sur la page
-    // de paiement au lieu d'être noyée dans un total. Les montants viennent de
-    // checkoutLines(), dont la somme est testée égale à totalCents().
-    line_items: checkoutLines(input.offre, colorway.label).map((line) => ({
+    // Le reçu dit l'offre telle qu'elle est vendue : 3 × l'unité + le 4e offert
+    // à 0,00 €. Les montants viennent de checkoutLines(), dont la somme est
+    // testée égale à totalCents().
+    line_items: checkoutLines(input.offre, colorway.label, chosenGift).map((line) => ({
       quantity: line.quantity,
       price_data: {
         currency: PRODUCT.currency,
@@ -85,7 +87,11 @@ export async function createCheckoutSession(
     })),
     shipping_address_collection: { allowed_countries: ['FR'] },
     // Ce que le webhook relira pour l'email de confirmation.
-    metadata: { coloris: colorway.id, offre: input.offre },
+    metadata: {
+      coloris: colorway.id,
+      offre: input.offre,
+      ...(input.cadeau ? { cadeau: input.cadeau } : {}),
+    },
     success_url: `${base}/merci?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${base}/leurre`,
   })
@@ -128,6 +134,26 @@ export async function setFulfillmentMarker(
   await getStripe().paymentIntents.update(paymentIntentId, {
     metadata: { [FULFILLMENT_MARKER_KEY]: eventId },
   })
+}
+
+/**
+ * Compte les commandes PAYÉES — la donnée VRAIE du bandeau d'objectif (règle
+ * n°6 : jamais un compteur inventé). Parcourt les sessions Checkout terminées ;
+ * « payée » se lit sur `payment_status`, exactement comme au webhook (un moyen
+ * différé peut terminer le tunnel sans avoir payé).
+ *
+ * Volume : pagination par 100 — quelques appels au pire à l'échelle actuelle,
+ * et le résultat est mis en cache par tag (`orders-count.ts`), invalidé par le
+ * webhook à chaque commande. Limite documentée (spec) : un remboursement ne
+ * décrémente pas — le chiffre reste « commandes passées », formulation vraie.
+ */
+export async function countPaidOrders(): Promise<number> {
+  const stripe = getStripe()
+  let count = 0
+  for await (const session of stripe.checkout.sessions.list({ status: 'complete', limit: 100 })) {
+    if (session.payment_status !== 'unpaid') count += 1
+  }
+  return count
 }
 
 /**

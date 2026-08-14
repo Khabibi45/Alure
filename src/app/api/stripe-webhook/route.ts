@@ -7,7 +7,8 @@ import {
   verifyWebhookEvent,
 } from '@/lib/shop/stripe'
 import { sendOrderEmails, type OrderSummary } from '@/lib/shop/emails'
-import { getColorway, offerSummary } from '@/lib/shop/product'
+import { revalidateOrdersCount } from '@/lib/shop/orders-count'
+import { getColorway, giftLabel, offerSummary } from '@/lib/shop/product'
 import {
   EmailNotConfiguredError,
   WebhookNotConfiguredError,
@@ -67,9 +68,12 @@ function toOrderSummary(session: Stripe.Checkout.Session): OrderSummary | null {
   // Coloris retiré du catalogue entre l'achat et le webhook : on garde l'ID brut
   // plutôt que de perdre l'information.
   const colorisLabel = colorway?.label ?? colorisId
+  // Le 4e offert choisi — id brut si le libellé est introuvable, jamais perdu.
+  const cadeauId = session.metadata?.cadeau
+  const cadeauLabel = cadeauId ? (giftLabel(cadeauId) ?? cadeauId) : undefined
   let summary: string
   try {
-    summary = offerSummary(offre, colorisLabel)
+    summary = offerSummary(offre, colorisLabel, cadeauLabel)
   } catch {
     // Offre inconnue (métadonnée d'une ancienne version) : on ne devine pas, on
     // transmet ce qu'on a lu. L'email reste vrai, il est juste moins joli.
@@ -203,6 +207,10 @@ export async function POST(request: NextRequest) {
   }
 
   markProcessed(event.id)
+  // Une commande payée vient d'être traitée : le compteur du bandeau d'objectif
+  // change — on invalide son cache (spec bandeau-objectif-commandes, T3).
+  // APRÈS l'idempotence : un doublon détecté plus haut n'invalide rien.
+  revalidateOrdersCount()
   // Marqueur posé APRÈS l'envoi : un échec d'ENVOI doit re-livrer (ci-dessus),
   // un échec de MARQUAGE non — les emails sont partis. On répond 200 en le
   // loggant fort : la seule conséquence possible est un doublon si Stripe

@@ -23,6 +23,12 @@ const sendOrderEmails = vi.fn()
 vi.mock('@/lib/shop/emails', () => ({
   sendOrderEmails: (...args: unknown[]) => sendOrderEmails(...args),
 }))
+// La revalidation du compteur (bandeau d'objectif) est mockée : `revalidateTag`
+// n'existe pas hors du runtime Next, et on veut asserter QUAND elle part.
+const revalidateOrdersCount = vi.fn()
+vi.mock('@/lib/shop/orders-count', () => ({
+  revalidateOrdersCount: (...args: unknown[]) => revalidateOrdersCount(...args),
+}))
 
 import { POST } from './route'
 import { WebhookSignatureError } from '@/lib/shop/errors'
@@ -65,6 +71,7 @@ beforeEach(() => {
   hasFulfillmentMarker.mockResolvedValue(false)
   setFulfillmentMarker.mockReset()
   setFulfillmentMarker.mockResolvedValue(undefined)
+  revalidateOrdersCount.mockReset()
 })
 
 describe('POST /api/stripe-webhook', () => {
@@ -83,13 +90,20 @@ describe('POST /api/stripe-webhook', () => {
     )
   })
 
-  it('rejette une signature invalide (400) sans envoyer d’email', async () => {
+  it('invalide le compteur du bandeau APRÈS une commande payée traitée', async () => {
+    verifyWebhookEvent.mockReturnValue(completedEvent())
+    await POST(makeReq())
+    expect(revalidateOrdersCount).toHaveBeenCalledTimes(1)
+  })
+
+  it('rejette une signature invalide (400) sans envoyer d’email ni toucher au compteur', async () => {
     verifyWebhookEvent.mockImplementation(() => {
       throw new WebhookSignatureError()
     })
     const res = await POST(makeReq())
     expect(res.status).toBe(400)
     expect(sendOrderEmails).not.toHaveBeenCalled()
+    expect(revalidateOrdersCount).not.toHaveBeenCalled()
   })
 
   it('rejette une requête sans en-tête de signature (400)', async () => {
