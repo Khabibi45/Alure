@@ -25,14 +25,31 @@ type ColorwaySelection = {
   setColoris: Dispatch<SetStateAction<string>>
   offre: OfferId
   setOffre: Dispatch<SetStateAction<OfferId>>
+  /** Le 4e leurre OFFERT, au choix (offre groupée) — coloris ou collector. */
+  cadeau: string
+  setCadeau: Dispatch<SetStateAction<string>>
 }
 
 const ColorwayContext = createContext<ColorwaySelection | null>(null)
 
-export function ColorwayProvider({ children }: { children: ReactNode }) {
-  const [coloris, setColoris] = useState(PRODUCT.colorways[0].id)
-  const [offre, setOffre] = useState<OfferId>('solo')
-  const value = useMemo(() => ({ coloris, setColoris, offre, setOffre }), [coloris, offre])
+export function ColorwayProvider({
+  children,
+  initialColoris,
+  initialOffre,
+}: {
+  children: ReactNode
+  /** Présélection portée par l'URL (frise de l'accueil), déjà validée côté serveur. */
+  initialColoris?: string
+  initialOffre?: OfferId
+}) {
+  const [coloris, setColoris] = useState(initialColoris ?? PRODUCT.colorways[0].id)
+  const [offre, setOffre] = useState<OfferId>(initialOffre ?? 'solo')
+  // Le Pirate est le choix par défaut du 4e offert : c'est lui qu'on vient chercher.
+  const [cadeau, setCadeau] = useState<string>(PRODUCT.collector.id)
+  const value = useMemo(
+    () => ({ coloris, setColoris, offre, setOffre, cadeau, setCadeau }),
+    [coloris, offre, cadeau]
+  )
   return <ColorwayContext.Provider value={value}>{children}</ColorwayContext.Provider>
 }
 
