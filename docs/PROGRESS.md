@@ -3,6 +3,142 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-14 — LOT 9 (suite) : « 3 achetés, le 4e offert AU CHOIX », suppressions bloc Offert + bandeau
+
+Consignes Camil du jour : supprimer le bloc « OFFERT » du Pirate, supprimer le bandeau
+« Objectif de lancement », et refondre l'offre : « 3 leurres achetés, le 4e offert au choix ».
+
+- **L'OFFRE CHANGE DE BARÈME** (pas qu'un discours cette fois) : palier 2 = **65,97 €**
+  (3 × 21,99 €) pour 4 leurres, et l'acheteur **choisit son 4e offert** — un coloris (même en
+  double) ou le Pirate. Domaine : `Offer.{paidCount:3, giftCount:1}` (le booléen `collector`
+  disparaît), `GIFT_CHOICE_IDS`/`giftLabel`/`giftOrderableError`, `collector.id = 'pirate'`.
+  `savingsCents('collection')` retombe à 0 : l'avantage est le CADEAU, pas une remise — la
+  ligne « Vous économisez » disparaît d'elle-même (jamais une fausse économie). Prix par
+  leurre : « moins de 17,00 € » (arrondi supérieur, comme avant).
+- **Le choix du cadeau voyage jusqu'au bout** : champ `cadeau` au schéma partagé (obligatoire
+  en offre groupée — superRefine ; l'objet nu reste exposé pour `parsePreselection`), garde
+  de disponibilité dans /api/checkout (`giftOrderableError`), métadonnée Stripe, ligne de
+  reçu nommée (« 4e offert — Pirate » à 0,00 €, invariant somme=total testé), relu par le
+  webhook pour l'email (`offerSummary(offre, coloris, cadeau)`). Sélecteur dans la BuyBox :
+  3 vignettes coloris + tuile Pirate (icône Skull, fond sombre), défaut = Pirate ;
+  `cadeau` dans le contexte coloris, envoyé au submit.
+- **Frise & bouton unique recalés** : 3 jalons « achetés » + le jalon cadeau (au choix) ;
+  résolution 1 → solo, 3 → offre complète — il n'existe PAS d'offre à 2 leurres : à 2, le
+  bouton pousse le 3e (« Encore 1 — le 4e sera offert »), et le solo direct n'est proposé
+  qu'à exactement 1 (lien secondaire sous « Ajouter »). CTA final « Commander les 4 ·
+  65,97 € ». Vérifié au vrai clic : 0 → +1 → +2 → +3 → /leurre présélectionné avec le
+  sélecteur du cadeau.
+- **Supprimé** : le bloc « OFFERT » du collector (le Pirate se montre nu — la frise et le
+  bouton racontent l'offre) et le bandeau « Objectif de lancement » (retiré de l'accueil et
+  de /leurre). ⚠️ L'infrastructure du compteur (OrdersBanner.tsx, orders-count.ts,
+  milestones.ts, revalidation webhook — no-op) reste en place, DÉBRANCHÉE : à re-brancher ou
+  à supprimer selon la décision de Camil au moment des commits.
+- **Copies réalignées partout** : OfferPanel, OfferProgress (4 étapes), fiche 3D du Pirate,
+  CGV (« un quatrième leurre, au choix de l'acheteur… remis gracieusement »), à-propos,
+  métadonnées /leurre, FAQ, et les **5 dictionnaires** (`npm run i18n` relancé).
+- **Gate** : tsc ✅ eslint ✅ **vitest 177 ✅** (les montants en dur du test — garde-fou voulu —
+  revus : 6597, « 65,97 », économies nulles, seuils à 3, `cadeau` requis) build ✅ + captures
+  réelles (entonnoir 3 clics, Pirate sans panneau, /leurre avec sélecteur du cadeau).
+
+## 2026-08-13 — LOT 9 (suite) : l'offre devient « 2 achetés, 2 offerts », frise en points
+
+Consigne Camil : « fais une frise avec des points, beaucoup plus fine et beaucoup plus
+grande ; on revoit l'offre avec 2 achetés 2 offerts, chaque leurre est servi individuellement ».
+
+- **L'offre reformulée « 2 achetés, 2 offerts »** — le BARÈME ne bouge pas d'un centime
+  (43,98 € = 2 × 21,99 €), c'est le discours qui change : chaque leurre se vend À L'UNITÉ
+  (21,99 €), et dès 2 achetés le 3e coloris + le Pirate sont OFFERTS. Conséquence forte :
+  le Pirate se débloque désormais « dès 2 leurres achetés » (plus « les 3 réunis ») — mis à
+  jour PARTOUT : `product.ts` (label d'offre, `paidCount`, tagline, `offerSummary`,
+  `checkoutLines` — le reçu Stripe affiche maintenant 2 × l'unité + 2 lignes offertes à
+  0,00 €, invariant somme=total testé), `OfferProgress` (3 étapes réécrites), `BuyBox`,
+  `OfferPanel`, overlay + fiche du collector (carrousel, `lure-models.ts`), CGV, à-propos,
+  métadonnées /leurre, et les **5 dictionnaires** (`docs/i18n/*.md`, 14 clés par langue,
+  `npm run i18n` relancé). `freebiesUnlocked()` (seuil dérivé de `paidCount`, jamais un
+  chiffre local) remplace `isCollectionComplete()`.
+- **Frise en POINTS, fine et large** (itération Camil) : `CollectionStrip` redessinée — une
+  seule rangée pill (`rounded-full`, ~40 px de haut, jusqu'à 52 rem de large) : 3 points
+  ronds (vrais rendus des coloris) reliés par un trait, le point Pirate (cadenas → check au
+  déblocage, dès 2 au panier le coloris manquant s'allume aussi « offert »), message d'une
+  ligne, CTA « Les 4 leurres · 43,98 € ». Mobile : rail sur sa ligne, message dessous.
+- **Le panier devient un COMPTEUR** (itération Camil : « un leurre quelconque à chaque fois
+  suffit ») : plus de suivi par coloris — n'importe quel leurre ajouté (même deux fois le
+  même) fait avancer la frise ; à 1 le solo garde le coloris du 1er ajout, à 2 c'est l'offre
+  complète quoi qu'il arrive. `sanitizeSelection` garde les doublons et borne à `paidCount` ;
+  le hook expose `add`/`removeOne` (fini le toggle). Jalons de la frise NEUTRES : « 1 », « 2 »
+  (checks), cadeau (3ᵉ coloris), Pirate — plus aucune vignette de coloris spécifique.
+- **Frise remontée** (`top-16`/`md:top-18`, juste sous le header) ; **panneau « Offert » du
+  Pirate retiré au premier clic** sur le leurre (state `collectorIntroSeen` — le clic suivant
+  ouvre la fiche) ; **contrôles du bas compactés** : variante `.px-seg--sm` du segmented
+  (globals.css), flèches `!h-8`, bouton en taille `md`, interlignes resserrés.
+- **Le bouton unique de l'entonnoir** (itération Camil : « un bouton, beaucoup d'actions ») :
+  `SmartCartButton` dans le carrousel — toujours visible, UN état par moment, jamais deux
+  choix : leurre affiché pas pris → « Ajouter · 21,99 € » (ajoute, allume la frise, AVANCE
+  tout seul vers le coloris suivant, puis saute sur le Pirate au 2e ajout) ; panier non vide
+  → « Commander · 21,99 € » / « Commander les 4 · 43,98 € » (→ /leurre présélectionné) ;
+  Pirate verrouillé panier vide → « Offert dès 2 achetés — choisir ». Le CTA sort de la
+  frise (elle devient pure statut, encore plus fine) ; le retrait reste dans la fiche.
+  L'encart collector passe cadenas → check avec le texte vrai dès le déblocage.
+  Entonnoir complet vérifié au vrai clic : 2 clics = tout allumé + « Commander les 4 ».
+- **Vérifié** : tsc ✅ eslint ✅ vitest 174 ✅ build ✅ + captures réelles desktop/mobile via
+  **playwright-core + Chrome local** (voie fiable du journal — le daemon browse gstack
+  restait instable) : frise fine et large, fiche + « Ajouter au panier » SOUS la frise au
+  vrai clic, zéro chevauchement, console propre.
+
+## 2026-08-12 — LOT 9 (branche `lot9-conversion`) : Pirate, frise panier, bandeau objectif, offre pleine largeur
+
+Contexte de branches : `main` a été ramené à l'état déployé sur Vercel (bb00028) ; le travail
+splash/carrousel vit sur `lot8-splash-carrousel` ; ce lot vit sur `lot9-conversion` (créée
+depuis main), qui reprend par cherry-pick le logo de chargement de lot8 (SplashScreen +
+AlureLoader) et l'étend au carrousel 3D (progression réelle des modèles, `onProgress` dans
+`lure-stage.ts`).
+
+- **Le collector s'appelle « Pirate »** (décision Camil). Une ligne changée
+  (`PRODUCT.collector.label`) — le nom se propage : site, reçus Stripe, emails, dictionnaires
+  (placeholder `{collector}`), plus la description 3D (`lure-models.ts`) et l'overlay du
+  carrousel.
+- **Frise « collection » + panier de sélection** (spec `frise-collection.md`, livrée) : au-dessus
+  des leurres 3D du hero, 4 jalons (3 coloris + Pirate cadenassé), synchronisée avec le
+  carrousel. Bouton « Ajouter au panier » après les specs de la fiche (`LureSpecs` footer) —
+  la frise s'allume aussitôt. La sélection résout TOUJOURS vers une offre réelle : 1 → solo,
+  2+ → collection (2 solos = le prix des 3, on l'affiche, on ne le vend pas). Persistance
+  sessionStorage via `useSyncExternalStore` (`use-collection-selection.ts`) — la nouvelle règle
+  ESLint `react-hooks/set-state-in-effect` interdit l'hydratation par `setState` dans un effet,
+  et c'est le bon outil. CTA → `/leurre?offre=…&coloris=…`, présélection validée par le schéma
+  partagé (`parsePreselection`, coloris épuisé écarté) ; la page passe en rendu dynamique
+  (searchParams serveur, choix assumé vs Suspense client qui viderait la page).
+- **Bandeau « objectif de lancement »** (spec `bandeau-objectif-commandes.md`, livrée) : compteur
+  RÉEL de commandes payées lu chez Stripe (`countPaidOrders()` dans `stripe.ts`, sessions
+  `complete` non-`unpaid`), cache taggé `orders-count` (`unstable_cache`, 1 h de fraîcheur max),
+  invalidé par le webhook après chaque commande traitée (`revalidateOrdersCount()` — Next 16 :
+  `revalidateTag(tag, 'max')`, le profil est obligatoire). Échelle 5→10→30→50→100→250→500→1000
+  (`milestones.ts`). Stripe injoignable → bandeau absent + log, jamais un chiffre faux. Affiché
+  accueil (sous le hero, ISR 1 h) + tête de /leurre. Vérifié en vrai : il affiche « 1 commande
+  sur un objectif de 5 » — la session de test payée de l'audit du 10/08.
+- **Page de vente pleine largeur** (consigne Camil) : `BuyBox` scindée — prix + coloris restent
+  en colonne, le reste (« Votre offre », progression, Acheter, moyens de paiement, réassurance)
+  passe en pleine largeur (`OfferPanel.tsx`). L'état de paiement est partagé par
+  `checkout-context.tsx` (statut unique, un seul `submit`) ; réassurance en 3 colonnes desktop.
+- **Itération Camil (midi)** : frise compactée (pastilles 32 px, CTA dans la rangée, texte xs)
+  et — surtout — frise + fiche technique déplacées dans la MÊME colonne de flux
+  (`top-20`, `flex-col`) : la fiche s'ouvre SOUS la frise, le chevauchement est impossible
+  par construction. L'overlay collector descend de 80 px (`pt-40`) pour la même raison.
+  Vérifié en capture 375 px : frise, fiche complète avec « Ajouter au panier », contrôles du
+  bas — rien ne se touche.
+- **Gate** : tsc ✅ eslint ✅ vitest 172 ✅ (18 nouveaux : résolution panier, présélection,
+  paliers, comptage, revalidation webhook) build ✅. Navigateur : accueil + /leurre vérifiés
+  (SSR + captures desktop/375px, console propre) ; le clic fiche→bouton n'a pas pu être simulé
+  en headless (WebGL trop lent), à vérifier à l'œil.
+- **Dette notée** : bandeau et frise en français uniquement (comme le carrousel) — à porter dans
+  les dictionnaires si les pages [lang] doivent les montrer. Un remboursement ne décrémente pas
+  le compteur (formulation « commandes passées » choisie pour rester vraie).
+
+Fichiers clés : `src/lib/shop/{product,milestones,orders-count,collection-selection,checkout-schema,stripe}.ts`,
+`src/components/sections/home/{CollectionStrip,use-collection-selection,LureCarousel,LureSpecs,lure-stage}.tsx|ts`,
+`src/components/sections/leurre/{OfferPanel,checkout-context,BuyBox,colorway-context}.tsx`,
+`src/components/sections/OrdersBanner.tsx`, `src/app/(fr)/{page,leurre/page}.tsx`,
+`src/app/api/stripe-webhook/route.ts`, specs `docs/specs/{frise-collection,bandeau-objectif-commandes}.md`.
+
 ## 2026-08-09 (soir) — Leurres 3D ×2 sur téléphone, captures refaites, filigrane retiré
 
 - **Filigrane du générateur retiré** (demande Camil : « je veux plus le logo gemini en bas à

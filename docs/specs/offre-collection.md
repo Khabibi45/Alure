@@ -4,6 +4,19 @@ Statut : `validée` — barème conçu le 2026-08-06 sur la consigne de Camil (�
 comprendre qui incite le plus possible à payer le plus, le leurre de base est à 21,99 € »).
 Remplace `./panier-bareme-degressif.md`, qui est archivé.
 
+> **Addendum 2026-08-13 (consigne Camil) — le discours devient « 2 ACHETÉS, 2 OFFERTS ».**
+> (Remplacé le lendemain — conservé pour la trace.) Barème inchangé, reformulation seule.
+>
+> **Addendum 2026-08-14 (consigne Camil) — l'offre devient « 3 ACHETÉS, LE 4e OFFERT AU
+> CHOIX », et le BARÈME change.** Palier 2 : 65,97 € = 3 × l'unité, pour 4 leurres — et
+> l'acheteur **choisit** son 4e : un coloris (même en double) ou le collector. Nouveau champ
+> `cadeau` dans le schéma de checkout (obligatoire en offre groupée, validé zod + dispo),
+> transmis en métadonnée Stripe, affiché sur le reçu (`checkoutLines` : 3 × l'unité + le
+> cadeau nommé à 0,00 €) et dans les emails (`offerSummary`). `savingsCents` retombe à 0 —
+> l'avantage est le cadeau, pas une remise : on n'affiche plus d'« économie ». Le sélecteur
+> du 4e offert vit dans la BuyBox (3 coloris + tuile Pirate), défaut = Pirate.
+> Toutes les règles d'honnêteté du §1 et §2 restent en vigueur telles quelles.
+
 ## 1. Le barème, et le raisonnement derrière
 
 **Deux paliers. Pas trois, pas cinq.**
