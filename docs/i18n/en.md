@@ -45,7 +45,7 @@
 ## 3. HOME
 
 - `HOME.H1` — The two-section jointed swimbait, made for predatory fish
-- `HOME.SUBTITLE` — Black bass, perch. {longueur} · {poids}. {prixSolo} for one lure — buy one, take the other two for the price of one, delivery included ({delai}).
+- `HOME.SUBTITLE` — Black bass, perch. {longueur} · {poids}. {prixSolo} for one lure — buy 3, get a 4th free, delivery included ({delai}).
 - `HOME.CTA` — See the lure
 
 ### 3D carousel
@@ -79,7 +79,7 @@
 ## 4. PRODUCT — /leurre page
 
 - `PRODUCT.TITLE` — Two-section jointed swimbait — {prixSolo}, delivery included
-- `PRODUCT.DESCRIPTION` — The Alure lure: two sections, jointed, made for predatory fish. {prixSolo} for one lure, or the collection of {nbColoris} colourways for {prixCollection} with the collector colourway free. Delivery included ({delai}), card or PayPal, 14-day right of withdrawal.
+- `PRODUCT.DESCRIPTION` — The Alure lure: two sections, jointed, made for predatory fish. {prixSolo} per lure, sold individually — buy 3 and pick a 4th free (up to the collector colourway): 4 lures for {prixCollection}. Delivery included ({delai}), card or PayPal, 14-day right of withdrawal.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Colourway:
 - `PRODUCT.SOLD_OUT` — Out of stock
@@ -90,33 +90,33 @@
 - `PRODUCT.BUY_LOADING_SHORT` — Redirecting…
 - `PRODUCT.PAYMENT_HINT` — Payment by card or PayPal, through Stripe.
 - `OFFER.SOLO_TITLE` — One lure
-- `OFFER.SOLO_DETAIL` — The {coloris} colourway.
-- `OFFER.COLLECTION_TITLE` — The collection
-- `OFFER.COLLECTION_DETAIL` — All {nbColoris} colourways + the {collector} free.
+- `OFFER.SOLO_DETAIL` — The {coloris} colourway, on its own.
+- `OFFER.COLLECTION_TITLE` — Buy 3, get a 4th free
+- `OFFER.COLLECTION_DETAIL` — All {nbColoris} colourways + a 4th of your choice — up to the {collector}.
 - `OFFER.PER_LURE_EXACT` — That works out at {montant} a lure.
 - `OFFER.PER_LURE_AT_MOST` — That works out at under {montant} a lure.
 - `OFFER.LEGEND` — Your offer
-- `OFFER.RULE` — Buy one lure, take the other two for the price of one
+- `OFFER.RULE` — Buy 3 lures, pick a 4th free
 - `PROGRESS.STEP_FIRST` — Your first lure
-- `PROGRESS.STEP_OTHERS` — The other two for the price of one
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} — all three colourways are yours
-- `PROGRESS.STEP_COLLECTOR` — The {collector}
-- `PROGRESS.COLLECTOR_DONE` — free with your collection
-- `PROGRESS.COLLECTOR_TODO` — free once the three colourways are together
+- `PROGRESS.STEP_OTHERS` — Your 2nd and 3rd lures
+- `PROGRESS.STEP_OTHERS_DONE` — +{montant} each — and the 4th is free
+- `PROGRESS.STEP_COLLECTOR` — The 4th — free, your choice (up to the {collector})
+- `PROGRESS.COLLECTOR_DONE` — pick it with your order
+- `PROGRESS.COLLECTOR_TODO` — free once 3 lures are bought
 - `PAYMENT.CARD` — Card
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Payment is taken on Stripe — your card details never pass through this site.
-- `PRODUCT.COLLECTOR_LOCKED` — Take the collection to unlock the {collector}.
+- `PRODUCT.COLLECTOR_LOCKED` — The {collector} can be picked as your free 4th lure once you buy 3.
 - `PRODUCT.COLLECTOR_EARNED` — The {collector} comes free with your order.
 - `PRODUCT.VIEWER_NO_WEBGL` — Your browser does not display 3D. The description alongside covers the lure in detail.
-- `PRODUCT.COLLECTOR_ALT` — The Alure collector lure in 3D, {nom} model, free with the full collection. It swims on the spot.
+- `PRODUCT.COLLECTOR_ALT` — The Alure collector lure in 3D, {nom} model, available as the free 4th lure once 3 are bought. It swims on the spot.
 - `PRODUCT.REASSURANCE_RETURN` — 14-day right of withdrawal
 - `PRODUCT.REASSURANCE_PAYMENT` — Payment by Stripe or PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Order tracking by email
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Buy one lure, take the other two for the price of one
+- `PRICING.RULE` — Buy 3 lures, pick a 4th free
 - `PRICING.TAX_LINE` — delivery included · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
 - `PRICING.SAVINGS` — You save {montant}.
 
@@ -127,7 +127,7 @@
 - `FAQ.Q_SHIPPING_COST` — How much does delivery cost?
 - `FAQ.A_SHIPPING_COST` — Nothing: delivery within France is included in the price shown, whichever offer you choose.
 - `FAQ.Q_BULK` — Does the price come down if I take several?
-- `FAQ.A_BULK` — Yes, by a long way. One lure on its own is {prixSolo}. The collection of {nbColoris} colourways is {prixCollection} — buy one lure, take the other two for the price of one — and the {collector} comes free with it. The total is shown before payment, delivery included.
+- `FAQ.A_BULK` — Yes. Each lure is sold individually at {prixSolo}. Buy 3 ({prixCollection}) and the 4th is free — your choice: a duplicate colourway or the {collector}. The total is shown before payment, delivery included.
 - `FAQ.Q_SIZE` — What size and weight is the lure?
 - `FAQ.A_SIZE` — {longueur} for {poids}. It is a compact format: it casts on light tackle and fishes just as well on a straight retrieve as on a worked one.
 - `FAQ.Q_TRACK` — How do I follow my order?

@@ -32,12 +32,13 @@ export default function CgvPage() {
       <h2 className="mt-10 text-[1.25rem] font-bold text-foreground">2. Le produit et les prix</h2>
       <p className="mt-3">
         Le site vend le leurre de pêche {SITE.name} (leurre articulé deux sections), en plusieurs
-        coloris. Le prix en vigueur est celui affiché au moment de la commande. À la date d'entrée
-        en vigueur, deux offres coexistent : un leurre seul à{' '}
-        {formatEuros(PRODUCT.pricing.soloCents)}, ou la collection des {PRODUCT.colorways.length}{' '}
-        coloris à {formatEuros(OFFERS.collection.amountCents)}, avec laquelle un coloris collector
-        est remis gracieusement et sans contrepartie. Livraison en France incluse. TVA non
-        applicable, art. 293 B du CGI.
+        coloris, chaque leurre étant vendu à l'unité. Le prix en vigueur est celui affiché au
+        moment de la commande. À la date d'entrée en vigueur, deux offres coexistent : un leurre
+        seul à {formatEuros(PRODUCT.pricing.soloCents)}, ou l'offre « 3 achetés, le 4e offert » à{' '}
+        {formatEuros(OFFERS.collection.amountCents)} (soit trois leurres au prix de l'unité), avec
+        laquelle un quatrième leurre, au choix de l'acheteur parmi les coloris disponibles ou le
+        coloris collector, est remis gracieusement et sans contrepartie. Livraison en France
+        incluse. TVA non applicable, art. 293 B du CGI.
       </p>
 
       <h2 className="mt-10 text-[1.25rem] font-bold text-foreground">3. Commande et paiement</h2>

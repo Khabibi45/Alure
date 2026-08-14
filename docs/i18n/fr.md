@@ -43,7 +43,7 @@
 ## 3. HOME
 
 - `HOME.H1` — Le leurre articulé deux sections, pensé pour les carnassiers
-- `HOME.SUBTITLE` — Black-bass, perche. {longueur} · {poids}. {prixSolo} le leurre — un acheté, les 2 autres pour le prix d’un, livraison incluse ({delai}).
+- `HOME.SUBTITLE` — Black-bass, perche. {longueur} · {poids}. {prixSolo} le leurre — 3 achetés, le 4e offert, livraison incluse ({delai}).
 - `HOME.CTA` — Voir le leurre
 
 ### Carrousel 3D
@@ -77,7 +77,7 @@
 ## 4. PRODUCT — page /leurre
 
 - `PRODUCT.TITLE` — Leurre articulé 2 sections — {prixSolo} port inclus
-- `PRODUCT.DESCRIPTION` — Le leurre Alure : articulé deux sections, pensé pour les carnassiers. {prixSolo} le leurre, ou la collection des {nbColoris} coloris pour {prixCollection} avec le coloris collector offert. Livraison incluse ({delai}), paiement carte ou PayPal, rétractation 14 jours.
+- `PRODUCT.DESCRIPTION` — Le leurre Alure : articulé deux sections, pensé pour les carnassiers. {prixSolo} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour {prixCollection}. Livraison incluse ({delai}), paiement carte ou PayPal, rétractation 14 jours.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Coloris :
 - `PRODUCT.SOLD_OUT` — Épuisé
@@ -88,33 +88,33 @@
 - `PRODUCT.BUY_LOADING_SHORT` — Redirection…
 - `PRODUCT.PAYMENT_HINT` — Paiement par carte ou PayPal, via Stripe.
 - `OFFER.SOLO_TITLE` — Un leurre
-- `OFFER.SOLO_DETAIL` — Le coloris {coloris}.
-- `OFFER.COLLECTION_TITLE` — La collection
-- `OFFER.COLLECTION_DETAIL` — Les {nbColoris} coloris + le {collector} offert.
+- `OFFER.SOLO_DETAIL` — Le coloris {coloris}, à l'unité.
+- `OFFER.COLLECTION_TITLE` — 3 achetés, le 4e offert
+- `OFFER.COLLECTION_DETAIL` — Les {nbColoris} coloris + le 4e offert au choix — jusqu'au {collector}.
 - `OFFER.PER_LURE_EXACT` — Soit {montant} le leurre.
 - `OFFER.PER_LURE_AT_MOST` — Soit moins de {montant} le leurre.
 - `OFFER.LEGEND` — Votre offre
-- `OFFER.RULE` — Un leurre acheté, les 2 autres pour le prix d’un
+- `OFFER.RULE` — 3 leurres achetés, le 4e offert au choix
 - `PROGRESS.STEP_FIRST` — Votre premier leurre
-- `PROGRESS.STEP_OTHERS` — Les 2 autres pour le prix d’un
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} — les 3 coloris sont à vous
-- `PROGRESS.STEP_COLLECTOR` — Le {collector}
-- `PROGRESS.COLLECTOR_DONE` — offert avec votre collection
-- `PROGRESS.COLLECTOR_TODO` — offert dès les 3 coloris réunis
+- `PROGRESS.STEP_OTHERS` — Les 2e et 3e leurres
+- `PROGRESS.STEP_OTHERS_DONE` — +{montant} chacun — et le 4e est offert
+- `PROGRESS.STEP_COLLECTOR` — Le 4e — offert, au choix (jusqu'au {collector})
+- `PROGRESS.COLLECTOR_DONE` — à choisir dans votre commande
+- `PROGRESS.COLLECTOR_TODO` — offert dès 3 leurres achetés
 - `PAYMENT.CARD` — Carte bancaire
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Paiement sur Stripe — vos coordonnées bancaires ne passent jamais par ce site.
-- `PRODUCT.COLLECTOR_LOCKED` — Prenez la collection pour débloquer le {collector}.
+- `PRODUCT.COLLECTOR_LOCKED` — Le {collector} se choisit comme 4e leurre offert, dès 3 achetés.
 - `PRODUCT.COLLECTOR_EARNED` — Le {collector} est offert avec votre commande.
 - `PRODUCT.VIEWER_NO_WEBGL` — Votre navigateur n'affiche pas la 3D. La description ci-contre détaille le leurre.
-- `PRODUCT.COLLECTOR_ALT` — Le leurre collector Alure en vue 3D, modèle {nom}, offert avec la collection complète. Il nage sur place.
+- `PRODUCT.COLLECTOR_ALT` — Le leurre collector Alure en vue 3D, modèle {nom}, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.
 - `PRODUCT.REASSURANCE_RETURN` — Rétractation 14 jours
 - `PRODUCT.REASSURANCE_PAYMENT` — Paiement par Stripe ou PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Suivi de commande par email
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Un leurre acheté, les 2 autres pour le prix d’un
+- `PRICING.RULE` — 3 leurres achetés, le 4e offert au choix
 - `PRICING.TAX_LINE` — port inclus · TVA non applicable, art. 293 B du CGI.
 - `PRICING.SAVINGS` — Vous économisez {montant}.
 
@@ -125,7 +125,7 @@
 - `FAQ.Q_SHIPPING_COST` — Combien coûte la livraison ?
 - `FAQ.A_SHIPPING_COST` — Rien : la livraison en France est incluse dans le prix affiché, quelle que soit l’offre choisie.
 - `FAQ.Q_BULK` — Le prix baisse-t-il si j'en prends plusieurs ?
-- `FAQ.A_BULK` — Oui, et beaucoup. Un leurre seul est à {prixSolo}. La collection des {nbColoris} coloris est à {prixCollection} — un leurre acheté, les 2 autres pour le prix d'un — et le {collector} vous est offert avec. Le total s'affiche avant le paiement, livraison comprise.
+- `FAQ.A_BULK` — Oui. Chaque leurre se commande à l'unité, à {prixSolo}. Dès 3 leurres achetés ({prixCollection}), le 4e est offert — au choix : un coloris en double ou le {collector}. Le total s'affiche avant le paiement, livraison comprise.
 - `FAQ.Q_SIZE` — Quelle taille et quel poids fait le leurre ?
 - `FAQ.A_SIZE` — {longueur} pour {poids}. C'est un format compact : il passe au lancer léger et se pêche aussi bien en linéaire qu'en animation.
 - `FAQ.Q_TRACK` — Comment suivre ma commande ?

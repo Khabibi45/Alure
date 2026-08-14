@@ -42,7 +42,7 @@
 ## 3. HOME
 
 - `HOME.H1` — Der zweiteilige Swimbait, gemacht für Raubfische
-- `HOME.SUBTITLE` — Schwarzbarsch, Barsch. {longueur} · {poids}. {prixSolo} pro Köder — einen kaufen, die beiden anderen zum Preis von einem, Versand inklusive ({delai}).
+- `HOME.SUBTITLE` — Schwarzbarsch, Barsch. {longueur} · {poids}. {prixSolo} pro Köder — 3 gekauft, der 4. gratis, Versand inklusive ({delai}).
 - `HOME.CTA` — Köder ansehen
 
 ### 3D-Karussell
@@ -76,7 +76,7 @@
 ## 4. PRODUCT — Seite /leurre
 
 - `PRODUCT.TITLE` — Zweiteiliger Swimbait — {prixSolo} inklusive Versand
-- `PRODUCT.DESCRIPTION` — Der Alure-Köder: zweiteiliger Swimbait, gemacht für Raubfische. {prixSolo} pro Köder, oder die Kollektion mit allen {nbColoris} Farben für {prixCollection}, mit der Sammlerfarbe gratis dazu. Versand inklusive ({delai}), Zahlung per Karte oder PayPal, 14 Tage Widerrufsrecht.
+- `PRODUCT.DESCRIPTION` — Der Alure-Köder: zweiteiliger Swimbait, gemacht für Raubfische. {prixSolo} pro Köder, einzeln erhältlich — und ab 3 gekauften Ködern der 4. gratis nach Wahl (bis zur Sammlerfarbe): 4 Köder für {prixCollection}. Versand inklusive ({delai}), Zahlung per Karte oder PayPal, 14 Tage Widerrufsrecht.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Farbe:
 - `PRODUCT.SOLD_OUT` — Ausverkauft
@@ -87,33 +87,33 @@
 - `PRODUCT.BUY_LOADING_SHORT` — Weiterleitung…
 - `PRODUCT.PAYMENT_HINT` — Zahlung per Karte oder PayPal, über Stripe.
 - `OFFER.SOLO_TITLE` — Ein Köder
-- `OFFER.SOLO_DETAIL` — In der Farbe {coloris}.
-- `OFFER.COLLECTION_TITLE` — Die Kollektion
-- `OFFER.COLLECTION_DETAIL` — Alle {nbColoris} Farben, dazu der {collector} gratis.
+- `OFFER.SOLO_DETAIL` — In der Farbe {coloris}, einzeln.
+- `OFFER.COLLECTION_TITLE` — 3 gekauft, der 4. gratis
+- `OFFER.COLLECTION_DETAIL` — Alle {nbColoris} Farben + ein 4. nach Wahl — bis zum {collector}.
 - `OFFER.PER_LURE_EXACT` — Das sind {montant} pro Köder.
 - `OFFER.PER_LURE_AT_MOST` — Das sind weniger als {montant} pro Köder.
 - `OFFER.LEGEND` — Ihr Angebot
-- `OFFER.RULE` — Einen Köder kaufen, die beiden anderen zum Preis von einem
+- `OFFER.RULE` — 3 Köder gekauft, der 4. gratis nach Wahl
 - `PROGRESS.STEP_FIRST` — Ihr erster Köder
-- `PROGRESS.STEP_OTHERS` — Die beiden anderen zum Preis von einem
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} — alle 3 Farben gehören Ihnen
-- `PROGRESS.STEP_COLLECTOR` — Der {collector}
-- `PROGRESS.COLLECTOR_DONE` — gratis zu Ihrer Kollektion
-- `PROGRESS.COLLECTOR_TODO` — gratis, sobald die 3 Farben zusammen sind
+- `PROGRESS.STEP_OTHERS` — Ihr 2. und 3. Köder
+- `PROGRESS.STEP_OTHERS_DONE` — je +{montant} — und der 4. ist gratis
+- `PROGRESS.STEP_COLLECTOR` — Der 4. — gratis, nach Wahl (bis zum {collector})
+- `PROGRESS.COLLECTOR_DONE` — wählen Sie ihn bei der Bestellung
+- `PROGRESS.COLLECTOR_TODO` — gratis, sobald 3 Köder gekauft sind
 - `PAYMENT.CARD` — Kartenzahlung
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Zahlung über Stripe — Ihre Kartendaten laufen nie über diese Website.
-- `PRODUCT.COLLECTOR_LOCKED` — Nehmen Sie die Kollektion, dann schalten Sie den {collector} frei.
+- `PRODUCT.COLLECTOR_LOCKED` — Der {collector} lässt sich ab 3 gekauften Ködern als gratis 4. Köder wählen.
 - `PRODUCT.COLLECTOR_EARNED` — Der {collector} liegt Ihrer Bestellung gratis bei.
 - `PRODUCT.VIEWER_NO_WEBGL` — Ihr Browser zeigt keine 3D an. Die Beschreibung nebenan stellt den Köder im Detail vor.
-- `PRODUCT.COLLECTOR_ALT` — Der Alure-Sammlerköder in der 3D-Ansicht, Modell {nom}, gratis zur vollständigen Kollektion. Er schwimmt auf der Stelle.
+- `PRODUCT.COLLECTOR_ALT` — Der Alure-Sammlerköder in der 3D-Ansicht, Modell {nom}, wählbar als gratis 4. Köder ab 3 gekauften. Er schwimmt auf der Stelle.
 - `PRODUCT.REASSURANCE_RETURN` — 14 Tage Widerrufsrecht
 - `PRODUCT.REASSURANCE_PAYMENT` — Zahlung über Stripe oder PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Sendungsverfolgung per E-Mail
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Einen Köder kaufen, die beiden anderen zum Preis von einem
+- `PRICING.RULE` — 3 Köder gekauft, der 4. gratis nach Wahl
 - `PRICING.TAX_LINE` — Versand inklusive · TVA non applicable, art. 293 B du CGI (keine Umsatzsteuer nach der französischen Kleinunternehmerregelung).
 - `PRICING.SAVINGS` — Sie sparen {montant}.
 
@@ -124,7 +124,7 @@
 - `FAQ.Q_SHIPPING_COST` — Was kostet die Lieferung?
 - `FAQ.A_SHIPPING_COST` — Nichts: Der Versand innerhalb Frankreichs ist im angezeigten Preis enthalten, egal welches Angebot Sie wählen.
 - `FAQ.Q_BULK` — Wird es günstiger, wenn ich mehrere nehme?
-- `FAQ.A_BULK` — Ja, deutlich. Ein einzelner Köder kostet {prixSolo}. Die Kollektion mit allen {nbColoris} Farben kostet {prixCollection} — einen Köder kaufen, die beiden anderen zum Preis von einem — und den {collector} legen wir gratis dazu. Die Summe sehen Sie vor der Zahlung, Versand inklusive.
+- `FAQ.A_BULK` — Ja. Jeder Köder ist einzeln erhältlich, für {prixSolo}. Ab 3 gekauften Ködern ({prixCollection}) ist der 4. gratis — nach Wahl: eine Farbe doppelt oder der {collector}. Die Summe sehen Sie vor der Zahlung, Versand inklusive.
 - `FAQ.Q_SIZE` — Welche Länge und welches Gewicht hat der Köder?
 - `FAQ.A_SIZE` — {longueur} bei {poids}. Ein kompaktes Format: Es lässt sich leicht werfen und fängt beim gleichmäßigen Einholen ebenso gut wie beim animierten Führen.
 - `FAQ.Q_TRACK` — Wie verfolge ich meine Bestellung?

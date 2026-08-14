@@ -45,7 +45,7 @@
 ## 3. HOME
 
 - `HOME.H1` — El señuelo articulado de dos secciones, pensado para los depredadores
-- `HOME.SUBTITLE` — Black bass, perca. {longueur} · {poids}. {prixSolo} el señuelo — un señuelo comprado, los otros dos por el precio de uno, envío incluido ({delai}).
+- `HOME.SUBTITLE` — Black bass, perca. {longueur} · {poids}. {prixSolo} el señuelo — 3 comprados, el 4º de regalo, envío incluido ({delai}).
 - `HOME.CTA` — Ver el señuelo
 
 ### Carrusel 3D
@@ -79,7 +79,7 @@
 ## 4. PRODUCT — page /leurre
 
 - `PRODUCT.TITLE` — Señuelo articulado de 2 secciones — {prixSolo} con envío incluido
-- `PRODUCT.DESCRIPTION` — El señuelo Alure: articulado en dos secciones, pensado para los depredadores. {prixSolo} el señuelo, o la colección de {nbColoris} colores por {prixCollection} con el color collector de regalo. Envío incluido ({delai}), pago con tarjeta o PayPal, 14 días de desistimiento.
+- `PRODUCT.DESCRIPTION` — El señuelo Alure: articulado en dos secciones, pensado para los depredadores. {prixSolo} el señuelo por unidad — y con 3 comprados, el 4º de regalo a elegir (hasta el color collector): 4 señuelos por {prixCollection}. Envío incluido ({delai}), pago con tarjeta o PayPal, 14 días de desistimiento.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Color:
 - `PRODUCT.SOLD_OUT` — Agotado
@@ -90,33 +90,33 @@
 - `PRODUCT.BUY_LOADING_SHORT` — Redirigiendo…
 - `PRODUCT.PAYMENT_HINT` — Pago con tarjeta o PayPal, a través de Stripe.
 - `OFFER.SOLO_TITLE` — Un señuelo
-- `OFFER.SOLO_DETAIL` — El color {coloris}.
-- `OFFER.COLLECTION_TITLE` — La colección
-- `OFFER.COLLECTION_DETAIL` — Los {nbColoris} colores + el {collector} de regalo.
+- `OFFER.SOLO_DETAIL` — El color {coloris}, por unidad.
+- `OFFER.COLLECTION_TITLE` — 3 comprados, el 4º de regalo
+- `OFFER.COLLECTION_DETAIL` — Los {nbColoris} colores + un 4º a elegir — hasta el {collector}.
 - `OFFER.PER_LURE_EXACT` — Sale a {montant} el señuelo.
 - `OFFER.PER_LURE_AT_MOST` — Sale a menos de {montant} el señuelo.
 - `OFFER.LEGEND` — Su oferta
-- `OFFER.RULE` — Un señuelo comprado, los otros dos por el precio de uno
+- `OFFER.RULE` — 3 señuelos comprados, el 4º de regalo a elegir
 - `PROGRESS.STEP_FIRST` — Su primer señuelo
-- `PROGRESS.STEP_OTHERS` — Los otros dos por el precio de uno
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} — los 3 colores son suyos
-- `PROGRESS.STEP_COLLECTOR` — El {collector}
-- `PROGRESS.COLLECTOR_DONE` — de regalo con su colección
-- `PROGRESS.COLLECTOR_TODO` — de regalo al reunir los 3 colores
+- `PROGRESS.STEP_OTHERS` — El 2º y el 3º
+- `PROGRESS.STEP_OTHERS_DONE` — +{montant} cada uno — y el 4º va de regalo
+- `PROGRESS.STEP_COLLECTOR` — El 4º — de regalo, a elegir (hasta el {collector})
+- `PROGRESS.COLLECTOR_DONE` — elíjalo con su pedido
+- `PROGRESS.COLLECTOR_TODO` — de regalo al comprar 3 señuelos
 - `PAYMENT.CARD` — Tarjeta bancaria
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — El pago se hace en Stripe: sus datos bancarios nunca pasan por esta web.
-- `PRODUCT.COLLECTOR_LOCKED` — Elija la colección para desbloquear el {collector}.
+- `PRODUCT.COLLECTOR_LOCKED` — El {collector} puede elegirse como 4º señuelo de regalo al comprar 3.
 - `PRODUCT.COLLECTOR_EARNED` — El {collector} va de regalo con su pedido.
 - `PRODUCT.VIEWER_NO_WEBGL` — Su navegador no muestra 3D. La descripción de al lado detalla el señuelo.
-- `PRODUCT.COLLECTOR_ALT` — El señuelo collector de Alure en vista 3D, modelo {nom}, de regalo con la colección completa. Nada sin avanzar.
+- `PRODUCT.COLLECTOR_ALT` — El señuelo collector de Alure en vista 3D, modelo {nom}, disponible como 4º señuelo de regalo al comprar 3. Nada sin avanzar.
 - `PRODUCT.REASSURANCE_RETURN` — 14 días de desistimiento
 - `PRODUCT.REASSURANCE_PAYMENT` — Pago con Stripe o PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Seguimiento del pedido por correo
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Un señuelo comprado, los otros dos por el precio de uno
+- `PRICING.RULE` — 3 señuelos comprados, el 4º de regalo a elegir
 - `PRICING.TAX_LINE` — envío incluido · TVA non applicable, art. 293 B du CGI (IVA no aplicable).
 - `PRICING.SAVINGS` — Ahorra {montant}.
 
@@ -127,7 +127,7 @@
 - `FAQ.Q_SHIPPING_COST` — ¿Cuánto cuesta el envío?
 - `FAQ.A_SHIPPING_COST` — Nada: el envío a Francia está incluido en el precio mostrado, sea cual sea la oferta elegida.
 - `FAQ.Q_BULK` — ¿Baja el precio si compro varios?
-- `FAQ.A_BULK` — Sí, y bastante. Un señuelo solo cuesta {prixSolo}. La colección de {nbColoris} colores cuesta {prixCollection} — un señuelo comprado, los otros dos por el precio de uno — y el {collector} va de regalo. El total se muestra antes del pago, con el envío incluido.
+- `FAQ.A_BULK` — Sí. Cada señuelo se compra por unidad, a {prixSolo}. Al comprar 3 ({prixCollection}), el 4º va de regalo — a elegir: un color repetido o el {collector}. El total se muestra antes del pago, con el envío incluido.
 - `FAQ.Q_SIZE` — ¿Qué tamaño y qué peso tiene el señuelo?
 - `FAQ.A_SIZE` — {longueur} y {poids}. Es un formato compacto: pasa bien con equipo ligero y pesca igual de bien a recuperación lineal que animado.
 - `FAQ.Q_TRACK` — ¿Cómo sigo mi pedido?

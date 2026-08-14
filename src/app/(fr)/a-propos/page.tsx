@@ -43,7 +43,7 @@ export default function AProposPage() {
         <p>
           Vous le trouvez ici en {PRODUCT.colorways.length} coloris, chacun nommé d'après sa robe —{' '}
           {PRODUCT.colorways.map((c) => c.label).join(', ')}. Le {PRODUCT.collector.label}, lui, ne
-          s'achète pas : il est offert avec la collection.
+          s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
         </p>
       </div>
 

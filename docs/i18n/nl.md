@@ -44,7 +44,7 @@
 ## 3. HOME
 
 - `HOME.H1` — De tweedelige swimbait, gemaakt voor roofvis
-- `HOME.SUBTITLE` — Black bass, baars. {longueur} · {poids}. {prixSolo} per kunstaas — één gekocht, de 2 andere voor de prijs van één, verzending inbegrepen ({delai}).
+- `HOME.SUBTITLE` — Black bass, baars. {longueur} · {poids}. {prixSolo} per kunstaas — 3 gekocht, de 4e gratis, verzending inbegrepen ({delai}).
 - `HOME.CTA` — Bekijk het kunstaas
 
 ### 3D-carrousel
@@ -78,7 +78,7 @@
 ## 4. PRODUCT — page /leurre
 
 - `PRODUCT.TITLE` — Tweedelige swimbait — {prixSolo} inclusief verzending
-- `PRODUCT.DESCRIPTION` — Het Alure-kunstaas: tweedelig, gemaakt voor roofvis. {prixSolo} per kunstaas, of de collectie van {nbColoris} kleuren voor {prixCollection} met de collector-kleur er gratis bij. Verzending inbegrepen ({delai}), betalen met kaart of PayPal, 14 dagen herroepingsrecht.
+- `PRODUCT.DESCRIPTION` — Het Alure-kunstaas: tweedelig, gemaakt voor roofvis. {prixSolo} per kunstaas, per stuk verkrijgbaar — en bij 3 gekocht de 4e gratis naar keuze (tot de collector-kleur): 4 kunstazen voor {prixCollection}. Verzending inbegrepen ({delai}), betalen met kaart of PayPal, 14 dagen herroepingsrecht.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Kleur:
 - `PRODUCT.SOLD_OUT` — Uitverkocht
@@ -89,33 +89,33 @@
 - `PRODUCT.BUY_LOADING_SHORT` — Doorsturen…
 - `PRODUCT.PAYMENT_HINT` — Betalen met kaart of PayPal, via Stripe.
 - `OFFER.SOLO_TITLE` — Eén kunstaas
-- `OFFER.SOLO_DETAIL` — De kleur {coloris}.
-- `OFFER.COLLECTION_TITLE` — De collectie
-- `OFFER.COLLECTION_DETAIL` — De {nbColoris} kleuren + de {collector} gratis.
+- `OFFER.SOLO_DETAIL` — De kleur {coloris}, per stuk.
+- `OFFER.COLLECTION_TITLE` — 3 gekocht, de 4e gratis
+- `OFFER.COLLECTION_DETAIL` — De {nbColoris} kleuren + een 4e naar keuze — tot de {collector}.
 - `OFFER.PER_LURE_EXACT` — Dat is {montant} per kunstaas.
 - `OFFER.PER_LURE_AT_MOST` — Dat is minder dan {montant} per kunstaas.
 - `OFFER.LEGEND` — Uw keuze
-- `OFFER.RULE` — Eén kunstaas gekocht, de 2 andere voor de prijs van één
+- `OFFER.RULE` — 3 kunstaas gekocht, de 4e gratis naar keuze
 - `PROGRESS.STEP_FIRST` — Uw eerste kunstaas
-- `PROGRESS.STEP_OTHERS` — De 2 andere voor de prijs van één
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} — de 3 kleuren zijn van u
-- `PROGRESS.STEP_COLLECTOR` — De {collector}
-- `PROGRESS.COLLECTOR_DONE` — gratis bij uw collectie
-- `PROGRESS.COLLECTOR_TODO` — gratis zodra u de 3 kleuren samen neemt
+- `PROGRESS.STEP_OTHERS` — Uw 2e en 3e kunstaas
+- `PROGRESS.STEP_OTHERS_DONE` — elk +{montant} — en de 4e is gratis
+- `PROGRESS.STEP_COLLECTOR` — De 4e — gratis, naar keuze (tot de {collector})
+- `PROGRESS.COLLECTOR_DONE` — kies hem bij uw bestelling
+- `PROGRESS.COLLECTOR_TODO` — gratis zodra u 3 kunstaas koopt
 - `PAYMENT.CARD` — Betaalkaart
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Betaling via Stripe — uw kaartgegevens komen nooit langs deze site.
-- `PRODUCT.COLLECTOR_LOCKED` — Neem de collectie om de {collector} te ontgrendelen.
+- `PRODUCT.COLLECTOR_LOCKED` — De {collector} kunt u kiezen als gratis 4e kunstaas zodra u er 3 koopt.
 - `PRODUCT.COLLECTOR_EARNED` — De {collector} krijgt u gratis bij uw bestelling.
 - `PRODUCT.VIEWER_NO_WEBGL` — Uw browser geeft geen 3D weer. De beschrijving hiernaast licht het kunstaas toe.
-- `PRODUCT.COLLECTOR_ALT` — Het Alure-verzamelaarsaas in 3D, model {nom}, gratis bij de volledige collectie. Het zwemt ter plaatse.
+- `PRODUCT.COLLECTOR_ALT` — Het Alure-verzamelaarsaas in 3D, model {nom}, te kiezen als gratis 4e kunstaas vanaf 3 gekocht. Het zwemt ter plaatse.
 - `PRODUCT.REASSURANCE_RETURN` — 14 dagen herroepingsrecht
 - `PRODUCT.REASSURANCE_PAYMENT` — Betalen via Stripe of PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Bestelling volgen per e-mail
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Eén kunstaas gekocht, de 2 andere voor de prijs van één
+- `PRICING.RULE` — 3 kunstaas gekocht, de 4e gratis naar keuze
 - `PRICING.TAX_LINE` — verzending inbegrepen · TVA non applicable, art. 293 B du CGI (vrijgesteld van btw volgens de Franse kleineondernemersregeling).
 - `PRICING.SAVINGS` — U bespaart {montant}.
 
@@ -126,7 +126,7 @@
 - `FAQ.Q_SHIPPING_COST` — Wat kost de verzending?
 - `FAQ.A_SHIPPING_COST` — Niets: verzending binnen Frankrijk zit in de getoonde prijs, welke formule u ook kiest.
 - `FAQ.Q_BULK` — Wordt het goedkoper als ik er meerdere neem?
-- `FAQ.A_BULK` — Ja, en flink. Eén kunstaas kost {prixSolo}. De collectie van {nbColoris} kleuren kost {prixCollection} — één gekocht, de 2 andere voor de prijs van één — en de {collector} krijgt u er gratis bij. Het totaal ziet u vóór de betaling, verzending inbegrepen.
+- `FAQ.A_BULK` — Ja. Elk kunstaas is per stuk verkrijgbaar, voor {prixSolo}. Koopt u er 3 ({prixCollection}), dan is de 4e gratis — naar keuze: een dubbele kleur of de {collector}. Het totaal ziet u vóór de betaling, verzending inbegrepen.
 - `FAQ.Q_SIZE` — Welke lengte en welk gewicht heeft het kunstaas?
 - `FAQ.A_SIZE` — {longueur} voor {poids}. Dat is een compact formaat: het gaat mee bij licht werpen en laat zich even goed gelijkmatig binnenhalen als met animatie vissen.
 - `FAQ.Q_TRACK` — Hoe volg ik mijn bestelling?
