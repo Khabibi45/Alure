@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { formatSpecs, lineupSummary } from '@/lib/shop/product'
 import { lureDisplayName, type LureModel } from '@/lib/lure-models'
@@ -78,7 +78,16 @@ function useTypewriter(lines: readonly string[], enabled: boolean) {
   return enabled ? typed : lines.slice()
 }
 
-export function LureSpecs({ model, onClose }: { model: LureModel; onClose: () => void }) {
+export function LureSpecs({
+  model,
+  onClose,
+  footer,
+}: {
+  model: LureModel
+  onClose: () => void
+  /** L'action sous les specs (consigne Camil : « Ajouter au panier » après la fiche). */
+  footer?: ReactNode
+}) {
   const [reducedMotion, setReducedMotion] = useState(false)
 
   useEffect(() => {
@@ -136,6 +145,8 @@ export function LureSpecs({ model, onClose }: { model: LureModel; onClose: () =>
           </li>
         ))}
       </ul>
+
+      {footer && <div className="mt-4">{footer}</div>}
     </aside>
   )
 }

@@ -73,6 +73,12 @@ export type LureStageEvents = {
   onError: (index: number, error: unknown) => void
   /** Pas de contexte WebGL : GPU bloqué, machine ancienne, navigateur durci. */
   onUnavailable: (error: unknown) => void
+  /**
+   * Progression RÉELLE du téléchargement d'un modèle, 0..1 — ou `null` quand le
+   * serveur n'annonce pas de taille (le chargement reste non mesurable, on ne
+   * fabrique pas de chiffre). Alimente le dessin du logo (`AlureLoader`).
+   */
+  onProgress?: (index: number, ratio: number | null) => void
 }
 
 export type LureStage = {
@@ -455,7 +461,9 @@ export function createLureStage(
         layout()
         events.onLoaded(wrapped)
       },
-      undefined,
+      (xhr) => {
+        events.onProgress?.(wrapped, xhr.total > 0 ? xhr.loaded / xhr.total : null)
+      },
       (error) => {
         // Échec bruyant : le composant affiche un vrai message, pas un cadre vide.
         requested.delete(wrapped)
