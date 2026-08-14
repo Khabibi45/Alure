@@ -8,7 +8,7 @@ import {
   COLLECTOR_LURE_MODEL,
   wrapIndex,
 } from './lure-models'
-import { PRODUCT, collectorIncluded, totalCents } from './shop/product'
+import { GIFT_CHOICE_IDS, PRODUCT, totalCents } from './shop/product'
 import { LURE_SWIM } from './three/swim.config'
 import { LURE_VIEWS, DEFAULT_LURE_VIEW, getLureView } from './three/lure-views'
 
@@ -95,15 +95,14 @@ describe('LURE_MODELS — le registre des leurres du hero', () => {
     expect(SELLABLE_LURE_MODELS.some((m) => m.collector)).toBe(false)
   })
 
-  it('ne débloque le collector qu’avec la collection', () => {
-    expect(collectorIncluded('solo')).toBe(false)
-    expect(collectorIncluded('collection')).toBe(true)
+  it('le collector est un CHOIX de cadeau — jamais un article vendu', () => {
+    expect(GIFT_CHOICE_IDS).toContain(PRODUCT.collector.id)
   })
 
   it('n’ajoute jamais le collector au montant payé', () => {
-    // Il est OFFERT : le total de la collection reste deux fois le prix d'un leurre,
-    // quel que soit le nombre d'objets réellement expédiés.
-    expect(totalCents('collection')).toBe(PRODUCT.pricing.soloCents * 2)
+    // Le 4e est OFFERT : le total de l'offre reste trois fois le prix d'un
+    // leurre, quel que soit le cadeau choisi.
+    expect(totalCents('collection')).toBe(PRODUCT.pricing.soloCents * 3)
   })
 })
 

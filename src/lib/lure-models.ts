@@ -88,14 +88,14 @@ export const LURE_MODELS: readonly LureModel[] = [
     id: 'noir',
     workingName: 'Noir',
     src: '/models/leurre-noir.glb',
-    // Ne se vend pas seul : il est offert à partir de trois leurres achetés.
+    // Ne se vend pas seul : il se CHOISIT comme 4e leurre offert (3 achetés).
     colorwayId: null,
     collector: true,
     description:
-      'Le leurre collector Alure en vue 3D, coloris « Noir collector », offert avec la collection des trois coloris. Il nage sur place.',
+      'Le leurre collector Alure en vue 3D, coloris « Pirate » : corps noir, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.',
     lines: [
       'Le collector. Il ne se vend pas : il s’obtient.',
-      'Offert avec la collection des trois coloris.',
+      'À choisir comme 4e leurre offert, dès 3 achetés.',
       'Corps noir, mêmes cotes, même nage.',
     ],
   },

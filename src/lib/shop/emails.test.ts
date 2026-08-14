@@ -26,8 +26,16 @@ describe('gabarits des emails de commande', () => {
   it('la confirmation contient le récapitulatif exact', () => {
     const text = confirmationText(order)
     expect(text).toContain(order.offerSummary)
-    // Intl formate avec une espace insécable fine (U+202F) : on normalise.
-    expect(text.replace(/\s/g, ' ')).toContain('43,98 €')
+    // Le montant vient de la source unique — jamais un chiffre en dur qui
+    // dérive quand le barème change. Intl formate avec une espace insécable
+    // fine (U+202F) : on normalise.
+    const totalAffiche = new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+    })
+      .format(totalCents('collection') / 100)
+      .replace(/\s/g, ' ')
+    expect(text.replace(/\s/g, ' ')).toContain(totalAffiche)
     expect(text).toContain('rétractation de 14 jours')
   })
 

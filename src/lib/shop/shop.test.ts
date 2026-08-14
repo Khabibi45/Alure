@@ -5,7 +5,9 @@ import {
   OFFER_IDS,
   PRODUCT,
   checkoutLines,
-  collectorIncluded,
+  GIFT_CHOICE_IDS,
+  giftLabel,
+  giftOrderableError,
   formatEuros,
   formatLength,
   formatSpecs,
@@ -26,9 +28,31 @@ const validColoris = PRODUCT.colorways[0].id
 describe('checkoutSchema (partagé client/serveur)', () => {
   it('accepte une commande valide', () => {
     expect(checkoutSchema.safeParse({ coloris: validColoris, offre: 'solo' }).success).toBe(true)
+    expect(
+      checkoutSchema.safeParse({
+        coloris: validColoris,
+        offre: 'collection',
+        cadeau: PRODUCT.collector.id,
+      }).success
+    ).toBe(true)
+  })
+
+  it('exige le choix du 4e offert avec l’offre groupée — jamais un cadeau deviné', () => {
     expect(checkoutSchema.safeParse({ coloris: validColoris, offre: 'collection' }).success).toBe(
-      true
+      false
     )
+    expect(
+      checkoutSchema.safeParse({
+        coloris: validColoris,
+        offre: 'collection',
+        cadeau: 'leurre-magique',
+      }).success
+    ).toBe(false)
+    // En solo, le cadeau n'existe pas — sa présence ne casse rien, il est ignoré en aval.
+    expect(
+      checkoutSchema.safeParse({ coloris: validColoris, offre: 'solo', cadeau: validColoris })
+        .success
+    ).toBe(true)
   })
 
   it.each(['', 'duo', 'COLLECTION', '3'])('rejette l’offre %s', (offre) => {
@@ -68,13 +92,14 @@ describe('L’offre à deux paliers — montants exacts', () => {
   // force à regarder les nouveaux montants un par un.
   it.each([
     ['solo', 2199],
-    ['collection', 4398],
+    // 2026-08-14 : « 3 achetés, le 4e offert au choix » — 3 × 2199.
+    ['collection', 6597],
   ])('%s → %s centimes', (offre, expected) => {
     expect(totalCents(offre)).toBe(expected)
   })
 
-  it('la collection vaut exactement deux fois le solo — « les 2 autres pour le prix d’un »', () => {
-    expect(totalCents('collection')).toBe(totalCents('solo') * 2)
+  it('« 3 achetés, le 4e offert » vaut exactement trois fois le solo — on paie 3 unités', () => {
+    expect(totalCents('collection')).toBe(totalCents('solo') * 3)
   })
 
   it('ne renvoie que des entiers de centimes', () => {
@@ -91,8 +116,10 @@ describe('savingsCents — l’économie annoncée est vraie', () => {
     expect(savingsCents('solo')).toBe(0)
   })
 
-  it('vaut le prix d’un leurre sur la collection', () => {
-    expect(savingsCents('collection')).toBe(PRODUCT.pricing.soloCents)
+  it('est nulle aussi sur l’offre groupée : la valeur est le CADEAU, pas une remise', () => {
+    // 3 coloris payés 3 × l'unité : aucun rabais à annoncer — le 4e offert ne
+    // se chiffre pas (le collector n'a pas de prix). Jamais une fausse économie.
+    expect(savingsCents('collection')).toBe(0)
   })
 
   it('se réfère au prix réellement pratiqué, jamais à un prix de référence gonflé', () => {
@@ -112,26 +139,37 @@ describe('perLureCents — le chiffre qui fait décider, et jamais un chiffre fa
   })
 
   it('refuse de répondre quand la division n’est pas exacte', () => {
-    // 43,98 € pour 4 leurres = 10,995 € pièce : un montant qui n'existe pas en
+    // 65,97 € pour 4 leurres = 16,4925 € pièce : un montant qui n'existe pas en
     // centimes. On préfère ne rien afficher plutôt qu'un arrondi en notre faveur.
     expect(perLureCents('collection')).toBeNull()
   })
 
-  it('annonce alors « moins de 11 € », qui est vrai et vérifiable', () => {
-    expect(perLureAtMostCents('collection')).toBe(1100)
-    expect(getOffer('collection').amountCents / luresReceived('collection')).toBeLessThan(1100)
+  it('annonce alors « moins de 17 € », qui est vrai et vérifiable', () => {
+    expect(perLureAtMostCents('collection')).toBe(1700)
+    expect(getOffer('collection').amountCents / luresReceived('collection')).toBeLessThan(1700)
   })
 
-  it('compte le collector parmi les leurres reçus', () => {
+  it('compte le cadeau parmi les leurres reçus', () => {
     expect(luresReceived('solo')).toBe(1)
-    expect(luresReceived('collection')).toBe(PRODUCT.colorways.length + 1)
+    expect(luresReceived('collection')).toBe(getOffer('collection').paidCount + 1)
   })
 })
 
-describe('collectorIncluded', () => {
-  it('n’est offert qu’avec la collection', () => {
-    expect(collectorIncluded('solo')).toBe(false)
-    expect(collectorIncluded('collection')).toBe(true)
+describe('le 4e offert, au choix (cadeau)', () => {
+  it('propose chaque coloris et le collector — rien d’autre', () => {
+    expect(GIFT_CHOICE_IDS).toEqual([
+      ...PRODUCT.colorways.map((c) => c.id),
+      PRODUCT.collector.id,
+    ])
+    expect(giftLabel(PRODUCT.collector.id)).toBe(PRODUCT.collector.label)
+    expect(giftLabel(PRODUCT.colorways[0].id)).toBe(PRODUCT.colorways[0].label)
+    expect(giftLabel('coloris-inconnu')).toBeNull()
+  })
+
+  it('le collector est toujours offrable, un coloris suit sa disponibilité', () => {
+    expect(giftOrderableError(PRODUCT.collector.id)).toBeNull()
+    expect(giftOrderableError(PRODUCT.colorways[0].id)).toBeNull()
+    expect(giftOrderableError('coloris-inconnu')).toMatch(/existe pas/i)
   })
 })
 
@@ -204,7 +242,7 @@ describe('orderableError — disponibilité réelle', () => {
 describe('formatage', () => {
   it('formate les montants de l’offre sans décimale parasite', () => {
     expect(formatEuros(totalCents('solo'))).toContain('21,99')
-    expect(formatEuros(totalCents('collection'))).toContain('43,98')
+    expect(formatEuros(totalCents('collection'))).toContain('65,97')
   })
 
   it('écrit les dimensions avec la virgule décimale française', () => {

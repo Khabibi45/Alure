@@ -28,9 +28,9 @@ export const PRODUCT = {
   id: 'alure-leurre-v1',
   name: 'Leurre Alure — articulé 2 sections',
   /**
-   * Barème dégressif, port inclus. TVA non applicable, art. 293 B du CGI.
-   * « Le premier à 25 €, chaque suivant à 13 € » — la règle tient en une phrase,
-   * et c'est cette phrase-là qui s'affiche au client.
+   * Prix à l'unité, port inclus. TVA non applicable, art. 293 B du CGI.
+   * « Chaque leurre à l'unité ; 3 achetés, le 4e offert au choix » — la règle
+   * tient en une phrase, et c'est cette phrase-là qui s'affiche au client.
    */
   pricing: {
     /** Le prix d'un leurre seul. C'est LA référence de tous les autres montants. */
@@ -63,12 +63,16 @@ export const PRODUCT = {
     },
   ] satisfies Colorway[],
   /**
-   * Le leurre collector : OFFERT avec la collection complète, jamais vendu seul.
-   * Il n'entre dans aucun calcul de montant — il ne change pas le total, il
-   * s'ajoute au colis. C'est ce qui lui donne sa valeur : on ne peut pas l'acheter.
+   * Le leurre collector : jamais vendu seul — il se CHOISIT comme 4e leurre
+   * offert (offre « 3 achetés, le 4e offert au choix », 2026-08-14). Il n'entre
+   * dans aucun calcul de montant. C'est ce qui lui donne sa valeur : on ne peut
+   * pas l'acheter. Renommé « Pirate » le 2026-08-12 (décision Camil) — le nom
+   * se propage partout d'ici : site, reçus Stripe, emails, dictionnaires
+   * ({collector}). L'`id` sert au champ `cadeau` du checkout.
    */
   collector: {
-    label: 'Noir collector',
+    id: 'pirate',
+    label: 'Pirate',
   },
   /**
    * Dimensions réelles du leurre, confirmées par Camil le 2026-08-06 (le journal
@@ -123,17 +127,21 @@ export type Offer = {
   readonly id: OfferId
   /** Libellé affiché (sélecteur d'offre, récapitulatifs). */
   readonly label: string
-  /** Nombre de coloris VENDUS (le collector n'en fait pas partie). */
+  /** Nombre de coloris VENDUS (le cadeau n'en fait pas partie). */
   readonly colorwayCount: number
   readonly amountCents: number
-  /** Le collector noir est-il inclus, offert ? */
-  readonly collector: boolean
+  /** Nombre de leurres PAYÉS, au prix de l'unité. */
+  readonly paidCount: number
+  /** Nombre de leurres OFFERTS — au choix de l'acheteur (champ `cadeau`). */
+  readonly giftCount: number
 }
 
 /**
  * Deux paliers, pas trois : un choix binaire se décide, une liste de cinq prix se
- * calcule. Le prix de la collection vaut EXACTEMENT deux fois le solo — c'est
- * « un leurre acheté, puis les 2 autres pour le prix d'un », au centime près.
+ * calcule. Chaque leurre se vend À L'UNITÉ (le solo) ; le palier 2 est
+ * « 3 ACHETÉS, LE 4e OFFERT AU CHOIX » (offre Camil 2026-08-14) : on paie trois
+ * leurres au prix de l'unité, et l'acheteur CHOISIT son 4e — un coloris en
+ * double ou le Pirate. Le montant est exactement 3 × l'unité.
  */
 export const OFFERS = {
   solo: {
@@ -141,15 +149,17 @@ export const OFFERS = {
     label: 'Un leurre',
     colorwayCount: 1,
     amountCents: PRODUCT.pricing.soloCents,
-    collector: false,
+    paidCount: 1,
+    giftCount: 0,
   },
   collection: {
     id: 'collection',
-    label: 'La collection',
+    label: '3 achetés, le 4e offert',
     colorwayCount: PRODUCT.colorways.length,
-    // « les 2 autres pour le prix d'un » : on paie deux fois le prix d'un leurre.
-    amountCents: PRODUCT.pricing.soloCents * 2,
-    collector: true,
+    // « 3 achetés » : on paie trois leurres à l'unité — jamais un prix recalculé.
+    amountCents: PRODUCT.pricing.soloCents * 3,
+    paidCount: 3,
+    giftCount: 1,
   },
 } as const satisfies Record<OfferId, Offer>
 
@@ -161,7 +171,7 @@ export const OFFERS = {
 export function priceTagline(offerId: string): string {
   assertOffer(offerId)
   return offerId === 'collection'
-    ? 'Un leurre acheté, les 2 autres pour le prix d’un · port inclus · TVA non applicable, art. 293 B du CGI.'
+    ? '3 leurres achetés, le 4e offert au choix · port inclus · TVA non applicable, art. 293 B du CGI.'
     : 'Port inclus · TVA non applicable, art. 293 B du CGI.'
 }
 
@@ -170,9 +180,9 @@ export function deliveryShort(): string {
   return `Livraison ${PRODUCT.deliveryDelay}`
 }
 
-/** « 3 coloris + 1 collector offert · 2 sections » — le résumé vrai de la gamme. */
+/** « 3 coloris + 1 collector · 2 sections » — le résumé vrai de la gamme. */
 export function lineupSummary(): string {
-  return `${PRODUCT.colorways.length} coloris + 1 collector offert · 2 sections`
+  return `${PRODUCT.colorways.length} coloris + 1 collector · 2 sections`
 }
 
 export const OFFER_IDS = Object.keys(OFFERS) as OfferId[]
@@ -204,8 +214,7 @@ export function savingsCents(offerId: string): number {
 }
 
 /**
- * Le prix par leurre, **collector compris**. C'est LE chiffre qui fait décider :
- * il tombe de 21,99 € à 11,00 € entre les deux paliers.
+ * Le prix par leurre, **cadeau compris**. C'est LE chiffre qui fait décider.
  * Retourne `null` si la division n'est pas exacte — on n'affiche jamais un prix
  * arrondi qui, remultiplié, ne redonne pas le total (principe n°1).
  */
@@ -216,37 +225,59 @@ export function perLureCents(offerId: string): number | null {
   return offer.amountCents % lures === 0 ? offer.amountCents / lures : null
 }
 
-/** Nombre d'objets réellement expédiés, collector compris. */
+/** Nombre d'objets réellement expédiés, cadeau compris. */
 export function luresReceived(offerId: string): number {
   assertOffer(offerId)
   const offer = OFFERS[offerId]
-  return offer.colorwayCount + (offer.collector ? 1 : 0)
+  return offer.paidCount + offer.giftCount
 }
 
 /**
  * Le prix par leurre arrondi à l'euro SUPÉRIEUR, à n'annoncer qu'avec « moins de ».
  *
- * 43,98 € pour 4 leurres font 10,995 € pièce : un montant qui n'existe pas en
- * centimes. Plutôt que d'écrire « 11,00 € » — faux, et faux en notre faveur — on
- * annonce « moins de 11 € », qui est vrai et se vérifie.
+ * 65,97 € pour 4 leurres font 16,4925 € pièce : un montant qui n'existe pas en
+ * centimes. Plutôt que d'écrire « 16,49 € » — faux, et faux en notre faveur — on
+ * annonce « moins de 17 € », qui est vrai et se vérifie.
  */
 export function perLureAtMostCents(offerId: string): number {
   assertOffer(offerId)
   return Math.ceil(OFFERS[offerId].amountCents / luresReceived(offerId) / 100) * 100
 }
 
-/** Le récapitulatif d'une commande, en une ligne — emails, logs, dashboard. */
-export function offerSummary(offerId: string, colorwayLabel: string): string {
+/**
+ * Le récapitulatif d'une commande, en une ligne — emails, logs, dashboard.
+ * `giftLabel` : le 4e leurre choisi (webhook) — « au choix » s'il manque
+ * (métadonnée d'une ancienne commande : on ne devine pas).
+ */
+export function offerSummary(offerId: string, colorwayLabel: string, giftLabel?: string): string {
   assertOffer(offerId)
   const offer = OFFERS[offerId]
-  return offer.collector
-    ? `La collection — ${offer.colorwayCount} coloris + le ${PRODUCT.collector.label} offert`
+  return offer.giftCount > 0
+    ? `3 achetés — les ${offer.colorwayCount} coloris + le 4e offert : ${giftLabel ?? 'au choix'}`
     : `1 leurre — ${colorwayLabel}`
 }
 
-export function collectorIncluded(offerId: string): boolean {
-  assertOffer(offerId)
-  return OFFERS[offerId].collector
+/* ──────────── Le 4e leurre offert, au choix (champ `cadeau`) ──────────── */
+
+/** Les choix possibles du cadeau : chaque coloris, ou le collector. */
+export const GIFT_CHOICE_IDS: readonly string[] = [
+  ...PRODUCT.colorways.map((c) => c.id),
+  PRODUCT.collector.id,
+]
+
+/** Le libellé public d'un choix de cadeau — `null` si l'identifiant est inconnu. */
+export function giftLabel(giftId: string): string | null {
+  if (giftId === PRODUCT.collector.id) return PRODUCT.collector.label
+  return getColorway(giftId)?.label ?? null
+}
+
+/**
+ * Le cadeau est-il réellement offrable ? Le collector l'est toujours (il ne
+ * connaît pas la rupture d'un coloris) ; un coloris suit sa disponibilité.
+ */
+export function giftOrderableError(giftId: string): string | null {
+  if (giftId === PRODUCT.collector.id) return null
+  return orderableError(giftId)
 }
 
 /** Une ligne de commande telle qu'elle part chez Stripe et s'affiche au client. */
@@ -259,12 +290,17 @@ export type CheckoutLine = {
 /**
  * Décompose une commande en lignes facturables.
  *
- * Le collector apparaît comme une ligne à **0,00 €** : l'acheteur voit ce qu'il
- * reçoit, et le total ne bouge pas. Invariant garanti par le test : la somme des
- * lignes vaut exactement `totalCents(offre)` — c'est lui qui interdit l'écart entre
- * le montant affiché et le montant encaissé.
+ * Le reçu dit l'offre telle qu'elle est vendue : chaque leurre à l'UNITÉ.
+ * « 3 achetés, le 4e offert » = 3 × le prix unitaire, puis le 4e — CHOISI par
+ * l'acheteur — en ligne à **0,00 €**. Invariant garanti par le test : la somme
+ * des lignes vaut exactement `totalCents(offre)` — c'est lui qui interdit
+ * l'écart entre le montant affiché et le montant encaissé.
  */
-export function checkoutLines(offerId: string, colorwayLabel: string): CheckoutLine[] {
+export function checkoutLines(
+  offerId: string,
+  colorwayLabel: string,
+  chosenGiftLabel?: string
+): CheckoutLine[] {
   assertOffer(offerId)
   const offer = OFFERS[offerId]
 
@@ -276,13 +312,13 @@ export function checkoutLines(offerId: string, colorwayLabel: string): CheckoutL
 
   return [
     {
-      name: `${PRODUCT.name} · la collection (${offer.colorwayCount} coloris)`,
-      quantity: 1,
-      unitAmountCents: offer.amountCents,
+      name: `${PRODUCT.name} · à l'unité`,
+      quantity: offer.paidCount,
+      unitAmountCents: PRODUCT.pricing.soloCents,
     },
     {
-      name: `${PRODUCT.name} · coloris collector — offert`,
-      quantity: 1,
+      name: `${PRODUCT.name} · 4e offert${chosenGiftLabel ? ` — ${chosenGiftLabel}` : ' au choix'}`,
+      quantity: offer.giftCount,
       unitAmountCents: 0,
     },
   ]
