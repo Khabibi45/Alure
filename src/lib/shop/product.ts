@@ -14,10 +14,21 @@
  * la classe de bug que le principe n°1 interdit. Un seul chemin : `totalCents()`.
  */
 
+import { DEFAULT_LOCALE, type Locale } from '@/lib/i18n/paths'
+
 export type Colorway = {
   id: string
   /** Nom affiché (site, Stripe, emails). */
   label: string
+  /**
+   * Le nom court des cases du panier, où la place manque (375 px, 4 cases).
+   *
+   * CONTRAINTE, tenue par un test : `shortLabel` doit être un PRÉFIXE de
+   * `label`. C'est ce qui satisfait WCAG 2.5.3 « Label in Name » — le texte
+   * visible d'un contrôle doit être contenu dans son nom accessible, sinon la
+   * commande vocale (« clique sur Truite ») n'atteint pas la cible.
+   */
+  shortLabel: string
   /** Passé à false à la main en cas de rupture : affiché « Épuisé », non commandable. */
   available: boolean
   /** Visuel produit (rendu 3D maison, `public/produit/`) — jamais une image fournisseur. */
@@ -51,13 +62,21 @@ export const PRODUCT = {
     {
       id: 'coloris-1',
       label: 'Truite arc-en-ciel',
+      shortLabel: 'Truite',
       available: true,
       image: '/produit/leurre-truite.webp',
     },
-    { id: 'coloris-2', label: 'Perche', available: true, image: '/produit/leurre-perche.webp' },
+    {
+      id: 'coloris-2',
+      label: 'Perche',
+      shortLabel: 'Perche',
+      available: true,
+      image: '/produit/leurre-perche.webp',
+    },
     {
       id: 'coloris-3',
       label: 'Orange feu',
+      shortLabel: 'Orange',
       available: true,
       image: '/produit/leurre-orange.webp',
     },
@@ -87,31 +106,36 @@ export const PRODUCT = {
   deliveryDelay: '10 à 20 jours ouvrés',
 } as const
 
-/** La convention décimale de chaque langue servie (multilingue, docs/i18n/). */
-const NUMBER_LOCALES: Record<string, string> = {
+/**
+ * La convention décimale de chaque langue servie (multilingue, docs/i18n/).
+ *
+ * Typée `Record<Locale, string>` À DESSEIN : c'est le compilateur qui garantit
+ * qu'aucune langue servie n'est oubliée ici. Avec un `Record<string, string>` et
+ * un repli `?? 'fr-FR'`, une langue ajoutée sortait « 6,5 » ponctué en français
+ * sans que rien ne le signale — la dégradation silencieuse qu'interdit le
+ * principe n°1. Ajouter une langue casse maintenant le build, et c'est le but.
+ */
+const NUMBER_LOCALES: Record<Locale, string> = {
   fr: 'fr-FR',
   en: 'en-GB',
-  es: 'es-ES',
-  de: 'de-DE',
-  nl: 'nl-NL',
 }
 
-function formatNumber(value: number, locale: string): string {
-  return new Intl.NumberFormat(NUMBER_LOCALES[locale] ?? 'fr-FR').format(value)
+function formatNumber(value: number, locale: Locale): string {
+  return new Intl.NumberFormat(NUMBER_LOCALES[locale]).format(value)
 }
 
-/** « 6,5 cm » — virgule décimale française par défaut, point en anglais, etc. */
-export function formatLength(locale: string = 'fr'): string {
+/** « 6,5 cm » — virgule décimale en français, point en anglais. */
+export function formatLength(locale: Locale = DEFAULT_LOCALE): string {
   return `${formatNumber(PRODUCT.specs.lengthCm, locale)} cm`
 }
 
 /** « 6,5 g ». */
-export function formatWeight(locale: string = 'fr'): string {
+export function formatWeight(locale: Locale = DEFAULT_LOCALE): string {
   return `${formatNumber(PRODUCT.specs.weightGrams, locale)} g`
 }
 
 /** « 6,5 cm · 6,5 g » — la forme courte affichée à côté du produit. */
-export function formatSpecs(locale: string = 'fr'): string {
+export function formatSpecs(locale: Locale = DEFAULT_LOCALE): string {
   return `${formatLength(locale)} · ${formatWeight(locale)}`
 }
 
@@ -306,7 +330,11 @@ export function checkoutLines(
 
   if (offer.id === 'solo') {
     return [
-      { name: `${PRODUCT.name} · ${colorwayLabel}`, quantity: 1, unitAmountCents: offer.amountCents },
+      {
+        name: `${PRODUCT.name} · ${colorwayLabel}`,
+        quantity: 1,
+        unitAmountCents: offer.amountCents,
+      },
     ]
   }
 
@@ -340,7 +368,24 @@ export function orderableError(
   return null
 }
 
-/** Formatage d'un montant en centimes pour l'affichage : 2199 → « 21,99 € ». */
-export function formatEuros(cents: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(cents / 100)
+/**
+ * Formatage d'un montant en centimes : 2199 → « 21,99 € » en français,
+ * « €21.99 » en anglais.
+ *
+ * La langue est un PARAMÈTRE, avec le français par défaut. Elle était figée à
+ * `fr-FR` : la page anglaise affichait donc « 21,99 € », une virgule décimale
+ * et un symbole postposé qu'un anglophone lit mal — et qui laissait croire à
+ * une conversion approximative sur le seul écran qui doit être limpide, celui
+ * du prix.
+ *
+ * Le défaut français n'est pas un repli paresseux : les emails, le reçu Stripe
+ * et les pages légales restent en français par décision (le montant vu à
+ * l'achat doit être celui du reçu), et ils appellent tous cette fonction sans
+ * argument.
+ */
+export function formatEuros(cents: number, locale: Locale = DEFAULT_LOCALE): string {
+  return new Intl.NumberFormat(NUMBER_LOCALES[locale], {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(cents / 100)
 }

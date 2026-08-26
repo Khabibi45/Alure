@@ -1,11 +1,20 @@
 import type { MetadataRoute } from 'next'
 import { SITE } from '@/lib/site-config'
 import { LEGAL_COMPLETE } from '@/lib/legal-config'
-import { PREFIXED_LOCALES, localePath, hreflangAlternates } from '@/lib/i18n/paths'
+import { PREFIXED_LOCALES, TRANSLATED_PATHS, localePath, hreflangAlternates } from '@/lib/i18n/paths'
 
-/** Les chemins qui existent dans TOUTES les langues (README i18n §4 : une
- *  entrée de sitemap par langue, hreflang réciproques). */
-const TRANSLATED_PATHS = ['/', '/faq'] as const
+/**
+ * Les chemins traduits viennent de `paths.ts` — la SOURCE UNIQUE, celle que le
+ * sélecteur de langue et les hreflang consultent déjà. Ce fichier en gardait sa
+ * propre copie : les deux ont divergé le jour où les routes anglaises ont été
+ * créées, et le sitemap aurait continué d'annoncer deux pages sur onze.
+ *
+ * Les pages hors index (`/merci`, et les pages légales tant que
+ * `legal-config.ts` n'est pas rempli) sont retirées ci-dessous — dans les DEUX
+ * langues, sinon la version anglaise d'une page exclue se ferait indexer.
+ */
+const HORS_INDEX: readonly string[] = ['/merci']
+const LEGALES: readonly string[] = ['/mentions-legales', '/cgv', '/retractation', '/confidentialite']
 
 function absolute(languages: Record<string, string>): Record<string, string> {
   return Object.fromEntries(
@@ -61,7 +70,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Les versions traduites des pages qui existent dans toutes les langues.
     ...PREFIXED_LOCALES.flatMap((locale) =>
-      TRANSLATED_PATHS.map((path) => ({
+      TRANSLATED_PATHS.filter(
+        (path) => !HORS_INDEX.includes(path) && (LEGAL_COMPLETE || !LEGALES.includes(path))
+      ).map((path) => ({
         url: `${SITE.url}${localePath(locale, path)}`,
         lastModified: new Date(),
         changeFrequency: 'monthly' as const,

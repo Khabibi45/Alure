@@ -1,50 +1,54 @@
 # Multilingue — le standard
 
-> **Statut : contenu prêt, mise en ligne BLOQUÉE par une décision commerciale.** Lire le §0
-> avant tout. Les fichiers de langue sont complets et utilisables ; ce qui manque n'est pas du
-> texte, c'est une décision.
+> **Statut : décision prise le 2026-08-25 — issue n°2.** Le site sert le français et l'anglais,
+> et la livraison reste limitée à la France. Ce qui reste à faire n'est plus une décision : c'est
+> d'AFFICHER cette limite. Lire le §0.
 
 Ce dossier contient **tout le texte visible du site**, langue par langue. Un fichier par langue,
 les mêmes clés dans le même ordre partout. Le français fait foi.
 
 | Fichier | Langue | Statut |
 |---|---|---|
-| [`fr.md`](./fr.md) | Français | **référence** — c'est la source, les autres en dérivent |
+| [`fr.md`](./fr.md) | Français | **référence** — c'est la source, l'anglais en dérive |
 | [`en.md`](./en.md) | Anglais | adapté |
-| [`es.md`](./es.md) | Espagnol | adapté |
-| [`de.md`](./de.md) | Allemand | adapté |
-| [`nl.md`](./nl.md) | Néerlandais | adapté |
+
+> **Deux langues, et deux seulement** (décision Camil, 2026-08-25). L'espagnol, l'allemand et le
+> néerlandais ont été retirés : `git show 525df8c:docs/i18n/es.md` les fait ressortir si besoin.
+> Le périmètre est tenu par `LOCALES` (`src/lib/i18n/paths.ts`) et par `src/lib/i18n.test.ts`,
+> qui refuse que les deux divergent.
 
 ---
 
-## 0. Le blocage à lever avant de publier une seule de ces langues
+## 0. La contrepartie de la version anglaise
 
 **Le site ne livre qu'en France.** C'est écrit dans le code
 (`shipping_address_collection.allowed_countries: ['FR']`) et assumé comme hors-scope dans
 [`../specs/boutique.md`](../specs/boutique.md).
 
-Publier une version allemande ou espagnole d'une boutique qui refuse l'adresse de livraison au
-moment de payer, c'est **faire venir des gens pour rien** — et c'est le genre de parcours qui
-génère des litiges, or les litiges gèlent un compte Stripe. Ce n'est pas un détail de traduction :
-c'est la première chose à trancher.
+C'est pour cette raison que l'espagnol, l'allemand et le néerlandais ont été retirés le
+2026-08-25 : publier une boutique qui refuse l'adresse de livraison au moment de payer, c'est
+faire venir des gens pour rien, et les litiges gèlent un compte Stripe.
 
-Trois issues, à choisir explicitement :
+**L'anglais, lui, reste** — mais à une condition, et elle n'est pas négociable :
 
-1. **Ouvrir la livraison à ces pays.** Alors il faut, *avant* de publier : le coût réel
-   d'expédition par zone (déjà signalé par Camil le 2026-08-06 : « en fonction des régions et des
-   pays ça va leur revenir beaucoup plus cher »), les **délais par zone** (le « 10 à 20 jours
-   ouvrés » actuel est une promesse France), la **TVA** — une micro-entreprise en franchise
-   art. 293 B qui vend à des particuliers d'autres pays de l'UE entre dans le régime des ventes à
-   distance et son seuil ; et la **rétractation 14 jours** vaut dans toute l'UE, donc le retour
-   depuis l'étranger doit être décidé. **Aucun de ces points ne se devine — ils se vérifient.**
-2. **Publier en anglais seulement**, comme langue de lecture pour des visiteurs francophones ou
-   internationaux, en indiquant clairement « nous n'expédions qu'en France » **au-dessus du
-   bouton d'achat**, pas dans une FAQ.
-3. **Ne rien publier** et garder ces fichiers comme travail préparatoire.
+> La mention « livraison France uniquement » doit s'afficher **au-dessus du bouton d'achat**,
+> pas dans une FAQ. Les clés `SHIPPING_NOTICE.TITLE` et `SHIPPING_NOTICE.BODY` existent pour ça.
 
-**Tant que ce n'est pas tranché, chaque fichier de langue porte en tête l'encadré
-`SHIPPING_NOTICE`** — il dit la vérité au visiteur. Le supprimer sans avoir ouvert la livraison
-serait un mensonge, pas une simplification.
+Un visiteur qui lit le site en anglais n'a **aucune raison** de supposer que la boutique n'expédie
+qu'en France. Le lui cacher jusqu'au formulaire d'adresse, c'est le laisser payer d'abord et
+découvrir ensuite.
+
+> ⚠️ **État réel au 2026-08-25 : ces deux clés ne sont affichées NULLE PART.** Elles existent dans
+> les deux dictionnaires et aucun composant ne les lit. Tant que ce n'est pas corrigé, la version
+> anglaise ne respecte pas sa propre condition de publication. C'est la tâche ouverte n°1 de ce
+> dossier, et elle est inscrite dans `docs/ROADMAP.md`.
+
+Si la livraison s'ouvrait un jour à d'autres pays, ce sont **ces points-là** qu'il faudrait
+trancher avant, jamais après : le coût réel d'expédition par zone, les délais par zone (le « 10 à
+20 jours ouvrés » est une promesse France), la TVA (une micro-entreprise en franchise art. 293 B
+qui vend à des particuliers de l'UE entre dans le régime des ventes à distance et son seuil), et
+la rétractation 14 jours, qui vaut dans toute l'UE — donc le retour depuis l'étranger. Aucun de
+ces points ne se devine.
 
 ---
 

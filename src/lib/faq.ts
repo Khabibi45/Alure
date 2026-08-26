@@ -26,8 +26,8 @@ export function faqItems(locale: Locale): FaqItem[] {
   const dict = getDictionary(locale)
   const params = {
     delai: t(dict, 'PRODUCT.DELAY_VALUE'),
-    prixSolo: formatEuros(PRODUCT.pricing.soloCents),
-    prixCollection: formatEuros(OFFERS.collection.amountCents),
+    prixSolo: formatEuros(PRODUCT.pricing.soloCents, locale),
+    prixCollection: formatEuros(OFFERS.collection.amountCents, locale),
     nbColoris: String(PRODUCT.colorways.length),
     collector: PRODUCT.collector.label,
     longueur: formatLength(locale),
