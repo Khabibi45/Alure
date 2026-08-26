@@ -64,6 +64,14 @@ type HeroScrollProps = {
   /** Le titre `sr-only` de la page — aucun texte visible sur la scène. */
   overlay: React.ReactNode
   /**
+   * Le libellé du chargeur, dans la langue servie. En prop et non en dur : ce
+   * composant est `'use client'` et s'affiche aussi sur `/en`, où « Chargement. »
+   * était le dernier mot français visible du hero (règle Alure n°6).
+   */
+  loadingLabel: string
+  /** Le message d'échec de la séquence d'images, dans la langue servie. */
+  framesFailedLabel: string
+  /**
    * `true` = l'hybride `cine` : la vidéo se joue d'abord PAR-DESSUS la scène,
    * puis dépose le visiteur en bas de la section — là où le carrousel 3D est
    * révélé. Remonter fait alors défiler la séquence à rebours, redescendre
@@ -74,7 +82,13 @@ type HeroScrollProps = {
   intro?: boolean
 }
 
-export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps) {
+export function HeroScroll({
+  children,
+  overlay,
+  intro = false,
+  loadingLabel,
+  framesFailedLabel,
+}: HeroScrollProps) {
   const sectionRef = useRef<HTMLElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const framesRef = useRef<HTMLImageElement[]>([])
@@ -303,13 +317,13 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
 
         {status === 'failed' && (
           <p className="absolute inset-x-0 top-8 px-6 text-center text-sm text-muted-foreground">
-            Les images de la séquence n’ont pas pu se charger.
+            {framesFailedLabel}
           </p>
         )}
 
         {status === 'loading' && (
           <div className="absolute inset-0 flex items-center justify-center text-foreground">
-            <AlureLoader progress={manifest ? loaded / manifest.count : null} />
+            <AlureLoader progress={manifest ? loaded / manifest.count : null} label={loadingLabel} />
           </div>
         )}
 
@@ -371,7 +385,7 @@ export function HeroScroll({ children, overlay, intro = false }: HeroScrollProps
               <AlureLoader
                 progress={manifest ? loaded / manifest.count : null}
                 // Chargement accompli → le logo redevient le lock-up : ALURE.
-                label={manifest && loaded >= manifest.count ? 'Alure.' : 'Chargement.'}
+                label={manifest && loaded >= manifest.count ? 'Alure.' : loadingLabel}
                 showPercent={!manifest || loaded < manifest.count}
                 className="text-background drop-shadow-[0_0_16px_rgba(255,255,255,0.35)]"
                 arrowClassName="w-64 sm:w-80"

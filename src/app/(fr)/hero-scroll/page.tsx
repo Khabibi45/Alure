@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/home/Hero'
+import { carouselStrings } from '@/lib/i18n/chrome'
 import { getDictionary, t } from '@/lib/i18n'
 
 /**
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
 export default function HeroScrollPage() {
   return (
     <main>
-      <Hero variant="scroll" title={t(getDictionary('fr'), 'HOME.H1')} />
+      <Hero variant="scroll"
+        strings={carouselStrings('fr')} title={t(getDictionary('fr'), 'HOME.H1')} />
     </main>
   )
 }

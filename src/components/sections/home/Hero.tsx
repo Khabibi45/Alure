@@ -3,6 +3,7 @@ import { HeroScroll } from './HeroScroll'
 import { HeroVideo } from './HeroVideo'
 import { LureCarousel } from './LureCarousel'
 import type { HeroVariant } from '@/lib/hero-variant'
+import type { CarouselStrings } from './carousel-strings'
 
 /**
  * Le hero de l'accueil : la séquence au scroll (le leurre qui traverse la
@@ -29,10 +30,17 @@ function HeroCopy({ title }: { title: string }) {
 export function Hero({
   variant = 'cine',
   title,
+  strings,
 }: {
   variant?: HeroVariant
   /** Le `<h1>` sr-only de la page — vient du dictionnaire de la langue servie. */
   title: string
+  /**
+   * Les textes du carrousel, préparés côté serveur. Sans eux, tout le hero
+   * restait en français sur `/en` — c'était la cause racine du « tout ne se
+   * traduit pas » (CLAUDE.md, règle Alure n°6).
+   */
+  strings: CarouselStrings
 }) {
   return (
     // `overflow-x-clip` : la flèche filigrane dépasse VOLONTAIREMENT du cadre —
@@ -45,11 +53,16 @@ export function Hero({
 
       {variant === 'video' ? (
         <HeroVideo overlay={<HeroCopy title={title} />}>
-          <LureCarousel />
+          <LureCarousel strings={strings} />
         </HeroVideo>
       ) : (
-        <HeroScroll intro={variant === 'cine'} overlay={<HeroCopy title={title} />}>
-          <LureCarousel />
+        <HeroScroll
+          intro={variant === 'cine'}
+          overlay={<HeroCopy title={title} />}
+          loadingLabel={strings.loading}
+          framesFailedLabel={strings.framesFailed}
+        >
+          <LureCarousel strings={strings} />
         </HeroScroll>
       )}
     </div>

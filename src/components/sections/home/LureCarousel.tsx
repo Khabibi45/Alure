@@ -4,13 +4,21 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { LURE_MODELS, lureDisplayName, wrapIndex, type LureModel } from '@/lib/lure-models'
-import { OFFERS, PRODUCT, formatEuros, getColorway, totalCents } from '@/lib/shop/product'
-import { resolveOffer } from '@/lib/shop/collection-selection'
+import { PRODUCT, getColorway } from '@/lib/shop/product'
+import {
+  CART_MAX,
+  cartBoxState,
+  cartStatus,
+  collectionAvailable,
+  giftBoxState,
+  isInCart,
+} from '@/lib/shop/collection-selection'
+import { fill } from '@/lib/i18n/fill'
+import type { CarouselStrings } from './carousel-strings'
 import { DEFAULT_LURE_VIEW, LURE_VIEWS, getLureView, type LureViewId } from '@/lib/three/lure-views'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { AlureLoader } from '@/components/ui/AlureLoader'
-import { CollectionStrip } from './CollectionStrip'
 import { useCollectionSelection } from './use-collection-selection'
 import { createLureStage, type LureStage } from './lure-stage'
 import { LureSpecs } from './LureSpecs'
@@ -33,7 +41,7 @@ type Status = 'loading' | 'ready' | 'unsupported' | 'failed'
  * horizontal, une molette horizontale, les flèches du clavier et les boutons
  * changent de leurre.
  */
-export function LureCarousel() {
+export function LureCarousel({ strings }: { strings: CarouselStrings }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const frameRef = useRef<HTMLDivElement | null>(null)
   const stageRef = useRef<LureStage | null>(null)
@@ -48,8 +56,8 @@ export function LureCarousel() {
   const [specsOpen, setSpecsOpen] = useState(false)
   /** Progression réelle du téléchargement de chaque modèle (`null` = non mesurable). */
   const [modelProgress, setModelProgress] = useState<Record<number, number | null>>({})
-  /** Le « panier » de la frise : un COMPTEUR de leurres — n'importe lequel compte. */
-  const { selection, add, removeOne } = useCollectionSelection()
+  /** Le panier : un ENSEMBLE de coloris distincts — il montre le colis. */
+  const { selection, toggle, clear } = useCollectionSelection()
 
   const active = wrapIndex(target)
   const activeModel = LURE_MODELS[active]
@@ -168,31 +176,11 @@ export function LureCarousel() {
     if (index >= 0) setTarget((now) => now + ringStep(now, index))
   }, [])
 
-  /**
-   * L'action du bouton unique : ajouter le leurre affiché, puis AVANCER tout
-   * seul — vers le prochain coloris tant qu'on est sous les 2 achetés, vers le
-   * Pirate débloqué dès qu'ils y sont. Un clic = un pas de l'entonnoir.
-   */
-  const addAndAdvance = (colorwayId: string) => {
-    add(colorwayId)
-    const next = [...selection, colorwayId]
-    if (next.length >= OFFERS.collection.paidCount) {
-      jumpToCollector()
-    } else {
-      // On montre un AUTRE coloris pour la variété — mais n'importe quel leurre
-      // compte, y compris le même une deuxième fois.
-      const upcoming =
-        PRODUCT.colorways.find((c) => c.available && !next.includes(c.id)) ??
-        PRODUCT.colorways.find((c) => c.available && c.id !== colorwayId)
-      if (upcoming) jumpToColorway(upcoming.id)
-    }
-  }
-
-  /** Depuis le Pirate verrouillé : amène sur un coloris achetable. */
-  const seekColorway = () => {
-    const target = PRODUCT.colorways.find((c) => c.available)
-    if (target) jumpToColorway(target.id)
-  }
+  // L'auto-avance après un ajout a été SUPPRIMÉE (2026-08-25) : elle faisait
+  // pivoter le carrousel vers un autre leurre dans le même geste que le clic,
+  // si bien que le visiteur voyait disparaître ce qu'il venait d'ajouter, sans
+  // aucune confirmation. Désormais l'objet reste sous les yeux, et c'est sa
+  // case qui se coche.
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return
@@ -275,46 +263,39 @@ export function LureCarousel() {
 
         {broken && (
           <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-muted-foreground">
-            {status === 'unsupported'
-              ? 'Votre navigateur n’affiche pas la 3D. Les photos du leurre sont sur la page produit.'
-              : 'Le modèle 3D n’a pas pu se charger. Les photos du leurre sont sur la page produit.'}
+            {status === 'unsupported' ? strings.noWebgl : strings.modelFailed}
           </p>
         )}
 
         {!broken && !isActiveLoaded && (
           <div className="absolute inset-0 flex items-center justify-center text-foreground">
-            <AlureLoader progress={modelProgress[active] ?? null} />
+            <AlureLoader progress={modelProgress[active] ?? null} label={strings.loading} />
           </div>
         )}
 
         {/* Le canvas est aria-hidden : voici ce qu'il montre, pour qui ne le voit pas. */}
         <p className="sr-only" aria-live="polite">
-          {activeModel.description} Vue : {activeView.description}.
+          {fill(strings.modelAlt, {
+            nom: lureDisplayName(activeModel),
+            vue: strings.viewDescriptions[activeView.id],
+          })}
         </p>
       </div>
 
-      {/* La frise collection (décision Camil 2026-08-12), sous le header (surcouche
-          fixe de ~4,5rem), et la fiche technique DANS LA MÊME COLONNE DE FLUX :
-          la fiche s'ouvre SOUS la frise — le chevauchement est impossible par
-          construction, quelle que soit la hauteur de l'une ou de l'autre
-          (itération Camil : « rien ne doit se chevaucher »). */}
+      {/* La frise collection a été SUPPRIMÉE (consigne Camil 2026-08-20) : l'offre
+          se raconte par les deux boutons du bas et leur ligne de statut. La fiche
+          technique garde sa colonne sous le header (surcouche fixe de ~4,5rem). */}
       <div className="pointer-events-none absolute inset-x-0 top-16 z-30 flex flex-col items-center gap-3 px-4 md:top-18 [&>*]:pointer-events-auto">
-        <CollectionStrip
-          selection={selection}
-          activeColorwayId={activeModel.colorwayId}
-          onJumpCollector={jumpToCollector}
-        />
-
         {specsOpen && (
           <LureSpecs
             model={activeModel}
             onClose={() => setSpecsOpen(false)}
             footer={
-              <AddToCollection
+              <SheetAction
                 model={activeModel}
                 selection={selection}
-                onAdd={add}
-                onRemove={removeOne}
+                strings={strings}
+                onToggle={toggle}
               />
             }
           />
@@ -325,229 +306,321 @@ export function LureCarousel() {
           2026-08-14) : le Pirate se montre nu, la frise et le bouton unique
           racontent l'offre. Cliquer le leurre ouvre la fiche, comme les autres. */}
 
-
       {/* Les commandes flottent au-dessus du cadre plein écran. `pointer-events`
           rendus aux seuls contrôles : le reste de la bande laisse passer le
           glissé sur le leurre. */}
       {/* Compact au général (itération Camil) : segmented réduit, flèches et
           bouton un cran plus petits, interlignes resserrés. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-5 z-10 flex flex-col items-center gap-2 [&>*]:pointer-events-auto">
-      {!broken && (
-        <SegmentedControl
-          ariaLabel="Angle de vue du leurre"
-          value={view}
-          onChange={setView}
-          options={LURE_VIEWS.map((v) => ({ value: v.id, label: v.label }))}
-          className="px-seg--sm"
-        />
-      )}
+        {!broken && (
+          <SegmentedControl
+            ariaLabel={strings.viewsLabel}
+            value={view}
+            onChange={setView}
+            options={LURE_VIEWS.map((v) => ({ value: v.id, label: strings.views[v.id] }))}
+            className="px-seg--sm"
+          />
+        )}
 
-      {!broken && (
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => go(-1)}
-            aria-label="Leurre précédent"
-            className="px-btn px-btn--ghost px-btn--md !h-8 !px-2.5"
-          >
-            <ChevronLeft aria-hidden="true" className="size-4" />
-          </button>
+        {!broken && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => go(-1)}
+              aria-label={strings.previous}
+              className="px-btn px-btn--ghost px-btn--md !h-8 !px-2.5"
+            >
+              <ChevronLeft aria-hidden="true" className="size-4" />
+            </button>
 
-          <div className="flex items-center gap-1.5">
-            {LURE_MODELS.map((model, index) => {
-              const current = index === active
-              return (
-                <button
-                  key={model.id}
-                  type="button"
-                  // On vise l'occurrence la plus proche du leurre demandé : depuis
-                  // le dernier, cliquer le premier avance d'un cran au lieu de
-                  // rembobiner toute la liste.
-                  onClick={() => setTarget((now) => now + ringStep(now, index))}
-                  aria-label={`Afficher le leurre ${lureDisplayName(model)}`}
-                  aria-current={current ? 'true' : undefined}
-                  className={`h-2.5 rounded-full transition-[width,background-color] duration-[var(--dur-element)] ease-[var(--ease-out-soft)] ${
-                    current ? 'w-6 bg-foreground' : 'w-2.5 bg-border hover:bg-muted-foreground'
-                  }`}
-                />
-              )
-            })}
+            <p
+              className="text-label min-w-32 text-center text-muted-foreground uppercase"
+              translate="no"
+            >
+              {lureDisplayName(activeModel)}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => go(1)}
+              aria-label={strings.next}
+              className="px-btn px-btn--ghost px-btn--md !h-8 !px-2.5"
+            >
+              <ChevronRight aria-hidden="true" className="size-4" />
+            </button>
           </div>
+        )}
 
-          <button
-            type="button"
-            onClick={() => go(1)}
-            aria-label="Leurre suivant"
-            className="px-btn px-btn--ghost px-btn--md !h-8 !px-2.5"
-          >
-            <ChevronRight aria-hidden="true" className="size-4" />
-          </button>
-        </div>
-      )}
-
-      {!broken && (
-        <p className="text-label text-muted-foreground uppercase">
-          {lureDisplayName(activeModel)}
-        </p>
-      )}
-
-      {/* LE bouton (itération Camil : « un bouton, beaucoup d'actions ») —
-          toujours visible, il porte tout l'entonnoir. Le retrait, plus rare,
-          reste dans la fiche (clic sur le leurre). */}
-      {!broken && (
-        <SmartCartButton
+        {/* LE PANIER (consigne Camil 2026-08-25 : « un vrai panier à cliquer et à
+            consulter »). Il remplace les anciennes puces de navigation : chaque
+            case navigue ET porte son état, donc la rangée sert deux fois. */}
+        <CartBand
           model={activeModel}
           selection={selection}
-          onAddAdvance={addAndAdvance}
-          onSeekColorway={seekColorway}
+          strings={strings}
+          onToggle={toggle}
+          onClear={clear}
+          onShowColorway={jumpToColorway}
+          onShowCollector={jumpToCollector}
+          onOpenSheet={() => setSpecsOpen(true)}
         />
-      )}
       </div>
     </div>
   )
 }
 
 /**
- * L'UNIQUE bouton du hero — un état par moment de l'entonnoir, jamais deux
- * choix à la fois (itération Camil : minimaliste, compréhensible, rapide) :
+ * LE PANIER, visible en permanence (spec `docs/specs/carrousel-achat.md`).
  *
- *   panier à 3          → « Commander les 4 »            (part payer, cadeau au choix)
- *   coloris achetable   → « Ajouter · 21,99 € »          (ajoute + avance)
- *   Pirate, panier à 1  → « Commander · 21,99 € »        (le solo reste possible)
- *   Pirate, sinon       → « Offert dès 3 achetés »       (ramène sur un coloris)
+ * Une rangée de quatre cases montre le COLIS, pas un compteur : les trois
+ * coloris payés, puis le 4e leurre offert. Chaque case navigue (elle amène le
+ * carrousel sur son leurre) ET porte son état — c'est ce qui répond d'un coup
+ * d'œil aux quatre questions : combien, lesquels, combien ça coûte, comment
+ * j'en enlève un.
  *
- * Tous les montants et seuils viennent d'`OFFERS` — jamais écrits à la main.
+ * Deux sorties vers la caisse sont posées dessous et ne disparaissent JAMAIS,
+ * quel que soit l'état. C'est le correctif du défaut le plus grave de la version
+ * précédente : à 2 leurres au panier, plus aucun bouton ne menait au paiement.
+ *
+ * Règle de système : aucun bouton d'ici n'encaisse, donc AUCUN ne porte de
+ * montant. Le prix vit dans les cases, la ligne d'état et la note de bas de
+ * bande — donc visible dans tous les états. C'est ce qui rend impossible le
+ * retour du bug « Acheter · 21,99 € » qui achetait un autre leurre que celui
+ * affiché.
  */
-function SmartCartButton({
+function CartBand({
   model,
   selection,
-  onAddAdvance,
-  onSeekColorway,
+  strings,
+  onToggle,
+  onClear,
+  onShowColorway,
+  onShowCollector,
+  onOpenSheet,
 }: {
   model: LureModel
   selection: readonly string[]
-  onAddAdvance: (colorwayId: string) => void
-  onSeekColorway: () => void
+  strings: CarouselStrings
+  onToggle: (colorwayId: string) => void
+  onClear: () => void
+  onShowColorway: (colorwayId: string) => void
+  onShowCollector: () => void
+  onOpenSheet: () => void
 }) {
-  const resolved = resolveOffer(selection)
+  const soloPrice = strings.soloPrice
+  const displayed = model.colorwayId ? getColorway(model.colorwayId) : undefined
+  const displayedTaken = displayed ? isInCart(selection, displayed.id) : false
+  const displayedOrderable = displayed !== undefined && displayed.available
+  const status = cartStatus(selection)
+  const collectionOpen = collectionAvailable()
 
-  // 3 achetés : plus rien à ajouter — on commande, le 4e se choisit sur /leurre.
-  if (resolved?.offre === 'collection') {
-    return (
-      <Link
-        href={`/leurre?offre=${resolved.offre}&coloris=${resolved.coloris}`}
-        className="px-btn px-btn--primary px-btn--md min-w-44"
-      >
-        Commander les 4 · {formatEuros(totalCents('collection'))}
-      </Link>
-    )
-  }
+  // La phrase d'état : une CLÉ résolue par le domaine, remplie ici. Le domaine
+  // ne connaît aucun texte, ce composant ne connaît aucune règle.
+  const statusTemplate = {
+    'CART.STATE_EMPTY': strings.stateEmpty,
+    'CART.STATE_ONE': strings.stateOne,
+    'CART.STATE_SOME': strings.stateSome,
+    'CART.STATE_FULL': strings.stateFull,
+    'CART.STATE_SOLD_OUT': strings.stateSoldOut,
+  }[status.key]
 
-  // N'importe quel leurre compte — même celui déjà pris une première fois.
-  const colorway = model.colorwayId ? getColorway(model.colorwayId) : undefined
-  if (colorway?.available) {
-    return (
-      <div className="flex flex-col items-center gap-1.5">
-        <Button
+  const statusText = fill(statusTemplate ?? strings.stateEmpty, {
+    total: strings.collectionTotal,
+    compte: String(status.labels.length),
+    max: String(CART_MAX),
+    liste: status.labels.join(', '),
+  })
+
+  const giftState = giftBoxState(selection)
+  const giftLabel = {
+    offert: strings.boxGiftFree,
+    'a-choisir': strings.boxGiftChoose,
+    suspendu: strings.boxGiftPaused,
+  }[giftState]
+
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-2 px-2">
+      {/* ── La rangée du colis : 3 coloris payés + le 4e offert ── */}
+      <div role="group" aria-label={strings.sheet} className="flex w-full items-stretch gap-1.5">
+        {PRODUCT.colorways.map((colorway) => {
+          const state = cartBoxState(selection, colorway.id)
+          const shown = model.colorwayId === colorway.id
+          const stateLabel =
+            state === 'epuise'
+              ? strings.boxSoldOut
+              : state === 'au-panier'
+                ? strings.boxTaken
+                : fill(strings.boxPrice, { prix: soloPrice })
+          return (
+            <button
+              key={colorway.id}
+              type="button"
+              onClick={() => onShowColorway(colorway.id)}
+              aria-current={shown ? 'true' : undefined}
+              aria-label={fill(strings.boxA11y, { coloris: colorway.label, etat: stateLabel })}
+              className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded-lg border px-1 py-1.5 transition-colors duration-[var(--dur-element)] ${
+                shown ? 'border-foreground' : 'border-border hover:border-muted-foreground'
+              } ${state === 'au-panier' ? 'bg-success/10' : ''} ${state === 'epuise' ? 'opacity-55' : ''}`}
+            >
+              <span className="text-label truncate uppercase" translate="no" aria-hidden="true">
+                {colorway.shortLabel}
+              </span>
+              <span
+                aria-hidden="true"
+                className={`flex items-center gap-0.5 text-[0.6875rem] leading-tight ${
+                  state === 'au-panier' ? 'font-bold text-success' : 'text-muted-foreground'
+                }`}
+              >
+                {state === 'au-panier' && <Check className="size-3" strokeWidth={3} />}
+                {stateLabel}
+              </span>
+            </button>
+          )
+        })}
+
+        {/* La 4e case : le leurre offert. Elle ne se coche pas — elle se mérite. */}
+        <button
           type="button"
-          size="md"
-          onClick={() => onAddAdvance(colorway.id)}
-          aria-label={`Ajouter ${colorway.label} au panier — ${formatEuros(totalCents('solo'))}`}
-          className="min-w-44"
+          onClick={onShowCollector}
+          aria-label={fill(strings.giftA11y, { collector: PRODUCT.collector.label })}
+          className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded-lg border border-dashed px-1 py-1.5 transition-colors duration-[var(--dur-element)] ${
+            giftState === 'a-choisir' ? 'border-success' : 'border-border'
+          } ${giftState === 'suspendu' ? 'opacity-55' : ''}`}
         >
-          Ajouter · {formatEuros(totalCents('solo'))}
-        </Button>
-        {/* Le solo reste à un clic quand il n'y a qu'un leurre au panier. */}
-        {resolved?.offre === 'solo' && selection.length === 1 && (
-          <Link
-            href={`/leurre?offre=solo&coloris=${resolved.coloris}`}
-            className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+          <span className="text-label truncate uppercase" aria-hidden="true">
+            {strings.boxGift}
+          </span>
+          <span
+            aria-hidden="true"
+            className={`text-[0.6875rem] leading-tight ${
+              giftState === 'a-choisir' ? 'font-bold text-success' : 'text-muted-foreground'
+            }`}
           >
-            ou commander 1 leurre · {formatEuros(totalCents('solo'))}
+            {giftLabel}
+          </span>
+        </button>
+      </div>
+
+      {/* ── Les actions : ajouter/retirer le leurre regardé, et commander ── */}
+      <div className="flex w-full flex-wrap items-center justify-center gap-2">
+        {displayedOrderable && displayed && (
+          <Button
+            type="button"
+            size="md"
+            variant="ghost"
+            onClick={() => onToggle(displayed.id)}
+            className="gap-1.5"
+          >
+            {displayedTaken && <Check aria-hidden className="size-4" strokeWidth={2.5} />}
+            <span translate="no">
+              {fill(displayedTaken ? strings.remove : strings.add, {
+                coloris: displayed.shortLabel,
+              })}
+            </span>
+            <span className="sr-only" translate="no">
+              {displayed.label}
+            </span>
+          </Button>
+        )}
+
+        {collectionOpen && (
+          <Link
+            href={`/leurre?offre=collection${selection[0] ? `&coloris=${selection[0]}` : ''}#offert`}
+            className="px-btn px-btn--primary px-btn--md"
+          >
+            {strings.orderCollection}
           </Link>
         )}
       </div>
-    )
-  }
 
-  // Le solo ne se commande que pour UN leurre : à 2, on pousse le 3e — jamais
-  // une commande qui paierait moins qu'annoncé au panier.
-  if (resolved?.offre === 'solo' && selection.length === 1) {
-    return (
-      <Link
-        href={`/leurre?offre=solo&coloris=${resolved.coloris}`}
-        className="px-btn px-btn--primary px-btn--md min-w-44"
+      {/* ── La ligne d'état : montée au premier rendu, jamais démontée ── */}
+      <p
+        aria-live="polite"
+        className="min-h-8 text-center text-xs leading-snug text-muted-foreground"
       >
-        Commander · {formatEuros(totalCents('solo'))}
-      </Link>
-    )
-  }
+        {statusText}
+      </p>
 
-  // Pirate affiché, panier vide ou à 2 : le bouton ramène vers un coloris.
-  return (
-    <Button type="button" size="md" variant="ghost" onClick={onSeekColorway} className="min-w-44">
-      {selection.length === 0
-        ? `Offert dès ${OFFERS.collection.paidCount} achetés — choisir`
-        : 'Encore 1 — le 4e sera offert'}
-    </Button>
+      {/* ── Les sorties : toujours au moins une, dans tous les états ── */}
+      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[0.75rem]">
+        <button type="button" onClick={onOpenSheet} className="underline underline-offset-2">
+          {strings.sheet}
+        </button>
+        {displayedOrderable && displayed && (
+          <>
+            <span aria-hidden="true" className="text-muted-foreground">
+              ·
+            </span>
+            <Link
+              href={`/leurre?offre=solo&coloris=${displayed.id}`}
+              className="underline underline-offset-2"
+            >
+              <span translate="no">{fill(strings.orderSolo, { coloris: displayed.shortLabel })}</span>
+            </Link>
+          </>
+        )}
+        {selection.length > 0 && (
+          <>
+            <span aria-hidden="true" className="text-muted-foreground">
+              ·
+            </span>
+            <button type="button" onClick={onClear} className="underline underline-offset-2">
+              {strings.clear}
+            </button>
+          </>
+        )}
+      </div>
+
+      <p className="text-center text-[0.6875rem] leading-tight text-muted-foreground">
+        {fill(strings.footnote, { prix: soloPrice, delai: strings.deliveryDelay })}
+      </p>
+    </div>
   )
 }
 
 /**
- * Le bouton de la fiche — après les specs du leurre. Le panier est un COMPTEUR :
- * ajouter tant qu'on est sous les 2 achetés, retirer une occurrence sinon.
- * Le collector n'a pas de bouton (il ne se vend pas), un coloris épuisé non
- * plus (jamais un bouton qui ment).
+ * L'action au pied de la fiche technique — EXACTEMENT le même geste que dans la
+ * bande du panier, pour que le leurre ouvert se prenne sans refermer sa fiche.
+ *
+ * Un coloris épuisé n'affiche pas de bouton (jamais un bouton qui ment). Le
+ * collector non plus : il ne se vend pas, il se choisit comme 4e leurre offert
+ * sur la page produit — c'est le lien « Commander les 4 » de la bande qui y mène.
  */
-function AddToCollection({
+function SheetAction({
   model,
   selection,
-  onAdd,
-  onRemove,
+  strings,
+  onToggle,
 }: {
   model: LureModel
   selection: readonly string[]
-  onAdd: (colorwayId: string) => void
-  onRemove: (colorwayId: string) => void
+  strings: CarouselStrings
+  onToggle: (colorwayId: string) => void
 }) {
   const colorwayId = model.colorwayId
   if (!colorwayId) return null
   const colorway = getColorway(colorwayId)
   if (!colorway) return null
   if (!colorway.available) {
-    return <p className="text-[0.8125rem] text-muted-foreground">Épuisé</p>
+    return <p className="text-[0.8125rem] text-muted-foreground">{strings.boxSoldOut}</p>
   }
 
-  const inCart = selection.includes(colorwayId)
-  const full = selection.length >= OFFERS.collection.paidCount
-
-  if (inCart) {
-    return (
-      <Button
-        type="button"
-        size="md"
-        variant="ghost"
-        onClick={() => onRemove(colorwayId)}
-        className="w-full gap-2"
-      >
-        <Check aria-hidden className="size-4" strokeWidth={2.5} />
-        Retirer du panier
-      </Button>
-    )
-  }
-
-  if (full) {
-    // 3 achetés : le panier est plein — le 4e se choisit en commandant.
-    return (
-      <p className="text-[0.8125rem] font-bold text-success">
-        Le 4e leurre est offert — choisissez-le en commandant.
-      </p>
-    )
-  }
-
+  const inCart = isInCart(selection, colorwayId)
   return (
-    <Button type="button" size="md" onClick={() => onAdd(colorwayId)} className="w-full">
-      Ajouter au panier
+    <Button
+      type="button"
+      size="md"
+      variant={inCart ? 'ghost' : undefined}
+      onClick={() => onToggle(colorwayId)}
+      className="w-full gap-2"
+    >
+      {inCart && <Check aria-hidden className="size-4" strokeWidth={2.5} />}
+      <span translate="no">
+        {fill(inCart ? strings.remove : strings.add, { coloris: colorway.shortLabel })}
+      </span>
+      <span className="sr-only" translate="no">
+        {colorway.label}
+      </span>
     </Button>
   )
 }

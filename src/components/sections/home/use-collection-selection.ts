@@ -1,7 +1,11 @@
 'use client'
 
 import { useSyncExternalStore } from 'react'
-import { SELECTION_STORAGE_KEY, sanitizeSelection } from '@/lib/shop/collection-selection'
+import {
+  SELECTION_STORAGE_KEY,
+  sanitizeSelection,
+  toggleColorway,
+} from '@/lib/shop/collection-selection'
 
 /**
  * La sélection « panier » de l'accueil, adossée au sessionStorage : elle
@@ -48,21 +52,29 @@ function writeSelection(next: readonly string[]): void {
 
 export function useCollectionSelection(): {
   selection: readonly string[]
-  /** Ajoute UN leurre — les doublons sont permis, le panier est un compteur. */
-  add: (colorwayId: string) => void
-  /** Retire UNE occurrence de ce coloris (la dernière ajoutée). */
-  removeOne: (colorwayId: string) => void
+  /** Ajoute le coloris s'il est absent, le retire s'il est présent. */
+  toggle: (colorwayId: string) => void
+  /** Vide le panier. */
+  clear: () => void
 } {
   const selection = useSyncExternalStore(subscribe, readSelection, () => EMPTY)
   return {
     selection,
-    add: (colorwayId: string) => {
-      writeSelection([...readSelection(), colorwayId])
+    toggle: (colorwayId: string) => {
+      writeSelection(toggleColorway(readSelection(), colorwayId))
     },
-    removeOne: (colorwayId: string) => {
-      const current = readSelection()
-      const index = current.lastIndexOf(colorwayId)
-      if (index >= 0) writeSelection([...current.slice(0, index), ...current.slice(index + 1)])
-    },
+    clear: () => writeSelection(EMPTY),
   }
+}
+
+/**
+ * Efface le panier — appelé au retour de paiement (`/merci`).
+ *
+ * Sans ça, le hero réaffichait « Commander les 4 » à quelqu'un qui venait de
+ * payer : le sessionStorage survit à l'aller-retour vers checkout.stripe.com
+ * dans le même onglet. Exporté hors du hook parce que la page de retour n'a pas
+ * besoin de lire la sélection, seulement de la jeter.
+ */
+export function clearStoredSelection(): void {
+  writeSelection(EMPTY)
 }

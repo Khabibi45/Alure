@@ -42,7 +42,12 @@ function introVideo(container: HTMLElement): HTMLVideoElement | null {
 
 function renderHero(intro: boolean) {
   return render(
-    <HeroScroll intro={intro} overlay={<h1 className="sr-only">Titre</h1>}>
+    <HeroScroll
+      intro={intro}
+      overlay={<h1 className="sr-only">Titre</h1>}
+      loadingLabel="Chargement."
+      framesFailedLabel="Les images de la séquence n’ont pas pu se charger."
+    >
       <div data-testid="scene-3d" />
     </HeroScroll>
   )

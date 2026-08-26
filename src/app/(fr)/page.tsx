@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/home/Hero'
+import { PrecommandeSection } from '@/components/sections/PrecommandeSection'
+import { carouselStrings } from '@/lib/i18n/chrome'
 import { HERO_VARIANT } from '@/lib/hero-variant'
 import { SITE } from '@/lib/site-config'
 import { getDictionary, t, hreflangAlternates } from '@/lib/i18n'
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
   // pas le gabarit « %s — Alure » des pages intérieures.
   title: { absolute: `${SITE.name} — leurre articulé 2 sections pour black-bass et perche` },
   description: SITE.description,
-  // hreflang réciproques : l'accueil existe dans les cinq langues.
+  // hreflang réciproques : l'accueil existe dans les deux langues.
   alternates: { canonical: '/', languages: hreflangAlternates('/').languages },
 }
 
@@ -21,7 +23,12 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <main>
-      <Hero variant={HERO_VARIANT} title={t(getDictionary('fr'), 'HOME.H1')} />
+      <Hero
+        variant={HERO_VARIANT}
+        title={t(getDictionary('fr'), 'HOME.H1')}
+        strings={carouselStrings('fr')}
+      />
+      <PrecommandeSection locale="fr" />
     </main>
   )
 }

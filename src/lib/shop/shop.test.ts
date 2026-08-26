@@ -157,10 +157,7 @@ describe('perLureCents — le chiffre qui fait décider, et jamais un chiffre fa
 
 describe('le 4e offert, au choix (cadeau)', () => {
   it('propose chaque coloris et le collector — rien d’autre', () => {
-    expect(GIFT_CHOICE_IDS).toEqual([
-      ...PRODUCT.colorways.map((c) => c.id),
-      PRODUCT.collector.id,
-    ])
+    expect(GIFT_CHOICE_IDS).toEqual([...PRODUCT.colorways.map((c) => c.id), PRODUCT.collector.id])
     expect(giftLabel(PRODUCT.collector.id)).toBe(PRODUCT.collector.label)
     expect(giftLabel(PRODUCT.colorways[0].id)).toBe(PRODUCT.colorways[0].label)
     expect(giftLabel('coloris-inconnu')).toBeNull()
@@ -215,8 +212,14 @@ describe('offerSummary — la ligne lue dans les emails', () => {
 
 describe('orderableError — disponibilité réelle', () => {
   const fixtures: Colorway[] = [
-    { id: 'ok', label: 'Dispo', available: true, image: '/produit/test.webp' },
-    { id: 'epuise', label: 'Épuisé', available: false, image: '/produit/test.webp' },
+    { id: 'ok', label: 'Dispo', shortLabel: 'Dispo', available: true, image: '/produit/test.webp' },
+    {
+      id: 'epuise',
+      label: 'Épuisé',
+      shortLabel: 'Épuisé',
+      available: false,
+      image: '/produit/test.webp',
+    },
   ]
 
   it('null pour un coloris disponible', () => {
