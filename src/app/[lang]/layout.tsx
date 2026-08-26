@@ -20,7 +20,7 @@ import {
 } from '@/lib/i18n'
 
 /**
- * LE layout racine des langues sous préfixe (`/en`, `/es`, `/de`, `/nl`) —
+ * LE layout racine de la langue sous préfixe (`/en`) —
  * le pendant de `src/app/(fr)/layout.tsx` (structure « deux layouts racines »
  * de l'App Router : chacun porte son `<html lang>`, exigence du README i18n §4).
  *

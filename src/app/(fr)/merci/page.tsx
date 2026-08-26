@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Marker } from '@/components/ui/Marker'
 import { PRODUCT } from '@/lib/shop/product'
+import { ClearCartOnThanks } from '@/components/sections/home/ClearCartOnThanks'
 
 export const metadata: Metadata = {
   title: 'Merci pour votre commande',
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
 export default function MerciPage() {
   return (
     <main className="mx-auto flex min-h-svh max-w-2xl flex-col justify-center px-4 py-16">
+      {/* Le panier composé sur l'accueil n'a plus lieu d'être : la commande est
+          partie. Sans ça, le hero le réaffichait au retour. */}
+      <ClearCartOnThanks />
       <h1 className="text-3xl font-bold text-balance md:text-4xl">
         <Marker>Merci</Marker> pour votre commande
       </h1>

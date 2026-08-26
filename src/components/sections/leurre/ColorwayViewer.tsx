@@ -1,10 +1,13 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { LURE_MODELS, SELLABLE_LURE_MODELS, getModelForColorway } from '@/lib/lure-models'
+import { LURE_MODELS, SELLABLE_LURE_MODELS } from '@/lib/lure-models'
+import { getColorway } from '@/lib/shop/product'
 import { DEFAULT_LURE_VIEW, getLureView } from '@/lib/three/lure-views'
 import { createLureStage, type LureStage } from '@/components/sections/home/lure-stage'
 import { useColorwaySelection } from './colorway-context'
+import { fillNodes } from './fill-nodes'
+import type { LeurreStrings } from './leurre-strings'
 
 type Status = 'loading' | 'ready' | 'unsupported' | 'failed'
 
@@ -17,8 +20,12 @@ type Status = 'loading' | 'ready' | 'unsupported' | 'failed'
  * recharge pas, et le passage est amorti comme le reste du site.
  *
  * Le collector n'y figure pas : il ne se vend pas, il n'a pas de coloris à montrer ici.
+ *
+ * Ses textes arrivent du serveur (`leurreStrings(locale)`) : ils étaient en
+ * français en dur, et `/en/leurre` annonçait donc « Chargement du leurre… » au
+ * milieu d'une page anglaise.
  */
-export function ColorwayViewer() {
+export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const frameRef = useRef<HTMLDivElement | null>(null)
   const stageRef = useRef<LureStage | null>(null)
@@ -30,7 +37,7 @@ export function ColorwayViewer() {
     0,
     SELLABLE_LURE_MODELS.findIndex((m) => m.colorwayId === coloris)
   )
-  const model = getModelForColorway(coloris) ?? SELLABLE_LURE_MODELS[0]
+  const colorwayLabel = getColorway(coloris)?.label ?? ''
   const isLoaded = loaded.includes(index)
 
   useEffect(() => {
@@ -103,19 +110,22 @@ export function ColorwayViewer() {
 
       {broken && (
         <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-muted-foreground">
-          Votre navigateur n’affiche pas la 3D. La description ci-contre détaille le leurre.
+          {strings.viewerNoWebgl}
         </p>
       )}
 
       {!broken && !isLoaded && (
         <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
-          Chargement du leurre…
+          {strings.viewerLoading}
         </p>
       )}
 
-      {/* Le canvas est aria-hidden : voici ce qu'il montre. */}
+      {/* Le canvas est aria-hidden : voici ce qu'il montre. Le nom du coloris
+          reste hors traduction — c'est celui du reçu et de l'email. */}
       <p className="sr-only" aria-live="polite">
-        {model.description}
+        {fillNodes(strings.viewerAlt, {
+          coloris: <span translate="no">{colorwayLabel}</span>,
+        })}
       </p>
     </div>
   )

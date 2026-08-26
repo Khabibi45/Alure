@@ -3,16 +3,11 @@
 import { type ReactNode } from 'react'
 import Image from 'next/image'
 import { Skull } from 'lucide-react'
-import {
-  PRODUCT,
-  formatEuros,
-  giftLabel,
-  priceTagline,
-  savingsCents,
-  totalCents,
-} from '@/lib/shop/product'
+import { PRODUCT, giftLabel } from '@/lib/shop/product'
 import { useColorwaySelection } from './colorway-context'
 import { useCheckout } from './checkout-context'
+import { fillNodes } from './fill-nodes'
+import type { LeurreStrings } from './leurre-strings'
 
 /**
  * L'îlot prix + coloris + cadeau de /leurre (charte V.02 §8.5–8.8). L'offre,
@@ -22,16 +17,30 @@ import { useCheckout } from './checkout-context'
  *
  * Offre « 3 achetés, le 4e offert au choix » (2026-08-14) : en offre groupée,
  * l'acheteur choisit ici son 4e leurre — un coloris en double, ou le Pirate.
+ *
+ * Aucun montant ne se calcule ni ne se formate ici : `strings.total` arrive du
+ * serveur, déjà ponctué à la langue servie. C'est ce qui a fait afficher
+ * « 21,99 € » sur `/en/leurre` — le gros prix, l'écran qui doit être limpide.
+ *
+ * Les NOMS de coloris, eux, restent en français dans les deux langues et
+ * portent `translate="no"` : ils doivent correspondre au reçu Stripe et à
+ * l'email de confirmation.
  */
-export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
+export function BuyBox({
+  deliveryBanner,
+  strings,
+}: {
+  deliveryBanner: ReactNode
+  strings: LeurreStrings
+}) {
   // Le coloris vit dans le contexte : la galerie 3D affiche LE coloris
   // sélectionné, elle doit donc lire la même sélection que cet îlot.
   const { coloris, setColoris, offre, cadeau, setCadeau } = useColorwaySelection()
   const { status, clearError } = useCheckout()
 
   const loading = status.state === 'loading'
-  const total = formatEuros(totalCents(offre))
-  const savings = savingsCents(offre)
+  const total = strings.total[offre]
+  const savings = strings.savings[offre]
   const selectedLabel = PRODUCT.colorways.find((c) => c.id === coloris)?.label ?? ''
   const giftSelectedLabel = giftLabel(cadeau) ?? ''
 
@@ -46,11 +55,11 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
         <p key={offre} className="px-stat px-pop">
           {total}
         </p>
-        <p className="mt-1 text-[0.8125rem] text-muted-foreground">{priceTagline(offre)}</p>
-        {savings > 0 && (
-          <p className="mt-1 text-[0.8125rem] font-bold text-success">
-            Vous économisez {formatEuros(savings)}.
-          </p>
+        <p className="mt-1 text-[0.8125rem] text-muted-foreground">{strings.tagline[offre]}</p>
+        {/* Le serveur ne prépare cette phrase que s'il y a réellement une
+            économie : pas de « Vous économisez 0,00 € », pas de prix barré. */}
+        {savings !== null && (
+          <p className="mt-1 text-[0.8125rem] font-bold text-success">{savings}</p>
         )}
       </div>
 
@@ -60,7 +69,10 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
       {/* Coloris (§8.5) : radios natifs = navigation aux flèches gratuite. */}
       <fieldset className="m-0 mt-6 border-0 p-0">
         <legend className="text-[0.9375rem] text-muted-foreground">
-          Coloris : <span className="font-bold text-foreground">{selectedLabel}</span>
+          {strings.colorwayLabel}{' '}
+          <span className="font-bold text-foreground" translate="no">
+            {selectedLabel}
+          </span>
         </legend>
         <div className="mt-3 flex flex-wrap gap-3">
           {PRODUCT.colorways.map((c) => (
@@ -92,9 +104,11 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
               >
                 <Image src={c.image} alt="" fill sizes="56px" className="object-cover" />
               </span>
-              <span className="sr-only">{c.label}</span>
+              <span className="sr-only" translate="no">
+                {c.label}
+              </span>
               {!c.available && (
-                <span className="text-[0.8125rem] text-muted-foreground">Épuisé</span>
+                <span className="text-[0.8125rem] text-muted-foreground">{strings.soldOut}</span>
               )}
             </label>
           ))}
@@ -105,8 +119,10 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
       {offre === 'collection' && (
         <fieldset className="m-0 mt-6 border-0 p-0">
           <legend className="text-[0.9375rem] text-muted-foreground">
-            Votre 4e leurre, offert :{' '}
-            <span className="font-bold text-success">{giftSelectedLabel}</span>
+            {strings.giftLabel}{' '}
+            <span className="font-bold text-success" translate="no">
+              {giftSelectedLabel}
+            </span>
           </legend>
           <div className="mt-3 flex flex-wrap gap-3">
             {PRODUCT.colorways.map((c) => (
@@ -136,9 +152,13 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
                 >
                   <Image src={c.image} alt="" fill sizes="56px" className="object-cover" />
                 </span>
-                <span className="sr-only">{c.label} — en double, offert</span>
+                <span className="sr-only">
+                  {fillNodes(strings.giftDuplicateA11y, {
+                    coloris: <span translate="no">{c.label}</span>,
+                  })}
+                </span>
                 {!c.available && (
-                  <span className="text-[0.8125rem] text-muted-foreground">Épuisé</span>
+                  <span className="text-[0.8125rem] text-muted-foreground">{strings.soldOut}</span>
                 )}
               </label>
             ))}
@@ -165,7 +185,11 @@ export function BuyBox({ deliveryBanner }: { deliveryBanner: ReactNode }) {
               >
                 <Skull className="size-6" strokeWidth={1.75} />
               </span>
-              <span className="sr-only">{PRODUCT.collector.label} — le collector, offert</span>
+              <span className="sr-only">
+                {fillNodes(strings.giftCollectorA11y, {
+                  collector: <span translate="no">{PRODUCT.collector.label}</span>,
+                })}
+              </span>
             </label>
           </div>
         </fieldset>

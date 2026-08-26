@@ -2,28 +2,27 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import {
-  OFFER_IDS,
-  PRODUCT,
-  deliveryShort,
-  formatEuros,
-  getOffer,
-  perLureAtMostCents,
-  perLureCents,
-  totalCents,
-} from '@/lib/shop/product'
+import { OFFER_IDS, PRODUCT, getOffer } from '@/lib/shop/product'
 import { useColorwaySelection } from './colorway-context'
 import { useCheckout } from './checkout-context'
 import { OfferProgress } from './OfferProgress'
 import { PaymentMethods } from './PaymentMethods'
+import { fillNodes } from './fill-nodes'
+import type { LeurreStrings } from './leurre-strings'
 
 /**
  * Le panneau d'offre de /leurre, sur TOUTE la largeur de la page (consigne
  * Camil 2026-08-12) : les deux paliers côte à côte sur desktop, puis la
  * progression et le CTA. La logique de paiement vit dans `useCheckout` — ce
  * panneau et l'îlot prix/coloris lisent le même statut.
+ *
+ * Aucun montant n'est formaté ici, et aucune phrase n'est assemblée à la main :
+ * le serveur prépare les deux paliers (`leurreStrings(locale)`), le composant
+ * lit celui qui est coché. Les phrases « Soit moins de X le leurre » sont des
+ * gabarits du dictionnaire, pas des concaténations — en anglais l'ordre des
+ * mots n'est pas celui du français.
  */
-export function OfferPanel() {
+export function OfferPanel({ strings }: { strings: LeurreStrings }) {
   const { coloris, offre, setOffre } = useColorwaySelection()
   const { status, submit, clearError } = useCheckout()
   const ctaRef = useRef<HTMLDivElement>(null)
@@ -42,19 +41,17 @@ export function OfferPanel() {
   }, [])
 
   const loading = status.state === 'loading'
-  const total = formatEuros(totalCents(offre))
+  const total = strings.total[offre]
   const selectedLabel = PRODUCT.colorways.find((c) => c.id === coloris)?.label ?? ''
 
   return (
     <div>
       {/* L'offre : deux paliers, un choix binaire. Radios natifs = clavier gratuit. */}
       <fieldset className="m-0 border-0 p-0">
-        <legend className="px-label mb-2">Votre offre</legend>
+        <legend className="px-label mb-2">{strings.offerLegend}</legend>
         <div className="grid gap-3 md:grid-cols-2">
           {OFFER_IDS.map((id) => {
-            const offer = getOffer(id)
             const selected = id === offre
-            const perLure = perLureCents(id)
             return (
               <label
                 key={id}
@@ -82,18 +79,22 @@ export function OfferPanel() {
                 />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-3">
-                    <span className="font-bold">{offer.label}</span>
-                    <span className="font-bold tabular-nums">
-                      {formatEuros(offer.amountCents)}
-                    </span>
+                    <span className="font-bold">{strings.offerTitle[id]}</span>
+                    <span className="font-bold tabular-nums">{strings.total[id]}</span>
                   </span>
                   <span className="mt-0.5 block text-[0.8125rem] text-muted-foreground">
-                    {id === 'solo'
-                      ? `Le coloris ${selectedLabel}, à l'unité.`
-                      : `Les ${offer.colorwayCount} coloris + le 4e offert au choix — jusqu'au ${PRODUCT.collector.label}.`}
-                    {perLure !== null
-                      ? ` Soit ${formatEuros(perLure)} le leurre.`
-                      : ` Soit moins de ${formatEuros(perLureAtMostCents(id))} le leurre.`}
+                    {/* Un seul jeu de paramètres pour les deux paliers :
+                        `fillNodes` ignore une valeur dont le gabarit n'a pas
+                        besoin. Les NOMS PROPRES arrivent en nœuds, donc hors
+                        traduction du navigateur — ce sont eux qui figureront
+                        sur le reçu Stripe. Le nombre de coloris, lui, vient du
+                        domaine, jamais d'un chiffre réécrit à la main. */}
+                    {fillNodes(strings.offerDetail[id], {
+                      coloris: <span translate="no">{selectedLabel}</span>,
+                      nbColoris: String(getOffer(id).colorwayCount),
+                      collector: <span translate="no">{PRODUCT.collector.label}</span>,
+                    })}{' '}
+                    {strings.perLure[id]}
                   </span>
                 </span>
               </label>
@@ -104,7 +105,7 @@ export function OfferPanel() {
 
       {/* Progression à gauche, CTA à droite — empilés sur mobile. */}
       <div className="mt-6 grid gap-6 md:grid-cols-[1fr_20rem] md:items-start">
-        <OfferProgress offre={offre} />
+        <OfferProgress offre={offre} strings={strings} />
 
         <div ref={ctaRef}>
           <Button
@@ -115,9 +116,9 @@ export function OfferPanel() {
             className="w-full"
             aria-busy={loading}
           >
-            {loading ? 'Redirection vers le paiement…' : 'Acheter'}
+            {loading ? strings.buyLoading : strings.buy}
           </Button>
-          <PaymentMethods />
+          <PaymentMethods strings={strings} />
         </div>
       </div>
 
@@ -145,7 +146,7 @@ export function OfferPanel() {
           <div>
             <p className="text-lg font-bold tabular-nums">{total}</p>
             {/* Dérivé de la source unique (règle n°1) — jamais une réécriture du délai. */}
-            <p className="text-xs text-muted-foreground">{deliveryShort()}</p>
+            <p className="text-xs text-muted-foreground">{strings.deliveryShort}</p>
           </div>
           <Button
             type="button"
@@ -155,7 +156,7 @@ export function OfferPanel() {
             tabIndex={stickyVisible ? 0 : -1}
             className="min-w-32"
           >
-            {loading ? 'Redirection…' : 'Acheter'}
+            {loading ? strings.buyLoadingShort : strings.buy}
           </Button>
         </div>
       </div>

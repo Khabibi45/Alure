@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/home/Hero'
+import { PrecommandeSection } from '@/components/sections/PrecommandeSection'
+import { carouselStrings } from '@/lib/i18n/chrome'
 import { HERO_VARIANT } from '@/lib/hero-variant'
 import { getDictionary, t, isLocale, localePath, hreflangAlternates } from '@/lib/i18n'
 
@@ -28,10 +30,14 @@ export async function generateMetadata({
 
 export default async function LangHomePage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
-  const dict = getDictionary(isLocale(lang) ? lang : 'fr')
+  // Une SEULE résolution de la langue : le dictionnaire et les textes du hero
+  // doivent parler la même, sinon la page mélange deux langues sans rien dire.
+  const locale = isLocale(lang) ? lang : 'fr'
+  const dict = getDictionary(locale)
   return (
     <main>
-      <Hero variant={HERO_VARIANT} title={t(dict, 'HOME.H1')} />
+      <Hero variant={HERO_VARIANT} title={t(dict, 'HOME.H1')} strings={carouselStrings(locale)} />
+      <PrecommandeSection locale={locale} />
     </main>
   )
 }

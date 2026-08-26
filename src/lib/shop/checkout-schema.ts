@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { GIFT_CHOICE_IDS, PRODUCT, OFFER_IDS, orderableError, type OfferId } from './product'
+import { LOCALES } from '@/lib/i18n/paths'
 
 /** Taille maximale du corps de /api/checkout — le payload légitime fait ~60 octets. */
 export const CHECKOUT_MAX_BYTES = 1_000
@@ -7,6 +8,7 @@ export const CHECKOUT_MAX_BYTES = 1_000
 const colorwayIds = PRODUCT.colorways.map((c) => c.id) as [string, ...string[]]
 const offerIds = OFFER_IDS as [string, ...string[]]
 const giftIds = [...GIFT_CHOICE_IDS] as [string, ...string[]]
+const localeIds = [...LOCALES] as [string, ...string[]]
 
 /**
  * Schéma de la demande de checkout. PARTAGÉ route API / îlot client (une seule
@@ -23,6 +25,17 @@ const checkoutFields = z.object({
   coloris: z.enum(colorwayIds, { message: 'Choisissez un coloris.' }),
   offre: z.enum(offerIds, { message: 'Choisissez une offre.' }),
   cadeau: z.enum(giftIds, { message: 'Choisissez votre 4e leurre offert.' }).optional(),
+  /**
+   * La langue dans laquelle le client achète. Elle décide de la langue de la
+   * page Stripe Checkout ET des pages de retour : sans elle, un acheteur
+   * anglophone terminait son parcours sur un écran de paiement français, puis
+   * sur une page de remerciement française.
+   *
+   * Optionnelle et repliée sur le français côté serveur : une commande envoyée
+   * sans ce champ (onglet ouvert avant la mise à jour) reste valide plutôt que
+   * d'échouer au paiement.
+   */
+  langue: z.enum(localeIds).optional(),
 })
 
 export const checkoutSchema = checkoutFields.superRefine((data, ctx) => {
@@ -52,9 +65,7 @@ export function parsePreselection(params: Record<string, string | string[] | und
   // Le safeParse garantit l'appartenance ; le find rend le type OfferId sans cast.
   const offre = offreRaw.success ? OFFER_IDS.find((id) => id === offreRaw.data) : undefined
   return {
-    ...(coloris.success && orderableError(coloris.data) === null
-      ? { coloris: coloris.data }
-      : {}),
+    ...(coloris.success && orderableError(coloris.data) === null ? { coloris: coloris.data } : {}),
     ...(offre ? { offre } : {}),
   }
 }

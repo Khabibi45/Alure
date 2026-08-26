@@ -8,6 +8,7 @@ import {
   WebhookSignatureError,
 } from './errors'
 import type { CheckoutInput } from './checkout-schema'
+import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from '@/lib/i18n/paths'
 
 /**
  * L'isolation Stripe (règle Alure n°2) : le reste du site ne connaît que
@@ -68,9 +69,18 @@ export async function createCheckoutSession(
   const base = returnBaseUrl(devOrigin)
   // Le 4e offert, choisi par l'acheteur — son libellé s'affiche sur le reçu.
   const chosenGift = input.cadeau ? (giftLabel(input.cadeau) ?? undefined) : undefined
+  /**
+   * La langue de l'acheteur, telle qu'elle a été validée par le schéma. Elle
+   * était figée à `'fr'` : un client venu de `/en` composait sa commande en
+   * anglais, puis payait sur un écran Stripe français et revenait sur une page
+   * de remerciement française. Le repli reste le français, le marché réel.
+   */
+  // Le `find` rend le type `Locale` sans cast : le schéma garantit
+  // l'appartenance, mais son `z.enum` sur un tableau dynamique produit `string`.
+  const locale: Locale = LOCALES.find((l) => l === input.langue) ?? DEFAULT_LOCALE
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    locale: 'fr',
+    locale,
     // Le reçu dit l'offre telle qu'elle est vendue : 3 × l'unité + le 4e offert
     // à 0,00 €. Les montants viennent de checkoutLines(), dont la somme est
     // testée égale à totalCents().
@@ -92,8 +102,9 @@ export async function createCheckoutSession(
       offre: input.offre,
       ...(input.cadeau ? { cadeau: input.cadeau } : {}),
     },
-    success_url: `${base}/merci?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${base}/leurre`,
+    // Les retours restent dans la langue de l'achat : `/en/merci`, `/en/leurre`.
+    success_url: `${base}${localePath(locale, '/merci')}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${base}${localePath(locale, '/leurre')}`,
   })
 
   if (!session.url) {

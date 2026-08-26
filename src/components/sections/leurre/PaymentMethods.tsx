@@ -1,4 +1,5 @@
 import { CreditCard, Lock } from 'lucide-react'
+import type { LeurreStrings } from './leurre-strings'
 
 /**
  * Les moyens de paiement, affichés AVANT le clic : l'acheteur doit savoir où il
@@ -17,13 +18,13 @@ import { CreditCard, Lock } from 'lucide-react'
  * (Réglages → Moyens de paiement) : c'est un réglage, pas du code — `stripe.ts`
  * ne fixe volontairement pas `payment_method_types`.
  */
-export function PaymentMethods() {
+export function PaymentMethods({ strings }: { strings: LeurreStrings }) {
   return (
     <div className="mt-3">
       <ul className="flex flex-wrap items-center justify-center gap-2">
         {[
-          { label: 'Carte bancaire', icon: CreditCard },
-          { label: 'PayPal', icon: null },
+          { label: strings.paymentCard, icon: CreditCard },
+          { label: strings.paymentPaypal, icon: null },
         ].map(({ label, icon: Icon }) => (
           <li
             key={label}
@@ -36,7 +37,7 @@ export function PaymentMethods() {
       </ul>
       <p className="px-hint mt-2 flex items-center justify-center gap-1.5 text-center">
         <Lock className="size-3.5 shrink-0" strokeWidth={2} aria-hidden />
-        Paiement sur Stripe — vos coordonnées bancaires ne passent jamais par ce site.
+        {strings.paymentSafety}
       </p>
     </div>
   )

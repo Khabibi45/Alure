@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Marker } from '@/components/ui/Marker'
 import { ContactForm } from '@/components/sections/contact/ContactForm'
+import { contactStrings } from '@/lib/i18n/contact-strings'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -19,7 +20,7 @@ export default function ContactPage() {
         par email.
       </p>
       <div className="mt-8">
-        <ContactForm />
+        <ContactForm strings={contactStrings('fr')} />
       </div>
     </main>
   )

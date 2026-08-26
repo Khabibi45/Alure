@@ -1,7 +1,10 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { Check, Lock } from 'lucide-react'
-import { PRODUCT, formatEuros, type OfferId } from '@/lib/shop/product'
+import { PRODUCT, type OfferId } from '@/lib/shop/product'
+import { fillNodes } from './fill-nodes'
+import type { LeurreStrings } from './leurre-strings'
 
 /**
  * La progression de l'offre, en trois points.
@@ -13,34 +16,48 @@ import { PRODUCT, formatEuros, type OfferId } from '@/lib/shop/product'
  *  - aucune urgence fabriquée (pas de minuteur, pas de « plus que X en stock ») ;
  *  - la barre se remplit UNE FOIS (fondation §6), et `prefers-reduced-motion`
  *    l'affiche directement remplie via `motion-safe:`.
+ *
+ * Les libellés et le prix arrivent préparés du serveur : le montant du pas était
+ * formaté sans la langue, et affichait donc « 21,99 € » sur la page anglaise.
  */
-export function OfferProgress({ offre }: { offre: OfferId }) {
+export function OfferProgress({ offre, strings }: { offre: OfferId; strings: LeurreStrings }) {
   const collection = offre === 'collection'
-  const solo = formatEuros(PRODUCT.pricing.soloCents)
+  const solo = strings.soloPrice
 
-  const steps = [
+  const steps: {
+    key: string
+    title: ReactNode
+    detail: string
+    done: boolean
+    reward?: boolean
+  }[] = [
     {
       key: 'first',
-      title: 'Votre premier leurre',
+      title: strings.progressFirst,
       detail: solo,
       done: true,
     },
     {
       key: 'second',
-      title: 'Le deuxième',
+      title: strings.progressSecond,
+      // Un signe, pas un mot : le pas d'un palier se lit dans les deux langues.
       detail: `+${solo}`,
       done: collection,
     },
     {
       key: 'third',
-      title: 'Le troisième',
+      title: strings.progressThird,
       detail: `+${solo}`,
       done: collection,
     },
     {
       key: 'gift',
-      title: `Le 4e — OFFERT, au choix (jusqu'au ${PRODUCT.collector.label})`,
-      detail: collection ? 'choisissez-le ci-dessus, il part dans votre colis' : 'offert dès 3 leurres achetés',
+      // Le nom du collector reste en français, hors traduction automatique :
+      // c'est celui qui figurera sur le reçu et dans l'email.
+      title: fillNodes(strings.progressCollector, {
+        collector: <span translate="no">{PRODUCT.collector.label}</span>,
+      }),
+      detail: collection ? strings.progressCollectorDone : strings.progressCollectorTodo,
       done: collection,
       reward: true,
     },
@@ -81,7 +98,9 @@ export function OfferProgress({ offre }: { offre: OfferId }) {
                 }`}
               >
                 {step.title}
-                {step.reward && !step.done && <span className="sr-only"> — à débloquer</span>}
+                {step.reward && !step.done && (
+                  <span className="sr-only"> {strings.progressLockedA11y}</span>
+                )}
               </span>
               <span className="block text-[0.8125rem] text-muted-foreground">{step.detail}</span>
             </span>
