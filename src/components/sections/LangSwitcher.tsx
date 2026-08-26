@@ -3,14 +3,17 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { localePath, splitLocalePath, type Locale } from '@/lib/i18n/paths'
+import { hasTranslation, localePathOrHome, splitLocalePath, type Locale } from '@/lib/i18n/paths'
 
 /**
  * Le sélecteur de langue (docs/i18n/README.md §4) : un bouton portant le code
- * de la langue courante, qui ouvre la liste des cinq. Pas de drapeaux (un
+ * de la langue courante, qui ouvre la liste des deux. Pas de drapeaux (un
  * drapeau désigne un pays, pas une langue) ; chaque nom s'écrit DANS SA LANGUE.
- * Le changement garde la page courante, et le choix se retient dans un cookie
- * strictement nécessaire (préférence d'affichage — pas un traceur).
+ * Le changement garde la page courante QUAND elle existe dans la langue visée.
+ * Sinon il conduit à l'accueil de cette langue, et le dit (`noTranslationNote`)
+ * plutôt que de mener à une page « introuvable » — ce qui arrivait sur 11 des
+ * 13 pages du site. Le choix se retient dans un cookie strictement nécessaire
+ * (préférence d'affichage — pas un traceur).
  */
 
 const LANG_COOKIE = 'alure-lang'
@@ -22,11 +25,14 @@ export type LangOption = { code: Locale; label: string }
 export function LangSwitcher({
   buttonLabel,
   options,
+  noTranslationNote,
   tone = 'default',
 }: {
   /** « Changer de langue — actuellement Français » (aria, dans la langue courante). */
   buttonLabel: string
   options: readonly LangOption[]
+  /** Ce qu'on dit quand la page courante n'existe pas dans la langue visée. */
+  noTranslationNote: string
   /** `overlay` : posé sur le hero transparent — le gris `muted` s'y noierait. */
   tone?: 'default' | 'overlay'
 }) {
@@ -81,7 +87,8 @@ export function LangSwitcher({
             return (
               <li key={option.code}>
                 <Link
-                  href={localePath(option.code, path)}
+                  href={localePathOrHome(option.code, path)}
+                  title={hasTranslation(path) ? undefined : noTranslationNote}
                   lang={option.code}
                   hrefLang={option.code}
                   aria-current={active ? 'true' : undefined}

@@ -31,7 +31,7 @@ export function SiteHeader({
 }: {
   locale: Locale
   navItems: readonly NavItem[]
-  switcher: { buttonLabel: string; options: readonly LangOption[] }
+  switcher: { buttonLabel: string; options: readonly LangOption[]; noTranslationNote: string }
 }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
@@ -109,6 +109,7 @@ export function SiteHeader({
           <LangSwitcher
             buttonLabel={switcher.buttonLabel}
             options={switcher.options}
+            noTranslationNote={switcher.noTranslationNote}
             tone={overlay ? 'overlay' : 'default'}
           />
         </div>

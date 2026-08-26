@@ -21,18 +21,18 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     // Les pages non traduites (produit, suivi, à-propos) mènent à leur version
     // FRANÇAISE — un lien qui marche vaut mieux qu'un 404 poli. À localiser au
     // fur et à mesure des traductions de pages.
-    { href: '/leurre', label: t(dict, 'NAV.PRODUCT') },
-    ...(fr ? [{ href: '/a-propos', label: t(dict, 'NAV.ABOUT') }] : []),
+    { href: localePath(locale, '/leurre'), label: t(dict, 'NAV.PRODUCT') },
+    { href: localePath(locale, '/a-propos'), label: t(dict, 'NAV.ABOUT') },
     { href: localePath(locale, '/faq'), label: t(dict, 'NAV.FAQ') },
-    ...(fr ? [{ href: '/suivi', label: t(dict, 'NAV.TRACKING_LONG') }] : []),
-    { href: '/contact', label: t(dict, 'NAV.CONTACT') },
+    { href: localePath(locale, '/suivi'), label: t(dict, 'NAV.TRACKING_LONG') },
+    { href: localePath(locale, '/contact'), label: t(dict, 'NAV.CONTACT') },
   ]
 
   const legalLinks = [
-    { href: '/mentions-legales', label: t(dict, 'LEGAL.NOTICE_TITLE') },
-    { href: '/cgv', label: t(dict, 'LEGAL.TERMS_TITLE') },
-    { href: '/retractation', label: t(dict, 'LEGAL.WITHDRAWAL_TITLE') },
-    { href: '/confidentialite', label: t(dict, 'LEGAL.PRIVACY_TITLE') },
+    { href: localePath(locale, '/mentions-legales'), label: t(dict, 'LEGAL.NOTICE_TITLE') },
+    { href: localePath(locale, '/cgv'), label: t(dict, 'LEGAL.TERMS_TITLE') },
+    { href: localePath(locale, '/retractation'), label: t(dict, 'LEGAL.WITHDRAWAL_TITLE') },
+    { href: localePath(locale, '/confidentialite'), label: t(dict, 'LEGAL.PRIVACY_TITLE') },
   ]
 
   return (
