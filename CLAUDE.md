@@ -13,6 +13,10 @@ public professionnel, pas d'un side-project.
 1. **Délais honnêtes, partout.** Livraison 10-20 jours affichée AVANT l'achat (page produit,
    FAQ, récapitulatif checkout) et ré-affichée dans l'email de confirmation. Jamais atténuée,
    jamais cachée dans une page annexe — les litiges font geler Stripe/PayPal.
+   **Livraison France uniquement**, dite AVANT l'achat et **y compris sur la version anglaise**,
+   où le visiteur n'a aucune raison de le supposer (clés `SHIPPING_NOTICE`, `docs/i18n/README.md`
+   §0). Le checkout n'accepte que `FR` (`src/lib/shop/stripe.ts`) : vendre sans le dire envoie le
+   client au refus d'adresse **après** avoir payé.
 2. **Toute la logique commande vit dans `src/lib/shop/`** (produit, coloris, prix, sessions
    checkout, webhooks). Rien de commerce dans les composants — c'est la condition d'une
    migration Shopify future sans réécriture.
@@ -23,6 +27,23 @@ public professionnel, pas d'un side-project.
    Ne pas introduire de persistance « au cas où ».
 5. **Micro-entreprise FR** : TVA non applicable (art. 293 B du CGI) sur les prix et CGV ;
    rétractation 14 jours ; le vendeur est identifié dans les mentions légales.
+6. **Deux langues, et l'anglais dans le même commit.** Le site n'existe qu'en **français** (la
+   référence, servie à la racine) et en **anglais** (`/en`). En ajouter ou en retirer une est une
+   décision du propriétaire, pas une opération de contenu : ça touche `LOCALES`, le sitemap, les
+   `hreflang`, le sélecteur de langue et les redirections.
+   **Tout texte visible s'écrit dans `docs/i18n/fr.md`, se répercute AUSSITÔT dans
+   `docs/i18n/en.md`, puis `npm run i18n` régénère `src/lib/i18n/dictionaries.gen.ts`** (jamais
+   édité à la main) : **les trois fichiers partent dans le même commit**. Un commit qui touche au
+   texte sans toucher à l'anglais est *incomplet*, pas « à finir plus tard ».
+   **Aucune chaîne visible en dur** dans un composant atteignable depuis `src/app/[lang]/` : les
+   chaînes se préparent côté serveur (`src/lib/i18n/chrome.ts`) et arrivent en props — importer
+   `getDictionary`/`t` depuis un fichier `'use client'` embarquerait les dictionnaires entiers
+   dans le bundle. Restent en français par décision : les **noms propres du produit** (nom du
+   leurre, coloris, « Pirate » — ils doivent correspondre au reçu Stripe et à l'email), les
+   **pages légales** et les **gabarits d'email**.
+   Le filet : `src/lib/i18n.test.ts` (périmètre, correspondance avec `LOCALES`, parité, ordre,
+   placeholders) et `src/lib/i18n/gen.test.ts` (le généré = les sources). L'oubli sort en **gate
+   rouge**, pas en page à moitié traduite.
 
 ---
 
@@ -155,6 +176,7 @@ Si tu ne fais qu'une chose : écris dans `docs/PROGRESS.md`.
 | `docs/standards/WEB-REFERENCE.md` | Faits web volatils + pièges vérifiés datés — à rafraîchir. |
 | `docs/standards/FONDATION-PASTEL.md` | La fondation visuelle du studio (couche 1) : géométrie, surligneur, grain, motion — invariante. |
 | `docs/standards/UI-COPY.md` | Charte de ton de chaque texte visible. |
+| `docs/i18n/README.md` | Le standard des deux langues : ce qui se traduit, ce qui reste en français, et la contrepartie « livraison France » de la version anglaise. |
 | `docs/product/VISION.md` · `PRODUCT.md` | Le « pourquoi » + cible + conversion + direction artistique. |
 | `docs/ROADMAP.md` | Le parcours idée → mise en ligne, par phase. |
 | `docs/PROGRESS.md` | Historique de ce qui a été livré (le + récent en haut). |

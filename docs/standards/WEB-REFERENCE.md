@@ -37,6 +37,30 @@ douleur**. Corollaire : chaque service tiers ajouté (analytics, Calendly, embed
 `next lint` interprète « lint » comme un dossier (« Invalid project directory …/lint »).
 → script `"lint": "eslint ."` et gate = `npx eslint .` + `npx tsc --noEmit`.
 
+### WSL × Windows — un seul `node_modules` ne peut pas servir les deux (bug payé, 08/2026)
+Un projet posé sur `/mnt/d` (donc `D:\` vu de Windows) est atteignable depuis les deux systèmes,
+**mais `node_modules` ne l'est pas** : Next, Tailwind, lightningcss, rolldown et sharp embarquent
+des binaires `.node` compilés par plateforme, livrés en dépendances optionnelles.
+
+`npm install` n'installe **que** les binaires de la plateforme courante et **supprime les autres**.
+Conséquence en boucle :
+
+- installé depuis Windows → `vitest` meurt sous WSL sur `Cannot find native binding` (rolldown) ;
+- installé depuis WSL → `next dev`/`next build` meurt sous Windows sur
+  `Cannot find module '../lightningcss.win32-x64-msvc.node'`, à la compilation de `globals.css`.
+
+Le second casse le site, pas seulement l'outillage : il tombe sur la CSS, donc sur toutes les pages.
+
+→ **Règle : on choisit UN système et on n'en bouge plus.** Toutes les commandes `npm` (`install`,
+`dev`, `build`, `test`) partent du même. Réparation quand c'est arrivé : relancer `npm install`
+depuis le système qu'on veut servir, puis purger `.next` (les chunks compilés gardent les chemins
+de l'autre plateforme). `--no-save` ne protège pas — il préserve `package.json` et
+`package-lock.json`, pas les binaires natifs déjà installés.
+
+Symptôme trompeur associé : un `package-lock.json` traînant dans un dossier PARENT hors dépôt fait
+déduire à Turbopack une racine hors projet, et `next dev` démarre puis meurt sur
+`IO error … lockfile`. → fixer `turbopack: { root: process.cwd() }` dans `next.config.ts`.
+
 ### GSAP ScrollTrigger + `pin` — mesure du layout trop tôt (bug payé, non corrigé sur le site source)
 Une section pinnée peut passer en `position:fixed; width:0` au chargement (le contenu disparaît,
 un resize répare). **Parade** : créer les triggers dans un `requestAnimationFrame` après montage,

@@ -3,7 +3,399 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
-## 2026-08-14 — LOT 9 (suite) : « 3 achetés, le 4e offert AU CHOIX », suppressions bloc Offert + bandeau
+## 2026-08-26 — La parité FR/EN devient automatique ; la campagne de précommande des 100
+
+Deux consignes Camil : « standardise pour que tout ce qui est fait sur FR soit bien visible et
+traduit en anglais sur EN », puis « dire qu'il nous faut 100 commandes pour lancer une vraie ligne
+de production, investissez sur nous en précommandant ».
+
+### Le cliquet qui rend la parité automatique
+
+`src/lib/i18n/no-hardcoded-text.test.ts` — le filet qui manquait. Les deux autres garantissaient
+des dictionnaires complets et à jour, mais ne voyaient **rien** si le texte était écrit directement
+dans le JSX : c'est exactement comme ça que `/en` a pu servir un hero, un formulaire et une page
+produit entièrement français avec des dictionnaires parfaits.
+
+- Il interdit **tout littéral visible**, pas « le français » : détecter une langue demanderait une
+  heuristique, donc des faux positifs sur « Truite arc-en-ciel » (français par décision). Une
+  chaîne anglaise en dur serait tout aussi fausse côté français.
+- **18 fichiers de dette sont listés NOMMÉMENT**, pas exclus par un motif. C'est ce qui fait le
+  cliquet : la règle s'applique dès maintenant à tout le reste et à tout fichier neuf. On ne peut
+  plus en ajouter, seulement en retirer. Un test vérifie en plus que chaque ligne de dette
+  correspond à un fichier existant.
+- Il a immédiatement attrapé **le bandeau d'objectif** puis **ma propre section de campagne** —
+  les deux ont été corrigés avant d'être livrés. C'est le comportement attendu.
+
+### La campagne de précommande
+
+**Une décision juridique a été tranchée avant d'écrire une ligne.** Camil voulait une vraie
+précommande (payer maintenant, recevoir le leurre signé plus tard) mais un engagement « au
+conditionnel ». Les deux sont incompatibles : l'article L216-1 du code de la consommation impose
+une **date d'expédition**, et à défaut la loi applique 30 jours, après quoi l'acheteur peut
+annuler et exiger son remboursement. « Quand on aura 100 commandes » n'est pas une date.
+
+- `src/lib/shop/precommande.ts` traite donc la date comme une donnée **obligatoire**, sur le
+  modèle de `legal-config.ts` : tant que `PRECOMMANDE_SHIP_BY` vaut son gabarit « À COMPLÉTER »,
+  `PRECOMMANDE_ACTIVE` est faux, **la campagne ne s'affiche nulle part**, et rien n'est encaissé
+  sur une promesse sans date. Le site retombe sur la vente normale, qui est complète.
+- La section a **trois gardes**, chacune faisant disparaître le bloc plutôt que de le dégrader :
+  pas de date configurée, Stripe injoignable (pas de « 0 » par défaut — le compteur est
+  l'argument, sans chiffre vrai il n'y a plus de preuve), objectif déjà atteint.
+- **L'histoire** est sortie d'un concours à trois plumes (l'aveu, l'atelier ouvert, le pacte) et
+  d'un jury. Le pacte gagne l'architecture — un pêcheur méfiant à 22 h ne demande pas d'où vient
+  la marque, il demande ce qu'il advient de son argent. Titre greffé de l'atelier :
+  **« Le leurre existe. La série, non. »** La date et le remboursement sont au centre de la page,
+  pas en note de bas de page. Zéro tiret cadratin, zéro emoji, zéro donnée fabriquée.
+- Le contenu de la boîte premium reste **au conditionnel**, et le texte le dit explicitement :
+  « Tant que l'atelier n'a rien confirmé, nous n'annonçons ni matériau ni contenu. »
+- **Le bandeau d'objectif est rebranché** et traduit. Un test vérifie que la campagne et le
+  bandeau visent le **même** chiffre : sinon le site annoncerait deux objectifs différents sur la
+  même page.
+- 23 clés ajoutées dans les deux langues (331 au total).
+
+**Gate** : tsc ✅ eslint ✅ vitest 214 passés (+31 sautés) ✅ build ✅.
+
+**Ce qui bloque la publication de la campagne** : la date limite d'expédition, à choisir en
+comptant la production, l'acheminement et une marge. Une date manquée est un remboursement de
+droit, et une série de remboursements gèle un compte Stripe. Restent aussi à écrire : les CGV de
+la précommande (le régime diffère de la vente normale) et le gabarit d'email de remboursement si
+l'objectif n'est pas atteint.
+
+## 2026-08-26 — Le site entier existe en anglais : 11 routes `/en`, tunnel de paiement compris
+
+Consigne Camil : « quand le mode anglais passe, tout le site ne doit être accessible plus qu'en
+anglais. Fais les routes /en. Si le mode anglais est activé, alors toutes les routes ont /en aussi. »
+
+L'anglais passe de **2 pages sur 13** à **11 pages sur 11** (les deux routes de travail du hero
+restent françaises, volontairement).
+
+- **Les 9 routes créées** sous `src/app/[lang]/` : `/en/leurre`, `/en/contact`, `/en/suivi`,
+  `/en/a-propos`, `/en/merci`, `/en/cgv`, `/en/mentions-legales`, `/en/confidentialite`,
+  `/en/retractation`. Chacune vérifiée en navigateur : HTTP 200, `lang="en"`, titre anglais.
+- **142 clés de dictionnaire ajoutées** dans les deux langues (296 → 308 au total). Les pages
+  légales portent en tête le rappel que **la version française fait foi** — la clé
+  `LEGAL.TRANSLATION_DISCLAIMER` existait sans être lue.
+- **Les deux îlots clients qui restaient français sont traduits** : le formulaire de contact
+  (« Votre message », « Envoyer ma demande ») et toute la page produit (BuyBox, OfferPanel,
+  OfferProgress, ColorwayViewer, PaymentMethods). Ils suivent le patron du carrousel : le serveur
+  prépare les chaînes (`contactStrings`, `leurreStrings`), le client les reçoit en props — aucun
+  `'use client'` n'importe de dictionnaire, donc rien n'alourdit le bundle.
+- **Le schéma zod du contact devient une fabrique** (`createContactSchema(messages?)`) : les
+  RÈGLES restent uniques et partagées client/serveur, seuls les messages varient. `contactSchema`
+  garde sa signature, donc la route API et ses tests sont inchangés.
+- **Le tunnel de paiement suit enfin la langue.** Nouveau champ `langue` dans le schéma de
+  checkout, validé par zod comme tout le reste : il décide de la langue de la **page Stripe**
+  (`locale` n'est plus figé sur `'fr'`) et des **URL de retour** (`/en/merci`, `/en/leurre`).
+  Optionnel et replié sur le français : un onglet ouvert avant la mise à jour paie encore.
+- **Une seule source de vérité pour « quelles pages existent dans quelle langue »** :
+  `TRANSLATED_PATHS` dans `paths.ts`. Le sitemap gardait sa propre copie et aurait continué
+  d'annoncer 2 pages sur 11 ; il en dérive désormais, et exclut `/merci` et les pages légales
+  **dans les deux langues**. Menu et pied de page passent tous leurs liens par `localePath`.
+- **La mention « livraison France » s'affiche enfin**, au-dessus du bouton d'achat, sur les DEUX
+  versions de la page produit. Elle n'était nulle part. Sur le français aussi : le checkout
+  n'accepte que le code pays `FR`, ce qui exclut la Belgique, la Suisse et les DOM-TOM — un
+  francophone n'a pas plus de raison qu'un anglophone de le deviner.
+- **Vérifié en navigateur** : les 11 routes anglaises sans un mot de français ; les 11 routes
+  françaises intactes ; les prix au bon format de chaque côté (10 montants `21,99 €` sur
+  `/leurre`, 10 montants `€21.99` sur `/en/leurre`).
+- **Gate** : tsc ✅ eslint ✅ vitest 182 passés (+31 sautés) ✅ build ✅, depuis Windows.
+- **Reste ouvert** : l'email de confirmation part toujours en français (décision assumée, à
+  rouvrir maintenant qu'on vend en anglais) ; le soft 404 de `/en/<inconnu>` (HTTP 200 au lieu de
+  404) ; la page 404 anglaise qui ramène à l'accueil français ; et la description du JSON-LD
+  produit, française sur les deux versions.
+
+## 2026-08-25 — Audit complet de la version anglaise : 69 failles, les 6 plus visibles corrigées
+
+Signalement Camil : « tous les onglets ne sont pas forcément disponibles, la page contact est en
+not found, certains mots comme Truite ne sont pas traduits et deviennent Troot. » Les trois
+symptômes ont été **reproduits sur le serveur réel** avant d'auditer.
+
+Audit à cinq lentilles (navigation, français résiduel, traduction automatique, SEO, parcours
+d'achat) : **69 failles**, dont 11 bloquantes. Verdict : **la version anglaise n'est pas publiable
+en l'état.**
+
+**Corrigé (vérifié en navigateur, HTML servi) :**
+
+- **Le sélecteur de langue fabriquait des pages introuvables sur 11 des 13 pages.** Il construisait
+  `/en/<chemin courant>` sans jamais vérifier que la page existe en anglais : passer en anglais
+  depuis `/contact` menait à « Page introuvable ». C'est exactement ce que Camil a vu. Nouvelle
+  source unique `TRANSLATED_PATHS` dans `paths.ts` (les routes réellement présentes sous
+  `src/app/[lang]/`), et `localePathOrHome()` qui replie sur l'accueil de la langue **en le
+  disant** (clé `LANG.NO_TRANSLATION`, en `title`) plutôt que de mener à un mur. Deux tests le
+  verrouillent, dont un qui compare la liste aux dossiers réels de `src/app/[lang]/`.
+- **« Truite » devenait « Trout ».** Ce n'est pas le site qui traduit mal, c'est le navigateur :
+  aucun `translate="no"` n'existait dans tout le projet, et les noms propres du produit sont
+  français dans les deux langues **par décision** (ils doivent correspondre au reçu Stripe et à
+  l'email). Chrome les traduisait donc à l'écran, et l'acheteur recevait un article dont il n'avait
+  jamais vu le nom. 11 emplacements protégés (carrousel, fiche, BuyBox).
+- **Le délai de livraison s'affichait en français dans une phrase anglaise** : « Delivery 10 à 20
+  jours ouvrés, shipping included. » `PRODUCT.deliveryDelay` est une chaîne française en dur, alors
+  que sa traduction `PRODUCT.DELAY_VALUE` existait depuis toujours sans être lue par le carrousel.
+- **Les montants étaient ponctués à la française sur la page anglaise** : « 21,99 € » au lieu de
+  « €21.99 ». `formatEuros()` prend désormais la langue en paramètre (français par défaut, pour que
+  les emails, le reçu Stripe et les pages légales restent inchangés). La FAQ anglaise était touchée
+  par le même défaut.
+- **Un acheteur anglophone n'avait AUCUN lien vers le suivi de commande.** Le menu anglais avait 3
+  entrées contre 5 en français, alors que les libellés anglais (`NAV.ABOUT`, `NAV.TRACKING`)
+  existaient déjà. Menu et pied de page passent à 5 entrées dans les deux langues.
+
+**Non corrigé, et ce sont des décisions produit** : la page produit, le paiement Stripe
+(`locale: 'fr'` figé) et l'email de confirmation restent français ; 11 URL `/en/*` répondent
+HTTP 200 en affichant « page introuvable » (soft 404) ; la page 404 anglaise ramène à l'accueil
+français ; et `SHIPPING_NOTICE` n'est toujours affichée nulle part.
+
+**Gate** : tsc ✅ eslint ✅ vitest 181 passés (+31 sautés) ✅ build ✅, depuis Windows.
+
+Fichiers : `src/lib/i18n/paths.ts`, `chrome.ts`, `src/components/sections/LangSwitcher.tsx`,
+`SiteHeader.tsx`, `SiteFooter.tsx`, `src/lib/shop/product.ts`, `src/lib/faq.ts`,
+`src/components/sections/home/LureCarousel.tsx`, `carousel-strings.ts`,
+`src/components/sections/leurre/BuyBox.tsx`, `src/lib/i18n.test.ts`, `docs/i18n/{fr,en}.md`.
+
+## 2026-08-25 — Le panier du carrousel 3D, livré ; et le hero cesse d'être français sur `/en`
+
+Deux consignes Camil, traitées ensemble parce qu'elles se rejoignaient : « mets en place un
+affichage concret pour pouvoir ajouter, retirer du panier et avoir un vrai panier à cliquer et à
+consulter », et « pour le mode anglais et français, tout ne se traduit pas ».
+
+**Le constat qui liait les deux, mesuré par un audit à quatre lentilles (72 constats)** : le
+composant `LureCarousel` ne recevait **aucune prop**. Étant `'use client'`, il ne pouvait pas lire
+le dictionnaire — donc TOUT le hero, boutons d'achat compris, était condamné au français, y compris
+sur `/en`. C'était la cause racine, pas un oubli de traduction.
+
+- **Le panier est un ENSEMBLE de coloris distincts**, plus un compteur à doublons
+  (`collection-selection.ts` réécrit). Un coloris y est ou n'y est pas. La raison est une question
+  d'honnêteté, pas d'ergonomie : l'offre groupée expédie « les 3 coloris » par construction, donc
+  composer trois fois Truite arc-en-ciel et lire « 3 achetés, votre 4e est offert » promettait un
+  colis qui n'existe pas. `toggleColorway` est désormais l'unique mutation, et un état illégal
+  (doublon, 4e coloris) est **irreprésentable** au lieu d'être surveillé.
+- **La rangée des 4 cases** remplace les puces de navigation : les 3 coloris payés + le 4e offert,
+  chacun avec son nom, son prix ou son état. Elle navigue ET montre le colis. Les deux sorties
+  (« Commander les 4 leurres », « Commander … seul ») ne disparaissent plus **dans aucun état** —
+  c'était le défaut le plus grave : à 2 leurres au panier, plus **aucun** bouton ne menait au
+  paiement.
+- **Corrigé aussi** : l'auto-avance qui faisait disparaître le leurre qu'on venait d'ajouter ;
+  « Acheter » qui achetait `selection[0]` et non le leurre affiché ; le retrait impossible au
+  clavier ; et le panier jamais vidé après paiement (`ClearCartOnThanks` sur `/merci`).
+- **Le hero parle enfin la langue de sa page.** 21 clés `CART.*` créées en FR **et** EN, plus le
+  branchement de clés qui existaient depuis toujours sans être lues : `HOME.PREV`, `HOME.NEXT`,
+  `HOME.LOADING`, `HOME.NO_WEBGL`, `HOME.MODEL_FAILED`, `HOME.VIEWS_LABEL`, les 6 angles de vue et
+  leurs descriptions, `HOME.MODEL_ALT`. Une clé `HOME.FRAMES_FAILED` ajoutée. 165 clés par langue.
+- **Le mécanisme** : `carouselStrings(locale)` prépare tout côté serveur (`chrome.ts`) et le passe
+  en props ; `fill()` (nouveau module pur) remplit les `{placeholders}` côté client sans embarquer
+  un seul dictionnaire dans le bundle. C'est le patron à réutiliser pour tout composant client.
+- **Vérifié en navigateur réel**, serveur dev Windows, HTML servi : `/` rend « Ajouter »,
+  « Commander les 4 », « Vider le panier », « coloris sur » ; `/en` rend « Add », « Order all 4 »,
+  « Empty the cart », « colours of ». **Zéro occurrence de « Chargement » sur `/en`** (il en
+  restait deux, dans deux chargeurs distincts de `HeroScroll`).
+- **Gate** : tsc ✅ eslint ✅ vitest 179 passés (+31 sautés) ✅ build ✅, tout depuis Windows.
+- **Reste ouvert** (spec `docs/specs/carrousel-achat.md`, T7 et T8) : `inert` sur le hero pendant
+  le fondu (les boutons restent focusables alors qu'ils sont invisibles), et la fermeture de
+  l'offre groupée en rupture de stock, côté UI **et** côté `/api/checkout`, qui ne valide
+  aujourd'hui que le coloris décoratif et jamais les trois leurres réellement facturés.
+
+Fichiers : `src/lib/shop/collection-selection.ts` (réécrit) et son test, `src/lib/shop/product.ts`
+(`shortLabel`), `src/components/sections/home/LureCarousel.tsx`, `carousel-strings.ts` (nouveau),
+`ClearCartOnThanks.tsx` (nouveau), `Hero.tsx`, `HeroScroll.tsx`, `use-collection-selection.ts`,
+`src/lib/i18n/fill.ts` (nouveau), `chrome.ts`, `index.ts`, `docs/i18n/{fr,en}.md`.
+
+## 2026-08-25 — Deux langues au lieu de cinq ; la parité anglaise devient une règle tenue par les tests
+
+Consigne Camil : « mets à jour le mode Français et Anglais, c'est les deux seules langues dans
+lesquelles le site doit être disponible […] dès que quelque chose est mis à jour textuellement,
+tout doit être mis à jour sur le mode anglais, donc oblige ça dans les règles de projet. »
+
+- **Espagnol, allemand et néerlandais retirés.** `docs/i18n/{es,de,nl}.md` supprimés,
+  `LOCALES = ['fr', 'en']`, dictionnaires régénérés (143 clés par langue, contre 146 : les clés
+  `LANG.ES/DE/NL` du sélecteur n'avaient plus d'objet). **Ordre non négociable, et c'est ce qui a
+  rendu le changement sûr** : supprimer les sources → `npm run i18n` → *puis* réduire `LOCALES`.
+  Dans ce sens, un résidu devient une erreur TypeScript ; dans l'autre, tout reste vert et trois
+  dictionnaires morts partent en production sans un mot.
+- **Mesuré après coup** : sitemap 14 → **8** entrées, `hreflang` 6 → **3** balises
+  (`fr`, `en`, `x-default`), routes bâties `/en` et `/en/faq` seulement.
+- **Redirections posées** (`next.config.ts`) : `/es`, `/de`, `/nl` et leurs sous-chemins → `/`.
+  En **307, pas en 308** : un 308 se met en cache sans expiration, et une langue qui reviendrait
+  un jour serait inatteignable pour ceux qui l'ont vu. Destination = la racine française, pas
+  l'anglais : un visiteur venu de `/de/faq` n'a pas demandé l'anglais, et l'accueil porte le
+  sélecteur. Ces URL n'ont jamais existé en production (le domaine n'est pas acheté) **mais
+  répondaient 200 sur la préversion publique `alure-beta.vercel.app`, sans `X-Robots-Tag`** —
+  vérifié ce jour, d'où la redirection plutôt qu'un 404.
+- **`NUMBER_LOCALES` typée `Record<Locale, string>`** (`product.ts`) et son repli `?? 'fr-FR'`
+  supprimé : c'était la seule duplication de la liste des langues hors du module i18n, et le repli
+  aurait rendu « 6,5 » ponctué en français pour toute langue ajoutée, sans rien signaler.
+  Ajouter une langue casse désormais le build, et c'est le but.
+- **La règle est gravée et exécutable.** `CLAUDE.md` reçoit la **règle Alure n°6** (deux langues ;
+  tout texte visible part dans `fr.md`, `en.md` et le dictionnaire régénéré **dans le même
+  commit** ; aucune chaîne en dur dans un composant servi sous `/[lang]`). La règle n°1 reçoit la
+  mention « livraison France, dite aussi en anglais ». `src/lib/i18n.test.ts` est durci :
+  il ne connaissait que `docs/i18n/` et **jamais `LOCALES`** — on pouvait donc ajouter un fichier
+  de langue sans l'inscrire dans le code, ou l'inverse. Quatre assertions ajoutées : périmètre
+  exact, correspondance sources ↔ `LOCALES`, absence de clé `LANG.*` orpheline, convention
+  décimale pour chaque langue servie.
+- **Vérifié depuis Windows** : tsc ✅ eslint ✅ vitest 162 passés (+31 sautés) ✅ build ✅.
+  Les 15 tests en moins sont les cas par langue des trois langues retirées.
+- **Reste ouvert, et c'est la dette la plus gênante** : `SHIPPING_NOTICE.TITLE/BODY` existent dans
+  les deux dictionnaires et **ne sont affichées nulle part**. Or c'est la contrepartie explicite de
+  la version anglaise (`docs/i18n/README.md` §0) : sans elle, un visiteur anglophone n'a aucune
+  raison de deviner qu'on ne livre qu'en France, et il le découvre au refus d'adresse, après avoir
+  payé. Voir aussi : la FAQ anglaise renvoie vers `/leurre`, page française, et les boutons du
+  carrousel 3D sont en français en dur y compris sur `/en`.
+
+Fichiers : `src/lib/i18n/paths.ts`, `src/lib/i18n/index.ts`, `src/lib/i18n/dictionaries.gen.ts`,
+`src/lib/i18n.test.ts`, `src/lib/shop/product.ts`, `next.config.ts`, `docs/i18n/` (3 fichiers
+supprimés, README réécrit), `CLAUDE.md`, `docs/ROADMAP.md`.
+
+## 2026-08-25 — Le carrousel 3D repensé pour l'achat : la spec
+
+Consigne Camil : rendre la zone du carrousel « le plus explicite possible à l'achat » — voir
+combien de leurres, lesquels, en ajouter et en retirer vite.
+
+Brainstorm mené en orchestration multi-agents (5 lentilles de diagnostic, 3 directions
+concurrentes, 3 juges, une synthèse) : **60 constats**, dont 13 bloquants ou majeurs, tous ancrés
+fichier:ligne. La spec est dans **`docs/specs/carrousel-achat.md`** (statut `brouillon`, à valider).
+
+Les cinq défauts qui justifient le chantier, vérifiés dans `LureCarousel.tsx` :
+
+1. **À 2 leurres au panier, plus AUCUN bouton ne mène au paiement** (`:451-456`) — le visiteur
+   conclut que le site est cassé.
+2. **« Acheter · 21,99 € » n'achète pas le leurre affiché** (`:454-455`) mais `selection[0]`,
+   pendant que le nom du leurre à l'écran est imprimé juste au-dessus.
+3. **Le panier ne montre jamais son contenu** : `selection` n'est jamais parcourue.
+4. **Retirer un leurre est impossible au clavier** : le seul chemin passe par un geste pointeur.
+5. **Le clic « Ajouter » fait pivoter le carrousel** vers un autre leurre, sans aucune confirmation.
+
+Plus deux défauts de portée : **le panier n'est jamais vidé après paiement** (le hero réaffiche
+« Commander les 4 » à quelqu'un qui vient de payer), et les boutons **restent focusables pendant
+le fondu** du hero (`pointer-events: none` ne retire pas de l'ordre de tabulation).
+
+Décision de fond proposée, et elle demande l'arbitrage de Camil : **le panier devient un ensemble
+de coloris DISTINCTS**. Aujourd'hui les doublons sont permis et testés, alors que l'offre groupée
+expédie « les 3 coloris » : composer trois fois Truite, payer 65,97 € et recevoir trois coloris
+différents, c'est le litige type. Corollaire assumé : une rupture de stock **ferme** l'offre
+groupée.
+
+## 2026-08-25 — Régression d'environnement réparée : un `node_modules` ne sert qu'UN système
+
+Signalée par Camil : `Build Error — Cannot find module '../lightningcss.win32-x64-msvc.node'` à la
+compilation de `src/app/globals.css`, donc sur toutes les pages.
+
+**Cause : le `npm install` lancé depuis WSL le 2026-08-21.** Le projet vit sur `/mnt/d`, visible
+des deux systèmes, mais `node_modules` non : Next (SWC), Tailwind (oxide), lightningcss, rolldown
+et sharp embarquent des binaires `.node` par plateforme, en dépendances optionnelles. `npm install`
+n'installe que ceux de la plateforme courante **et supprime les autres**. Les cinq paquets
+`*-win32-x64-msvc` avaient donc disparu. `--no-save` n'y change rien : il protège `package.json` et
+`package-lock.json`, pas les binaires.
+
+- **Réparé** : `npm install` relancé **depuis Windows** (les 5 paquets win32 rétablis, lockfile
+  inchangé), puis `.next` purgé — ses chunks compilés gardaient les chemins Linux.
+- **Vérifié depuis Windows**, c'est-à-dire dans l'environnement réel : `require('lightningcss')` et
+  `require('@tailwindcss/postcss')` OK, `npm run build` vert (toutes les routes rendues),
+  `npm run test` 177 passés + 31 sautés.
+- **Règle posée** (`docs/standards/WEB-REFERENCE.md`) : on choisit UN système et toutes les
+  commandes `npm` en partent. Contrepartie assumée : `npm run test` et `npm run dev` se lancent
+  désormais **depuis Windows**, plus depuis WSL.
+
+Fichiers : `docs/standards/WEB-REFERENCE.md`, `node_modules/` (non versionné).
+
+## 2026-08-21 — Campagne de recette du parcours d'achat ; les 9 gabarits d'email ; 3 blocages de mise en ligne trouvés
+
+Consigne Camil : « fais des tests de tout ce qu'il est possible de faire sur le site, payer un
+leurre, deux, 3, vérifier le reçu, générer les envois de mail avec Resend […] génère un fichier
+.md pour chaque mail à envoyer ».
+
+**Précision d'offre** : il n'existe pas d'achat « 2 leurres » ni « 3 leurres ». Le site vend
+**deux** paliers — un leurre à 21,99 €, ou « 3 achetés, le 4e offert » à 65,97 €. La campagne
+teste donc ces deux-là, avec les 3 coloris et les 4 choix de 4e leurre offert.
+
+- **Campagne de recette** (`src/test/campagne-paiement.test.ts`) : 31 cas en conditions réelles —
+  signature Stripe vérifiée cryptographiquement (HMAC local : corps falsifié, secret étranger,
+  horodatage rejoué → tous refusés), 6 branches du webhook, 5 achats payés avec **envois Resend
+  réels**, idempotence par rejeu, 8 cas d'erreur de `/api/checkout`, rate-limit (429 à la 11e
+  requête, confirmé). **Gardée derrière `CAMPAGNE_REELLE=1`** — sans ça `npm run test` la saute,
+  car elle envoie de vrais emails. Se relance avec
+  `CAMPAGNE_REELLE=1 npx vitest run src/test/campagne-paiement.test.ts`.
+- **Reçu vérifié ligne à ligne** : solo → 1 × 21,99 € ; collection → 3 × 21,99 € **plus** le 4e
+  offert en ligne à 0,00 € portant son libellé choisi. L'invariant « somme des lignes =
+  `totalCents()` » tient pour les 4 choix de cadeau. Le collector Pirate n'entre dans aucun
+  montant.
+- **Les 9 gabarits d'email** (`docs/emails/`) : 3 automatiques (confirmation, notification
+  vendeur, formulaire de contact) et 6 à envoyer à la main (expédition/suivi, retard, coloris
+  épuisé, rétractation, remboursement, paiement non abouti). Chacun donne l'objet, le corps prêt
+  à copier, les variables, et ce que l'email ne doit jamais dire.
+- **Trois blocages de mise en ligne** (aucun n'est un bug de code) :
+  1. `STRIPE_SECRET_KEY` est une clé **restreinte et expirée** (`rkcs_test_…`, issue du connecteur
+     MCP). Toute création de session échoue en 500. Le paiement est à l'arrêt tant qu'une vraie
+     `sk_test_…` n'est pas remise.
+  2. **Resend n'a aucun domaine vérifié** : depuis `onboarding@resend.dev`, l'API refuse en 403
+     tout destinataire autre que `alure.pounio@gmail.com`. En l'état, **aucun client réel ne
+     recevrait sa confirmation** — le webhook partirait en 500 et Stripe re-livrerait en boucle.
+  3. `src/lib/legal-config.ts` porte encore ses `À COMPLÉTER` (adresse du siège, email de contact,
+     adresse de retour). Ces valeurs sont **affichées telles quelles** sur `/retractation`,
+     `/cgv` et `/mentions-legales`.
+- **Corrigé en passant** : `ORDER_NOTIFICATIONS_EMAIL` était **vide** dans `.env.local` — la
+  notification vendeur échouait, donc le webhook renvoyait 500 après avoir envoyé la confirmation
+  client, et Stripe re-livrant, le client recevait des confirmations en double. Renseignée.
+  `next.config.ts` reçoit `turbopack: { root: process.cwd() }` : un `package-lock.json` traîne
+  dans `D:\Claude_PROJETS`, Turbopack en déduisait une racine hors dépôt et `next dev` mourait sur
+  « IO error … lockfile ». Enfin, `@rolldown/binding-linux-x64-gnu` installé en `--no-save` pour
+  faire démarrer vitest sous WSL — **ce dernier geste a cassé le build Windows, cf. entrée du
+  2026-08-25.**
+- **Vérifié** : tsc ✅ eslint ✅ vitest 177 passés (+31 sautés) ✅ build ✅.
+- Reste ouvert : rejouer la campagne avec une clé Stripe valide pour couvrir ce que la clé morte
+  interdit — vraie session, paiement 4242, événement signé par Stripe, marqueur d'idempotence posé
+  sur le PaymentIntent. Et **écrire l'email d'expédition**, aujourd'hui promis au client par la
+  confirmation mais envoyé par personne.
+
+Fichiers : `src/test/campagne-paiement.test.ts` (nouveau), `docs/emails/` (10 fichiers, nouveau),
+`next.config.ts`, `.env.local` (non versionné), `docs/ROADMAP.md`.
+
+## 2026-08-20 — La frise disparaît ; deux boutons (« Ajouter au panier » + « Acheter ») sur les leurres 3D
+
+Consigne Camil : « supprime la frise dans la page d'accueil, fais un bouton ajouter au panier
+ainsi que Acheter, visible directement depuis la page des leurres 3D ».
+
+- **Frise supprimée** : `CollectionStrip.tsx` effacé, plus aucun rail de points sous le header.
+  La spec `docs/specs/frise-collection.md` passe au statut `retirée` (historique conservé). Le
+  panier-compteur (`use-collection-selection`, `collection-selection.ts`, `freebiesUnlocked` et
+  ses tests) reste intact — seule la REPRÉSENTATION disparaît.
+- **`SmartCartButton` → `CartActions`** (`LureCarousel.tsx`) : les DEUX boutons toujours
+  visibles sous les leurres 3D, plus une ligne de statut (aria-live) qui reprend le message de
+  la frise. États : coloris achetable → « Ajouter au panier » (ajoute + avance l'entonnoir,
+  inchangé) + « Acheter · 21,99 € » (ghost) ; à 0 « Acheter » vend le leurre AFFICHÉ, à 1 celui
+  du panier ; à 2 il disparaît (il n'existe pas d'offre à 2 leurres — la ligne pousse le 3e) ;
+  à 3 CTA unique « Commander les 4 · 65,97 € » ; Pirate/épuisé → « Offert dès 3 achetés —
+  choisir ». Montants et seuils toujours dérivés d'`OFFERS` — rien en dur.
+- **Vérifié** : tsc ✅ eslint ✅ vitest 177 ✅ build ✅ + parcours réel (playwright-core + Chrome
+  local) : frise absente, 2 boutons à 0/1, 1 seul à 2, « Commander les 4 » à 3, clic →
+  `/leurre?offre=collection&coloris=…` avec le sélecteur du 4e offert, mobile 375 px sans
+  chevauchement. ⚠️ Incident d'environnement en cours de session : le serveur dev hérité
+  (PID 29132) a saturé la mémoire (postcss crashé, GET / en 500 permanent) — tué, cache
+  `.next/dev` purgé, serveur relancé. Rien à voir avec le code.
+- Reste ouvert (ROADMAP Phase 2.5) : l'i18n de ces boutons (FR en dur, comme avant).
+
+Fichiers : `src/components/sections/home/LureCarousel.tsx` (CartActions),
+`src/components/sections/home/CollectionStrip.tsx` (supprimé), `docs/specs/frise-collection.md`,
+`docs/ROADMAP.md`.
+
+## 2026-08-17 — Roadmap technique de mise en ligne : Cloudflare (domaine + DNS) × Vercel
+
+Décision Camil : le nom de domaine s'achète et se gère chez **Cloudflare** (registrar + DNS),
+l'hébergement reste sur **Vercel**. `docs/ROADMAP.md` réécrite en conséquence :
+
+- Nouvelle **Phase 2.5 (reste applicatif)** : réconciliation des branches (`lot9-conversion`
+  poussée, `lot8-splash-carrousel` locale), sort du compteur débranché, i18n de la nouvelle
+  offre sur l'accueil (frise/bouton en FR dur), visuel produit du Pirate, tests E2E paiement à
+  rejouer (le parcours a changé : 65,97 €, champ `cadeau`).
+- **LOT 4 détaillé en 3 volets** : (a) domaine & DNS — Cloudflare en DNS-only (nuage gris,
+  proxy OFF : Vercel est déjà le CDN/TLS, on n'empile pas), apex A `76.76.21.21` / `www` CNAME
+  `cname.vercel-dns.com`, SPF/DKIM Resend + DMARC dans la zone, Email Routing pour
+  `contact@` ; (b) paiement/emails prod — 4 variables d'env Vercel, webhook Stripe abonné aux
+  3 événements, PayPal au dashboard, achat réel de bout en bout, identité vendeur
+  (`legal-config.ts`, lève le noindex des pages légales) ; (c) qualité — 6 audits, Lighthouse
+  mobile ≥ 90, OG, Search Console, Vercel Analytics (CSP dans le même commit si script).
+- La décision DA « domaine » passe à moitié tranchée : l'INFRA est décidée, le NOM reste à
+  choisir parmi les candidats vérifiés libres (alure-peche.fr…).
+
+Fichiers : `docs/ROADMAP.md` (Phase 2.5 + LOT 4 réécrits), ce journal.
 
 Consignes Camil du jour : supprimer le bloc « OFFERT » du Pirate, supprimer le bandeau
 « Objectif de lancement », et refondre l'offre : « 3 leurres achetés, le 4e offert au choix ».

@@ -1,6 +1,10 @@
 # Spec — Frise « collection » au-dessus du carrousel 3D
 
-Statut : `livrée` — validée le 2026-08-12 (décisions Camil : collector renommé « Pirate »,
+Statut : `retirée` — consigne Camil du 2026-08-20 : la frise disparaît de l'accueil ; l'offre
+se raconte désormais par les DEUX boutons du carrousel (« Ajouter au panier » + « Acheter »)
+et leur ligne de statut (`CartActions` dans `LureCarousel.tsx`). Le panier-compteur
+(`use-collection-selection`, `collection-selection.ts`) et l'entonnoir restent en place.
+Historique : `livrée` — validée le 2026-08-12 (décisions Camil : collector renommé « Pirate »,
 frise placée au-dessus des leurres 3D dans le carrousel). Périmètre étendu le même jour
 sur consigne Camil : bouton « Ajouter au panier » après les specs de la fiche, qui met la
 frise à jour aussitôt.
