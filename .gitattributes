@@ -1,0 +1,2 @@
+# Les scripts shell doivent rester en LF — CRLF casse bash sous WSL (hooks Claude Code)
+*.sh text eol=lf

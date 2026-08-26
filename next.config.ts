@@ -12,6 +12,13 @@ const FRAME_EXTRA: string[] = []
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Racine du projet, fixée explicitement. Sans elle, Turbopack la DÉDUIT en
+  // remontant les dossiers parents jusqu'au premier lockfile trouvé : il en
+  // existe un hors du dépôt (D:\Claude_PROJETS), donc la racine partait dans un
+  // dossier où le serveur n'a pas le droit d'écrire son lockfile — `next dev`
+  // démarrait puis mourait sur « IO error … lockfile » (WSL, montage /mnt/d).
+  // `npm run dev|build` s'exécute toujours depuis le dossier du package.json.
+  turbopack: { root: process.cwd() },
   // Build autonome pour Docker : l'image finale lance `node server.js`,
   // sans réinstaller TypeScript pour lire ce fichier. Désactivé sur Vercel
   // (qui définit VERCEL=1) : la plateforme fait son propre packaging et le
@@ -74,8 +81,28 @@ const nextConfig: NextConfig = {
     ]
   },
   async redirects() {
-    // Toute URL renommée/supprimée reçoit ici son 301 (règle n°9).
-    return []
+    // Toute URL renommée/supprimée reçoit ici sa redirection (règle n°9).
+    //
+    // Espagnol, allemand et néerlandais retirés le 2026-08-25 (décision Camil :
+    // le site n'existe qu'en français et en anglais). Ces trois préfixes n'ont
+    // JAMAIS existé sur le domaine de production — il n'est pas encore acheté —
+    // mais ils répondaient 200 sur la préversion publique, sans en-tête
+    // `X-Robots-Tag` : des liens ont pu circuler. On les rattrape donc plutôt
+    // que de les laisser tomber en 404.
+    //
+    // 307 et non 308 : `permanent: false`. Un 308 est mis en cache par le
+    // navigateur SANS date d'expiration — si l'une de ces langues revenait un
+    // jour, les visiteurs qui ont vu le 308 ne l'atteindraient plus jamais. La
+    // permanence se gagne, elle ne se suppose pas.
+    //
+    // Destination : la racine française, pas l'anglais. Un visiteur venu d'un
+    // lien `/de/faq` n'a pas demandé l'anglais ; l'accueil français porte le
+    // sélecteur de langue et le laisse choisir (doctrine i18n : on propose,
+    // on n'impose pas).
+    return [
+      { source: '/:locale(es|de|nl)', destination: '/', permanent: false },
+      { source: '/:locale(es|de|nl)/:path*', destination: '/', permanent: false },
+    ]
   },
 }
 

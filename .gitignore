@@ -74,3 +74,6 @@ public/**/*.orig.mp4
 
 .vercel
 .env*
+
+# Journal du serveur de dev lancé à la main (jamais versionné)
+dev-server.log
