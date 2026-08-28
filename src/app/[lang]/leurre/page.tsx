@@ -97,7 +97,7 @@ export default async function LangLeurrePage({
       {/* La limite d'expédition, en tête de page — au-dessus du prix, des
         coloris, du bouton d'achat et de la barre collante. Elle se lit AVANT
         qu'on puisse payer, jamais après (README i18n §0). */}
-      <aside className="flex items-start gap-3 rounded-card bg-surface p-5 shadow-card">
+      <aside className="rounded-card bg-surface shadow-card mb-8 flex items-start gap-3 p-5 md:mb-12">
         <MapPin className="mt-0.5 size-6 shrink-0 text-info" strokeWidth={1.75} aria-hidden />
         <div className="space-y-1">
           <p className="font-bold">{t(dict, 'SHIPPING_NOTICE.TITLE')}</p>
