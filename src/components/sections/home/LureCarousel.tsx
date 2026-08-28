@@ -282,10 +282,25 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
         </p>
       </div>
 
-      {/* La frise collection a été SUPPRIMÉE (consigne Camil 2026-08-20) : l'offre
-          se raconte par les deux boutons du bas et leur ligne de statut. La fiche
-          technique garde sa colonne sous le header (surcouche fixe de ~4,5rem). */}
+      {/* LA BANDE HAUTE — au-dessus du leurre, sous le header (surcouche fixe de
+          ~4,5rem). Elle porte l'angle de vue et la fiche technique.
+
+          Le sélecteur d'angle est REMONTÉ ici (consigne Camil 2026-08-28) : il
+          orientait le leurre depuis le bas de l'écran, à côté des commandes
+          d'achat, ce qui mélangeait deux gestes de nature différente. En haut,
+          il agit sur l'objet qu'il modifie, et la bande basse redevient ce
+          qu'elle doit être — le panier et les chemins vers la caisse. */}
       <div className="pointer-events-none absolute inset-x-0 top-16 z-30 flex flex-col items-center gap-3 px-4 md:top-18 [&>*]:pointer-events-auto">
+        {!broken && (
+          <SegmentedControl
+            ariaLabel={strings.viewsLabel}
+            value={view}
+            onChange={setView}
+            options={LURE_VIEWS.map((v) => ({ value: v.id, label: strings.views[v.id] }))}
+            className="px-seg--sm"
+          />
+        )}
+
         {specsOpen && (
           <LureSpecs
             model={activeModel}
@@ -309,19 +324,10 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
       {/* Les commandes flottent au-dessus du cadre plein écran. `pointer-events`
           rendus aux seuls contrôles : le reste de la bande laisse passer le
           glissé sur le leurre. */}
-      {/* Compact au général (itération Camil) : segmented réduit, flèches et
-          bouton un cran plus petits, interlignes resserrés. */}
+      {/* Compact au général (itération Camil) : flèches et bouton un cran plus
+          petits, interlignes resserrés. Le sélecteur d'angle a quitté cette
+          bande le 2026-08-28 — il vit désormais au-dessus du leurre. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-5 z-10 flex flex-col items-center gap-2 [&>*]:pointer-events-auto">
-        {!broken && (
-          <SegmentedControl
-            ariaLabel={strings.viewsLabel}
-            value={view}
-            onChange={setView}
-            options={LURE_VIEWS.map((v) => ({ value: v.id, label: strings.views[v.id] }))}
-            className="px-seg--sm"
-          />
-        )}
-
         {!broken && (
           <div className="flex items-center gap-2">
             <button
@@ -555,7 +561,9 @@ function CartBand({
               href={`/leurre?offre=solo&coloris=${displayed.id}`}
               className="underline underline-offset-2"
             >
-              <span translate="no">{fill(strings.orderSolo, { coloris: displayed.shortLabel })}</span>
+              <span translate="no">
+                {fill(strings.orderSolo, { coloris: displayed.shortLabel })}
+              </span>
             </Link>
           </>
         )}
