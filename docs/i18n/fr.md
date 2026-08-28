@@ -437,3 +437,17 @@
 ### NAV — page Nos projets (2026-08-28)
 
 - `NAV.PROJECTS` — Nos projets
+
+### PROJECTS — la page Nos projets (2026-08-28)
+
+- `PROJECTS.TITLE` — Où en est Alure
+- `PROJECTS.DESCRIPTION` — Où en est Alure : le leurre existe, il est stocké en France et livré sous {delai}. Il manque une première série signée, dans sa propre boîte.
+- `PROJECTS.INTRO` — Cette page dit où en est le projet Alure, et ce qu'il lui reste à faire. Le leurre existe, il est en stock, il part de chez nous. Ce qui n'existe pas encore, c'est une série produite sous notre nom.
+- `PROJECTS.DONE_TITLE` — Ce qui est déjà là
+- `PROJECTS.DONE_BODY` — Le leurre est fait : un articulé deux sections de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et le {collector} qui ne se vend pas et s'offre en 4e leurre. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.
+- `PROJECTS.STOCK_TITLE` — Le stock est rentré en France
+- `PROJECTS.STOCK_BODY` — Les leurres sont chez nous, et c'est nous qui préparons chaque commande, en enveloppe matelassée noire. Elle vous arrive sous {delai}. Avant, ils partaient de chez un fournisseur, et l'attente allait de 10 à 20 jours.
+- `PROJECTS.SERIES_TITLE` — La série et la boîte
+- `PROJECTS.SERIES_BODY` — Il manque une première série sous notre nom : le même leurre, signé, dans une boîte qui lui soit propre. C'est la seule différence avec celui que vous commandez ici aujourd'hui. Notre objectif est de {objectif} commandes pour la financer, et chaque commande payée compte dans ce total.
+- `PROJECTS.CTA` — Voir le leurre
+- `PROJECTS.CTA_NOTE` — {prixSolo} le leurre, ou {prixCollection} pour 3 achetés et le 4e offert. Port inclus, livraison {delai}. France métropolitaine uniquement.

@@ -338,7 +338,18 @@ export const DICTIONARIES = {
     "PRODUCT.VIEWER_LABEL": "The lure in 3D, rotatable",
     "PRODUCT.VIEWER_HINT": "Drag to turn the lure. With a keyboard: the arrow keys, and Home to reset.",
     "PRODUCT.VIEWER_FREE": "Free angle.",
-    "NAV.PROJECTS": "Our projects"
+    "NAV.PROJECTS": "Our projects",
+    "PROJECTS.TITLE": "Where Alure stands",
+    "PROJECTS.DESCRIPTION": "Where Alure stands: the lure exists, it is stocked in France and delivered in {delai}. A first signed run, in its own box, is still missing.",
+    "PROJECTS.INTRO": "This page says where the Alure project stands, and what is left to do. The lure exists, it is in stock, it ships from us. What does not exist yet is a run made under our own name.",
+    "PROJECTS.DONE_TITLE": "What is already here",
+    "PROJECTS.DONE_BODY": "The lure is made: a two-section jointed swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, plus the {collector}, which is never sold and comes as the free fourth lure. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.",
+    "PROJECTS.STOCK_TITLE": "The stock is now in France",
+    "PROJECTS.STOCK_BODY": "The lures are with us, and we pack every order ourselves, in a black padded envelope. Your order reaches you in {delai}. Before that, they shipped from a supplier, and the wait ran from 10 to 20 days.",
+    "PROJECTS.SERIES_TITLE": "The run and the box",
+    "PROJECTS.SERIES_BODY": "What is missing is a first run under our own name: the same lure, signed, in a box of its own. That is the only difference from the one you order here today. Our target is {objectif} orders to pay for it, and every paid order counts towards that total.",
+    "PROJECTS.CTA": "See the lure",
+    "PROJECTS.CTA_NOTE": "{prixSolo} for one lure, or {prixCollection} for three with a fourth free. Delivery included, {delai}. Mainland France only."
   },
   "fr": {
     "SHIPPING_NOTICE.TITLE": "Livraison France uniquement",
@@ -675,6 +686,17 @@ export const DICTIONARIES = {
     "PRODUCT.VIEWER_LABEL": "Le leurre en 3D, orientable",
     "PRODUCT.VIEWER_HINT": "Faites glisser pour tourner le leurre. Au clavier : les flèches, et Origine pour revenir.",
     "PRODUCT.VIEWER_FREE": "Angle libre.",
-    "NAV.PROJECTS": "Nos projets"
+    "NAV.PROJECTS": "Nos projets",
+    "PROJECTS.TITLE": "Où en est Alure",
+    "PROJECTS.DESCRIPTION": "Où en est Alure : le leurre existe, il est stocké en France et livré sous {delai}. Il manque une première série signée, dans sa propre boîte.",
+    "PROJECTS.INTRO": "Cette page dit où en est le projet Alure, et ce qu'il lui reste à faire. Le leurre existe, il est en stock, il part de chez nous. Ce qui n'existe pas encore, c'est une série produite sous notre nom.",
+    "PROJECTS.DONE_TITLE": "Ce qui est déjà là",
+    "PROJECTS.DONE_BODY": "Le leurre est fait : un articulé deux sections de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et le {collector} qui ne se vend pas et s'offre en 4e leurre. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.",
+    "PROJECTS.STOCK_TITLE": "Le stock est rentré en France",
+    "PROJECTS.STOCK_BODY": "Les leurres sont chez nous, et c'est nous qui préparons chaque commande, en enveloppe matelassée noire. Elle vous arrive sous {delai}. Avant, ils partaient de chez un fournisseur, et l'attente allait de 10 à 20 jours.",
+    "PROJECTS.SERIES_TITLE": "La série et la boîte",
+    "PROJECTS.SERIES_BODY": "Il manque une première série sous notre nom : le même leurre, signé, dans une boîte qui lui soit propre. C'est la seule différence avec celui que vous commandez ici aujourd'hui. Notre objectif est de {objectif} commandes pour la financer, et chaque commande payée compte dans ce total.",
+    "PROJECTS.CTA": "Voir le leurre",
+    "PROJECTS.CTA_NOTE": "{prixSolo} le leurre, ou {prixCollection} pour 3 achetés et le 4e offert. Port inclus, livraison {delai}. France métropolitaine uniquement."
   }
 } as const

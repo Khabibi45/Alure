@@ -439,3 +439,17 @@
 ### NAV — page Nos projets (2026-08-28)
 
 - `NAV.PROJECTS` — Our projects
+
+### PROJECTS — la page Nos projets (2026-08-28)
+
+- `PROJECTS.TITLE` — Where Alure stands
+- `PROJECTS.DESCRIPTION` — Where Alure stands: the lure exists, it is stocked in France and delivered in {delai}. A first signed run, in its own box, is still missing.
+- `PROJECTS.INTRO` — This page says where the Alure project stands, and what is left to do. The lure exists, it is in stock, it ships from us. What does not exist yet is a run made under our own name.
+- `PROJECTS.DONE_TITLE` — What is already here
+- `PROJECTS.DONE_BODY` — The lure is made: a two-section jointed swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, plus the {collector}, which is never sold and comes as the free fourth lure. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.
+- `PROJECTS.STOCK_TITLE` — The stock is now in France
+- `PROJECTS.STOCK_BODY` — The lures are with us, and we pack every order ourselves, in a black padded envelope. Your order reaches you in {delai}. Before that, they shipped from a supplier, and the wait ran from 10 to 20 days.
+- `PROJECTS.SERIES_TITLE` — The run and the box
+- `PROJECTS.SERIES_BODY` — What is missing is a first run under our own name: the same lure, signed, in a box of its own. That is the only difference from the one you order here today. Our target is {objectif} orders to pay for it, and every paid order counts towards that total.
+- `PROJECTS.CTA` — See the lure
+- `PROJECTS.CTA_NOTE` — {prixSolo} for one lure, or {prixCollection} for three with a fourth free. Delivery included, {delai}. Mainland France only.

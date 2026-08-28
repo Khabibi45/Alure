@@ -3,6 +3,38 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-28 — La page « Nos projets » a enfin un contenu
+
+Consigne Camil : « complète la page Nos projets ».
+
+**Elle était littéralement vide** : 333 caractères servis, uniquement l'en-tête et le pied de page.
+Elle ne rendait qu'un bloc, la campagne de précommande, et ce bloc se masque tant que la date
+d'expédition n'est pas configurée. C'est le cas aujourd'hui.
+
+**La contrainte qui a commandé l'écriture** : le contenu devait tenir debout dans les DEUX états.
+La frontière retenue est juridique autant qu'éditoriale — annoncer « on vise 100 commandes »
+n'engage à rien, c'est un but qu'on peut dire librement ; **vendre une précommande engage à une
+date** (art. L216-1). Le nouveau contenu ne parle donc que de faits présents et d'un objectif
+déclaré ; le bloc de campagne garde le monopole du compteur, de la date, du remboursement et de
+l'invitation à payer. La campagne peut s'allumer ou s'éteindre sans rendre la page incohérente.
+
+Trois structures ont été écrites puis départagées. La gagnante — « état des lieux, ce qui a
+changé, ce qui manque » — a été **réduite de cinq blocs à trois** par l'arbitrage : deux
+doublonnaient la page « À propos » (les rendus 3D, l'enveloppe matelassée) ou empiétaient sur la
+campagne, qui explique déjà pourquoi cent. C'est la coupe qui a le plus servi le texte.
+
+Le résultat, en trois blocs : **« Ce qui est déjà là »** (le leurre fait, les coloris, les rendus
+3D qu'on manipule du doigt), **« Le stock est rentré en France »** (avec l'ancien délai de 10 à 20
+jours nommé, parce que le dire rend le nouveau crédible), **« La série et la boîte »** (ce qui
+manque, au conditionnel, sans décrire une boîte qui n'existe pas).
+
+Le corps vit dans un composant partagé par les deux langues : pas de version française qui dérive
+de sa traduction, comme c'était arrivé à `/suivi` et `/a-propos`.
+
+**Gate** : tsc ✅ eslint ✅ vitest 223 passés (+31 sautés) ✅ build ✅. Vérifié en navigateur :
+1 607 caractères en français, 1 755 en anglais, quatre titres, le bouton produit, et aucun
+placeholder resté sans valeur.
+
 ## 2026-08-28 — Fin du dropshipping : stock en France, 3 à 5 jours ouvrés, et la page « Nos projets »
 
 Consigne Camil : « pour tout ce qui est textuel change pour Livraison 3-5 jours ouvrés, note qu'on
