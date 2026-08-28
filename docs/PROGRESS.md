@@ -3,6 +3,64 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-28 — Fin du dropshipping : stock en France, 3 à 5 jours ouvrés, et la page « Nos projets »
+
+Consigne Camil : « pour tout ce qui est textuel change pour Livraison 3-5 jours ouvrés, note qu'on
+change de méthode : on ne fait plus de dropshipping mais on utilise maintenant des enveloppes
+noires à bulles pour expédier les produits depuis la France. Fais apparaître l'onglet Nos projets. »
+
+Trois questions posées avant d'écrire une ligne, parce que la réponse changeait tout : le délai est
+vrai **dès maintenant** (le stock est en France), la page « À propos » est **réécrite** avec
+l'expédition française comme argument, et « Nos projets » accueille **la campagne des 100**.
+
+### Le délai, partout
+
+Le chiffre a une source unique (`PRODUCT.deliveryDelay` et sa traduction `PRODUCT.DELAY_VALUE`),
+mais huit endroits l'avaient recopié à la main. Tous alignés : page produit, FAQ, suivi de commande,
+emails, gabarits `docs/emails/`, CGV, documentation produit, charte graphique, ADR paiements.
+
+**Ce que le changement rendait faux, et que personne n'aurait vu tout de suite** : la page de suivi
+promettait encore « un numéro de suivi **international** », une activation « en 2 à 4 jours » et un
+recours « au-delà de **30 jours** ouvrés ». Trois promesses absurdes avec un colis parti de France
+sous cinq jours. Le bandeau de la page produit annonçait « expédié depuis notre fournisseur en
+Chine ». La notification vendeur disait « à commander chez le fournisseur » — il n'y a plus rien à
+commander, il y a un colis à préparer.
+
+**Deux pages françaises recopiaient tout leur texte en dur**, en double du dictionnaire que leurs
+jumelles anglaises utilisaient déjà : `/suivi` et `/a-propos`. C'est par là que la divergence
+serait revenue. Elles sont branchées sur la source unique. Le cliquet anti-texte-en-dur ne les
+voyait pas : il ne surveille que `src/app/[lang]/` et `src/components/sections/`.
+
+### La page « Nos projets »
+
+La campagne des 100 quitte l'accueil pour `/nos-projets` et `/en/nos-projets`, avec son entrée de
+menu dans les deux langues. L'accueil garde le **bandeau d'objectif**, qui affiche le compteur réel
+et renvoie vers la page — il était écrit depuis deux semaines et n'était branché nulle part.
+
+La page hérite des gardes de la campagne : sans date d'expédition configurée, sans compteur Stripe
+lisible ou une fois l'objectif atteint, elle ne rend rien. C'est assumé — mieux vaut une page vide
+qu'une précommande qui promet sans date.
+
+### La page « À propos » réécrite
+
+Son argument central était la transparence sur le dropshipping : « on expédie depuis notre
+fournisseur, on vous le dit franchement ». Devenu faux. Le nouvel angle, sorti d'un concours à deux
+plumes : le fait d'abord, le geste ensuite, la comparaison jamais. « Un seul leurre, stocké en
+France », puis l'enveloppe matelassée noire déposée à la poste. La page ne mentionne à aucun moment
+les colis qu'elle n'est pas — c'était le piège, l'auto-défense préventive étant l'une des cinq
+tournures interdites par la charte de ton.
+
+Une phrase garde le mot « fournisseur », et c'est volontaire : « pas de visuel fournisseur
+retouché » parle des IMAGES. Le fabricant existe toujours, seul le dropshipping s'arrête.
+
+**Gate** : tsc ✅ eslint ✅ vitest 222 passés (+31 sautés) ✅ build ✅. Vérifié en navigateur :
+`/nos-projets` et `/en/nos-projets` répondent, le menu compte six entrées dans les deux langues, et
+plus aucune des six pages testées ne porte l'ancien délai, la Chine ou le fournisseur.
+
+**Reste ouvert** : la règle n°1 de `CLAUDE.md` a été réécrite, mais cinq jours annoncés et manqués
+se remarquent bien plus vite que vingt — le délai est désormais une promesse tenue par nous, plus
+une contrainte subie.
+
 ## 2026-08-28 — Le leurre se tourne à la main sur la page produit ; l'angle de vue remonte sur l'accueil
 
 Deux consignes Camil : « mets le droite/gauche pour bouger les leurres 3D en haut des leurres 3D »,
