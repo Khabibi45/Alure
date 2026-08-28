@@ -3,6 +3,63 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-08-28 — Le leurre se tourne à la main sur la page produit ; l'angle de vue remonte sur l'accueil
+
+Deux consignes Camil : « mets le droite/gauche pour bouger les leurres 3D en haut des leurres 3D »,
+puis « sur la page produit on doit pouvoir bouger les différents leurres 3D à la souris, les
+visualiser sous tous les angles comme on veut ».
+
+### L'angle de vue remonte au-dessus du leurre (accueil)
+
+Le sélecteur des six angles orientait le leurre depuis le BAS de l'écran, collé aux commandes
+d'achat : deux gestes de nature différente au même endroit. Il agit désormais depuis la bande
+haute, au-dessus de l'objet qu'il modifie, et la bande basse redevient ce qu'elle doit être — le
+panier et les chemins vers la caisse.
+
+### La rotation libre (page produit)
+
+Le leurre se tourne à la main sur 360° en lacet et un quart de tour en tangage. Trois découvertes
+ont simplifié le travail, toutes vérifiées dans le code avant d'écrire une ligne :
+
+- **L'ordre d'Euler du moteur donnait DÉJÀ le bon comportement.** En ordre XYZ, la composition
+  fait pivoter le leurre sur sa propre verticale puis basculer autour de l'horizontale de l'écran
+  — le « tourne-disque » qu'on attend d'un objet qu'on manipule. Passer en `YXZ`, réflexe fréquent,
+  aurait fait dériver l'axe de bascule avec le lacet et rendu la manipulation imprévisible dès un
+  quart de tour.
+- **Les six vues nommées sont exactement les points remarquables de l'espace de rotation.**
+  « Dessus » et « Dessous » sont précisément les bornes du tangage. Le geste atteint donc ce que
+  les boutons atteignent, et la barre des six vues sert de commande grossière, de chemin clavier
+  et de retour à un angle nommé — sans inventer un bouton « recentrer » de plus.
+- **La pose et la nage vivent sur deux nœuds distincts** depuis l'origine. Le geste écrit sur la
+  pose, la nage continue par-dessus : il n'y a rien à suspendre, et le leurre ne se fige jamais.
+
+Décisions notables :
+
+- **Sensibilité normalisée par la largeur du cadre**, pas en degrés par pixel : « balayer toute la
+  largeur fait un demi-tour » reste vrai sur un téléphone de 335 px comme sur un grand écran.
+- **Aucune inertie.** L'objet nage déjà en permanence ; un élan posé par-dessus ne se lit pas comme
+  de l'élan, il se lit comme un site qui rame.
+- **Suivi 1:1 pendant le geste**, amorti seulement hors geste. Un amortissement, même court, fait
+  traîner l'objet derrière le doigt.
+- **`touch-pan-y`**, comme le carrousel : le cadre est un carré pleine largeur, capter les deux axes
+  au doigt confisquerait le défilement de la page sur son plus gros élément. Le tangage reste
+  accessible au doigt par les six vues.
+- **Clavier complet** : les flèches tournent par pas de 15°, Origine revient à la vue de départ.
+  La région vocale n'annonce que les angles NOMMÉS — la suivre pendant un glissé transformerait le
+  lecteur d'écran en machine à parler.
+- **Aucun état React dans le chemin du geste** : pointeur, dernier point et taille du cadre vivent
+  dans des refs. Le moteur est le seul détenteur des angles, pour que le composant et lui ne
+  dérivent jamais.
+- L'angle courant est une **union discriminée** : soit une vue nommée, soit « libre ». Après un
+  glissé, aucun bouton n'est enfoncé — le contrôle n'affirme jamais un angle qui n'est pas affiché.
+
+**Zéro diff sur le carrousel de l'accueil** : le moteur est partagé, seule la page produit câble
+les nouvelles méthodes. `ColorwayViewer` sort au passage de la liste de dette des textes en dur.
+
+**Gate** : tsc ✅ eslint ✅ vitest 220 passés (+31 sautés) ✅ build ✅. Vérifié en navigateur sur
+`/leurre` et `/en/leurre` : cadre focusable, curseur de saisie, défilement vertical préservé, les
+six angles traduits, l'indice de manipulation présent.
+
 ## 2026-08-26 — La parité FR/EN devient automatique ; la campagne de précommande des 100
 
 Deux consignes Camil : « standardise pour que tout ce qui est fait sur FR soit bien visible et
