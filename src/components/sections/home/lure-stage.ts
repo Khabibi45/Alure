@@ -10,6 +10,7 @@ import {
   TEXTURE_ANISOTROPY,
   YAW_FREQUENCY_RATIO,
 } from '@/lib/three/swim.config'
+import { clampOrbitPitch } from '@/lib/three/lure-views'
 import { applySwimDeformation, createSwimUniforms, type SwimUniforms } from '@/lib/three/swim-material'
 
 /**
@@ -65,6 +66,12 @@ const PORTRAIT_ZOOM = 2
  * passage est posé à la durée de la fondation, pas à une valeur choisie au hasard.
  */
 const TIME_CONSTANT = 0.14
+/*
+ * Pendant une rotation à la main, la pose n'est PAS amortie : `tick()` recopie
+ * la cible telle quelle. Un amortissement, même court, ferait traîner l'objet
+ * derrière le doigt — sur une visionneuse produit, ça se lit comme un site qui
+ * rame. Le suivi est donc 1:1, et rien ne rattrape au relâchement.
+ */
 /** Décalage de phase entre leurres : sans lui, les trois nagent au même instant. */
 const PHASE_STEP = 1.7
 
@@ -96,6 +103,12 @@ export type LureStage = {
   load: (index: number) => void
   /** Oriente tous les leurres (vue de droite, dessus, devant…), en radians XYZ. */
   setView: (rotation: readonly [number, number, number]) => void
+  /** Début d'une rotation à la main : la pose suit le geste sans amortissement. */
+  beginOrbit: () => void
+  /** Fait tourner de ces deux angles, en RADIANS et en INCRÉMENTS depuis le dernier appel. */
+  orbitBy: (yawDelta: number, pitchDelta: number) => void
+  /** Fin du geste : la pose repasse en amorti. */
+  endOrbit: () => void
   setReducedMotion: (reduced: boolean) => void
   resize: () => void
   /** Coupe la boucle de rendu quand la scène sort de l'écran ou l'onglet. */
@@ -210,6 +223,9 @@ function inertStage(): LureStage {
     releaseDrag: () => 0,
     load: () => {},
     setView: () => {},
+    beginOrbit: () => {},
+    orbitBy: () => {},
+    endOrbit: () => {},
     setReducedMotion: () => {},
     resize: () => {},
     setRunning: () => {},
@@ -302,6 +318,21 @@ export function createLureStage(
    *  d'Euler ferait passer le leurre par des orientations absurdes entre deux vues. */
   const currentPose = new THREE.Quaternion()
   const targetPose = new THREE.Quaternion()
+  /**
+   * Le moteur est le SEUL détenteur de l'orientation. Si le composant gardait
+   * aussi ses angles, les deux dériveraient au premier clic sur une vue nommée.
+   * `applyOrbit()` est l'unique chemin d'écriture vers `targetPose`.
+   */
+  let orbitYaw = 0
+  let orbitPitch = 0
+  let orbitRoll = 0
+  let orbiting = false
+  // Réutilisé : `applyOrbit` est appelée ~60 fois par seconde pendant un geste.
+  const scratchEuler = new THREE.Euler()
+
+  function applyOrbit(): void {
+    targetPose.setFromEuler(scratchEuler.set(orbitPitch, orbitYaw, orbitRoll))
+  }
   /** Temps de nage accumulé — distinct de l'horloge murale : il se fige en mouvement
    *  réduit, et ne rattrape pas le temps passé onglet caché. */
   let swimTime = 0
@@ -354,14 +385,21 @@ export function createLureStage(
     const delta = Math.min((now - lastTime) / 1000, 0.05)
     lastTime = now
 
+    // Trois décisions INDÉPENDANTES, trois lignes distinctes. Les mêler ferait
+    // figer la nage pendant une rotation, ou téléporter le rail en mouvement
+    // réduit — deux régressions qu'on ne verrait qu'à l'usage.
     const gap = target - progress
     if (reducedMotion) {
       progress = target
-      currentPose.copy(targetPose)
     } else {
       swimTime += delta
       if (Math.abs(gap) < 0.0005) progress = target
       else progress += gap * (1 - Math.exp(-delta / TIME_CONSTANT))
+    }
+    if (reducedMotion || orbiting) {
+      // Pendant le geste, suivi 1:1 : aucun rattrapage au relâchement.
+      currentPose.copy(targetPose)
+    } else {
       currentPose.slerp(targetPose, 1 - Math.exp(-delta / TIME_CONSTANT))
     }
 
@@ -490,7 +528,23 @@ export function createLureStage(
     },
     load,
     setView(rotation) {
-      targetPose.setFromEuler(new THREE.Euler(rotation[0], rotation[1], rotation[2]))
+      // Une vue nommée REMET les accumulateurs à sa valeur : sans ça, un clic
+      // sur « Dessus » après un glissé libre repartirait de l'angle courant.
+      orbitPitch = rotation[0]
+      orbitYaw = rotation[1]
+      orbitRoll = rotation[2]
+      applyOrbit()
+    },
+    beginOrbit() {
+      orbiting = true
+    },
+    orbitBy(yawDelta, pitchDelta) {
+      orbitYaw += yawDelta
+      orbitPitch = clampOrbitPitch(orbitPitch + pitchDelta)
+      applyOrbit()
+    },
+    endOrbit() {
+      orbiting = false
     },
     setReducedMotion(reduced) {
       reducedMotion = reduced

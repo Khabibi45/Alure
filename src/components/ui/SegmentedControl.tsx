@@ -7,7 +7,12 @@ interface SegmentedOption<T extends string> {
 
 interface SegmentedControlProps<T extends string> {
   options: ReadonlyArray<SegmentedOption<T>>
-  value: T
+  /**
+   * `null` = aucune option sélectionnée. Nécessaire dès qu'un autre geste peut
+   * amener dans un état qu'aucun bouton ne décrit — la rotation libre du leurre,
+   * par exemple. Laisser un bouton enfoncé affirmerait alors une valeur fausse.
+   */
+  value: T | null
   onChange: (value: T) => void
   /** Libellé du groupe pour les lecteurs d'écran — ex. « Période affichée ». */
   ariaLabel: string

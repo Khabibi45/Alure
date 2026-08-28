@@ -49,6 +49,8 @@ const AUTORISES = new Set([
   ' — ',
   'fr-FR',
   'en-GB',
+  // Une requête média CSS : ce n'est pas du texte, et elle ne se traduit pas.
+  '(prefers-reduced-motion: reduce)',
 ])
 
 /** Les fichiers qui n'affichent rien : pas de texte visible à y chercher. */
@@ -86,7 +88,6 @@ const DETTE = new Set(
     'src/components/sections/home/lure-stage.ts',
     'src/components/sections/home/use-portrait.ts',
     'src/components/sections/leurre/BuyBox.tsx',
-    'src/components/sections/leurre/ColorwayViewer.tsx',
     'src/components/sections/leurre/checkout-context.tsx',
     'src/components/sections/leurre/colorway-context.tsx',
     'src/components/sections/leurre/fill-nodes.tsx',

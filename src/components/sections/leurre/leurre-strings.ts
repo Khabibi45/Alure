@@ -1,3 +1,4 @@
+import type { LureViewId } from '@/lib/three/lure-views'
 import type { OfferId } from '@/lib/shop/product'
 
 /**
@@ -27,6 +28,18 @@ import type { OfferId } from '@/lib/shop/product'
  *    `fill()` (qui rend une chaîne) ne le permettrait pas.
  */
 export type LeurreStrings = {
+  /* ── La visionneuse 3D orientable ── */
+  /** Le nom du groupe manipulable, pour les lecteurs d'écran. */
+  readonly viewerLabel: string
+  /** L'indice discret sous le leurre : comment on le fait tourner. */
+  readonly viewerHint: string
+  /** Ce qu'on annonce quand l'angle n'est plus une vue nommée. */
+  readonly viewerFree: string
+  /** Le libellé du groupe des six angles. */
+  readonly viewsLabel: string
+  /** Le nom de chaque angle, et sa description pour les lecteurs d'écran. */
+  readonly views: Readonly<Record<LureViewId, string>>
+  readonly viewDescriptions: Readonly<Record<LureViewId, string>>
   /**
    * « Livraison France métropolitaine uniquement », affiché AVANT tout bouton
    * d'achat, dans les DEUX langues (règle Alure n°1). Le checkout n'accepte que

@@ -1,5 +1,21 @@
 import { getDictionary, raw, t } from './index'
 import type { Locale } from './paths'
+import { LURE_VIEWS, type LureViewId } from '@/lib/three/lure-views'
+
+/**
+ * Le pont entre l'identifiant d'un angle (français, clé technique jamais
+ * affichée) et le suffixe de sa clé de dictionnaire. Même table que
+ * `chrome.ts` : les six angles sont partagés par le carrousel et la page
+ * produit, et leurs textes ne se dédoublent pas.
+ */
+const VIEW_KEYS: Record<LureViewId, string> = {
+  droite: 'RIGHT',
+  gauche: 'LEFT',
+  dessus: 'TOP',
+  dessous: 'BOTTOM',
+  devant: 'FRONT',
+  derriere: 'BACK',
+}
 import type { LeurreStrings } from '@/components/sections/leurre/leurre-strings'
 import {
   OFFER_IDS,
@@ -75,7 +91,19 @@ export function leurreStrings(locale: Locale): LeurreStrings {
           })
   }
 
+  const views = {} as Record<LureViewId, string>
+  const viewDescriptions = {} as Record<LureViewId, string>
+  for (const view of LURE_VIEWS) {
+    views[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}`)
+    viewDescriptions[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}_DESC`)
+  }
   return {
+    viewerLabel: t(dict, 'PRODUCT.VIEWER_LABEL'),
+    viewerHint: t(dict, 'PRODUCT.VIEWER_HINT'),
+    viewerFree: t(dict, 'PRODUCT.VIEWER_FREE'),
+    viewsLabel: t(dict, 'HOME.VIEWS_LABEL'),
+    views,
+    viewDescriptions,
     shippingNoticeTitle: t(dict, 'SHIPPING_NOTICE.TITLE'),
     shippingNoticeBody: t(dict, 'SHIPPING_NOTICE.BODY'),
     viewerLoading: t(dict, 'HOME.LOADING'),

@@ -429,3 +429,9 @@
 - `BANNER.DONE` — {commandes} placed. Thank you for being here.
 - `BANNER.EMPTY` — Alure is starting out. Be the first order; the target is {objectif}.
 - `BANNER.PROGRESS` — {commandes} towards a target of {objectif}. Be among the first.
+
+### PRODUCT — visionneuse orientable (2026-08-28)
+
+- `PRODUCT.VIEWER_LABEL` — The lure in 3D, rotatable
+- `PRODUCT.VIEWER_HINT` — Drag to turn the lure. With a keyboard: the arrow keys, and Home to reset.
+- `PRODUCT.VIEWER_FREE` — Free angle.

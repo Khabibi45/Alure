@@ -10,7 +10,15 @@ import {
 } from './lure-models'
 import { GIFT_CHOICE_IDS, PRODUCT, totalCents } from './shop/product'
 import { LURE_SWIM } from './three/swim.config'
-import { LURE_VIEWS, DEFAULT_LURE_VIEW, getLureView } from './three/lure-views'
+import {
+  LURE_VIEWS,
+  DEFAULT_LURE_VIEW,
+  ORBIT_KEY_STEP,
+  ORBIT_MAX_PITCH,
+  clampOrbitPitch,
+  getLureView,
+  orbitToEuler,
+} from './three/lure-views'
 
 /**
  * Le filet qui rend l'ajout d'un leurre SÛR.
@@ -149,5 +157,41 @@ describe('LURE_VIEWS — les angles de vue', () => {
   it('donne trois angles réellement distincts', () => {
     const signatures = LURE_VIEWS.map((v) => v.rotation.join(','))
     expect(new Set(signatures).size).toBe(LURE_VIEWS.length)
+  })
+})
+
+describe('la rotation libre du leurre (page produit)', () => {
+  it('borne le tangage à un quart de tour, dans les deux sens', () => {
+    expect(clampOrbitPitch(0)).toBe(0)
+    expect(clampOrbitPitch(Math.PI)).toBe(ORBIT_MAX_PITCH)
+    expect(clampOrbitPitch(-Math.PI)).toBe(-ORBIT_MAX_PITCH)
+    expect(clampOrbitPitch(ORBIT_MAX_PITCH)).toBe(ORBIT_MAX_PITCH)
+  })
+
+  it('la borne du tangage est EXACTEMENT la vue « Dessus » et la vue « Dessous »', () => {
+    // C'est ce qui fait que le geste atteint précisément ce que les boutons
+    // atteignent : ni plus (le leurre ne se retourne jamais), ni moins.
+    expect(getLureView('dessus').rotation[0]).toBe(ORBIT_MAX_PITCH)
+    expect(getLureView('dessous').rotation[0]).toBe(-ORBIT_MAX_PITCH)
+  })
+
+  it('laisse le lacet libre : un leurre se regarde sur 360°', () => {
+    const [, yaw] = orbitToEuler(4 * Math.PI, 0)
+    expect(yaw).toBe(4 * Math.PI)
+  })
+
+  it('compose dans l’ordre attendu par three : tangage, lacet, roulis', () => {
+    expect(orbitToEuler(0.3, 0.2, 0.1)).toEqual([0.2, 0.3, 0.1])
+  })
+
+  it('redonne chaque vue nommée à l’identique — le geste et les boutons partagent l’espace', () => {
+    for (const view of LURE_VIEWS) {
+      const [pitch, yaw, roll] = view.rotation
+      expect(orbitToEuler(yaw, pitch, roll)).toEqual([pitch, yaw, roll])
+    }
+  })
+
+  it('un pas clavier fait 24 appuis pour un tour complet', () => {
+    expect((2 * Math.PI) / ORBIT_KEY_STEP).toBeCloseTo(24)
   })
 })

@@ -334,7 +334,10 @@ export const DICTIONARIES = {
     "BANNER.ORDERS_MANY": "{compte} orders",
     "BANNER.DONE": "{commandes} placed. Thank you for being here.",
     "BANNER.EMPTY": "Alure is starting out. Be the first order; the target is {objectif}.",
-    "BANNER.PROGRESS": "{commandes} towards a target of {objectif}. Be among the first."
+    "BANNER.PROGRESS": "{commandes} towards a target of {objectif}. Be among the first.",
+    "PRODUCT.VIEWER_LABEL": "The lure in 3D, rotatable",
+    "PRODUCT.VIEWER_HINT": "Drag to turn the lure. With a keyboard: the arrow keys, and Home to reset.",
+    "PRODUCT.VIEWER_FREE": "Free angle."
   },
   "fr": {
     "SHIPPING_NOTICE.TITLE": "Livraison France uniquement",
@@ -667,6 +670,9 @@ export const DICTIONARIES = {
     "BANNER.ORDERS_MANY": "{compte} commandes",
     "BANNER.DONE": "{commandes} passées. Merci d’être là.",
     "BANNER.EMPTY": "Alure se lance. Soyez la première commande, l’objectif est de {objectif}.",
-    "BANNER.PROGRESS": "{commandes} sur un objectif de {objectif}. Faites partie des premiers."
+    "BANNER.PROGRESS": "{commandes} sur un objectif de {objectif}. Faites partie des premiers.",
+    "PRODUCT.VIEWER_LABEL": "Le leurre en 3D, orientable",
+    "PRODUCT.VIEWER_HINT": "Faites glisser pour tourner le leurre. Au clavier : les flèches, et Origine pour revenir.",
+    "PRODUCT.VIEWER_FREE": "Angle libre."
   }
 } as const

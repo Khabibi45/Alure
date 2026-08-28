@@ -77,3 +77,49 @@ export function getLureView(id: LureViewId): LureView {
   if (!view) throw new Error(`Vue de leurre inconnue : ${id}`)
   return view
 }
+
+/* ────────────────────── La rotation libre (page produit) ────────────────────── */
+
+/**
+ * Le tangage est borné à un quart de tour, EXACTEMENT les vues « Dessus » et
+ * « Dessous ». Ce n'est pas un chiffre choisi au hasard : le geste atteint donc
+ * précisément ce que les boutons atteignent, ni plus — le leurre ne se retourne
+ * jamais tête en bas — ni moins.
+ *
+ * Le lacet, lui, n'est pas borné : un leurre se regarde sur 360°.
+ */
+export const ORBIT_MAX_PITCH = Math.PI / 2
+
+/**
+ * La sensibilité, exprimée en fraction de CADRE et non en degrés par pixel :
+ * balayer toute la largeur fait un demi-tour. Un réglage en °/px se trompe
+ * forcément d'un bout — trop lent sur un téléphone de 335 px, incontrôlable sur
+ * un écran large. Normalisé, l'énoncé reste vrai partout.
+ */
+export const ORBIT_RADIANS_PER_FRAME_WIDTH = Math.PI
+
+/** Le pas d'un appui sur une flèche : 15°, soit 24 appuis pour un tour complet. */
+export const ORBIT_KEY_STEP = Math.PI / 12
+
+/** Ramène un tangage dans ses bornes. Pur, pour être testable sans trois.js. */
+export function clampOrbitPitch(pitch: number): number {
+  return Math.min(ORBIT_MAX_PITCH, Math.max(-ORBIT_MAX_PITCH, pitch))
+}
+
+/**
+ * Compose les angles d'orbite en rotation d'Euler, dans l'ordre XYZ de three.
+ *
+ * Cet ordre donne R = Rx(tangage) · Ry(lacet) · Rz(roulis) : le leurre pivote
+ * d'abord sur sa propre verticale, puis bascule autour de l'horizontale de
+ * l'ÉCRAN. C'est le comportement « tourne-disque » qu'on attend d'un objet
+ * qu'on manipule — et c'est celui que les six vues nommées utilisent déjà.
+ * En ordre `YXZ`, l'axe de bascule dériverait avec le lacet et la manipulation
+ * deviendrait imprévisible dès un quart de tour.
+ */
+export function orbitToEuler(
+  yaw: number,
+  pitch: number,
+  roll = 0
+): readonly [number, number, number] {
+  return [clampOrbitPitch(pitch), yaw, roll]
+}

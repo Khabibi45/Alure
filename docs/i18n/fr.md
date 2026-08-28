@@ -427,3 +427,9 @@
 - `BANNER.DONE` — {commandes} passées. Merci d’être là.
 - `BANNER.EMPTY` — Alure se lance. Soyez la première commande, l’objectif est de {objectif}.
 - `BANNER.PROGRESS` — {commandes} sur un objectif de {objectif}. Faites partie des premiers.
+
+### PRODUCT — visionneuse orientable (2026-08-28)
+
+- `PRODUCT.VIEWER_LABEL` — Le leurre en 3D, orientable
+- `PRODUCT.VIEWER_HINT` — Faites glisser pour tourner le leurre. Au clavier : les flèches, et Origine pour revenir.
+- `PRODUCT.VIEWER_FREE` — Angle libre.
