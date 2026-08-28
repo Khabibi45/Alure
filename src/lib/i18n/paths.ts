@@ -44,6 +44,7 @@ export const TRANSLATED_PATHS = [
   '/contact',
   '/suivi',
   '/a-propos',
+  '/nos-projets',
   '/merci',
   '/cgv',
   '/mentions-legales',

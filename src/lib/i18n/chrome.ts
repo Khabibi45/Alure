@@ -21,6 +21,7 @@ export function headerNav(locale: Locale): NavItem[] {
   const dict = getDictionary(locale)
   return [
     { href: localePath(locale, '/leurre'), label: t(dict, 'NAV.PRODUCT') },
+    { href: localePath(locale, '/nos-projets'), label: t(dict, 'NAV.PROJECTS') },
     { href: localePath(locale, '/a-propos'), label: t(dict, 'NAV.ABOUT') },
     { href: localePath(locale, '/faq'), label: t(dict, 'NAV.FAQ') },
     { href: localePath(locale, '/suivi'), label: t(dict, 'NAV.TRACKING') },
