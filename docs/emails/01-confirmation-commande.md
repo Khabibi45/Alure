@@ -25,7 +25,7 @@ Récapitulatif :
 - 1 leurre — {coloris}
 - Total payé : 21,99 € (port inclus — TVA non applicable, art. 293 B du CGI)
 
-Livraison : 10 à 20 jours ouvrés, comme annoncé avant votre achat.
+Livraison : 3 à 5 jours ouvrés, comme annoncé avant votre achat.
 Dès l'expédition, vous recevrez le numéro de suivi par email.
 
 Vous disposez d'un droit de rétractation de 14 jours après réception.
@@ -46,7 +46,7 @@ Récapitulatif :
 - 3 achetés — les 3 coloris + le 4e offert : {cadeau}
 - Total payé : 65,97 € (port inclus — TVA non applicable, art. 293 B du CGI)
 
-Livraison : 10 à 20 jours ouvrés, comme annoncé avant votre achat.
+Livraison : 3 à 5 jours ouvrés, comme annoncé avant votre achat.
 Dès l'expédition, vous recevrez le numéro de suivi par email.
 
 Vous disposez d'un droit de rétractation de 14 jours après réception.
@@ -68,7 +68,7 @@ côté site. C'est ce qui interdit l'écart entre le reçu et l'email.
 
 ## Ce que cet email ne doit jamais dire
 
-- Une date de livraison précise. Le fournisseur expédie sous 10 à 20 jours ouvrés, et personne ne
+- Une date de livraison précise. Nous expédions sous 3 à 5 jours ouvrés, et personne ne
   connaît le jour exact.
 - « Votre colis est en route » tant que rien n'est parti. L'expédition a son propre email.
 - Un numéro de suivi vide ou provisoire. Pas de numéro, pas de ligne.
@@ -76,7 +76,7 @@ côté site. C'est ce qui interdit l'écart entre le reçu et l'email.
 
 ## À vérifier avant de considérer cet email comme livré
 
-- [ ] Le délai « 10 à 20 jours ouvrés » y figure, en toutes lettres.
+- [ ] Le délai « 3 à 5 jours ouvrés » y figure, en toutes lettres.
 - [ ] La mention « TVA non applicable, art. 293 B du CGI » accompagne le montant.
 - [ ] Le droit de rétractation de 14 jours est rappelé.
 - [ ] Le libellé du 4e leurre offert apparaît quand l'offre est la collection.

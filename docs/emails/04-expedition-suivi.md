@@ -39,14 +39,14 @@ Alure — https://alure-peche.fr
 |---|---|
 | `{numéro_de_suivi}` | Confirmation d'expédition du fournisseur |
 | `{lien_de_suivi}` | Page de suivi du transporteur, avec le numéro déjà renseigné |
-| `{date_min}` / `{date_max}` | Calculées depuis la date d'expédition, dans la fenêtre annoncée de 10 à 20 jours ouvrés à partir de la commande |
+| `{date_min}` / `{date_max}` | Calculées depuis la date d'expédition, dans la fenêtre annoncée de 3 à 5 jours ouvrés à partir de la commande |
 
 ## La règle sur les dates
 
 **« Livraison estimée », jamais « livraison le ».** Le mot « estimée » n'est pas une précaution de
 style : une date promise et manquée est un litige, et un litige gèle un compte Stripe.
 
-Si les dates calculées sortent de la fenêtre des 10 à 20 jours ouvrés annoncée avant l'achat,
+Si les dates calculées sortent de la fenêtre des 3 à 5 jours ouvrés annoncée avant l'achat,
 n'envoyez pas cet email tel quel. Envoyez d'abord [Retard de livraison](05-retard-livraison.md).
 
 ## Si le fournisseur ne donne aucun numéro

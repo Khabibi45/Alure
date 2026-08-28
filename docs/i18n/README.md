@@ -64,7 +64,7 @@ Ce qui se transpose, et comment :
 | En français | Ce qu'on veut faire ressentir | Ce que ça devient ailleurs |
 |---|---|---|
 | Vouvoiement systématique | Respect, sérieux commercial | EN : neutre (« you ») · ES : **usted** · DE : **Sie** · NL : **u** |
-| « Comptez 10 à 20 jours ouvrés » | Honnêteté assumée sur un délai long | Jamais adouci, jamais déplacé plus bas dans la page |
+| « Comptez 3 à 5 jours ouvrés » | Un délai court, dit avant l'achat | Jamais adouci, jamais déplacé plus bas dans la page |
 | « Nous vendons un seul leurre, que nous avons choisi » | Petite maison, choix assumé | Garder la première personne du pluriel, garder l'aveu |
 | « Le paiement n'a pas pu démarrer. Réessayez dans un instant. » | Erreur qui dit quoi faire | Même structure : ce qui s'est passé, puis l'action |
 | « Acheter » | Verbe d'action, zéro emphase | EN « Buy » (pas « Buy now! ») · DE « Kaufen » · ES « Comprar » · NL « Kopen » |

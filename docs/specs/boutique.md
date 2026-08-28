@@ -20,7 +20,7 @@ Date : 2026-08-05
   contre la doc Stripe à l'implémentation) · **3 coloris** au lancement · quantité 1 à 5.
 - **Critères d'acceptation** (observables) :
   - [ ] Sur `/leurre`, le visiteur voit : prix 21,99 € port inclus, mention TVA, sélecteur des
-        3 coloris (nom + visuel), quantité 1-5, **délai 10-20 jours ouvrés visible SANS scroller
+        3 coloris (nom + visuel), quantité 1-5, **délai 3 à 5 jours ouvrés visible SANS scroller
         sur mobile 375 px**, et le récap des garanties factuelles (rétractation 14 j, paiement
         Stripe/PayPal).
   - [ ] Un coloris marqué indisponible dans les données produit est visible mais non
@@ -29,7 +29,7 @@ Date : 2026-08-05
         Stripe Checkout affichant le bon montant (quantité × 21,99 €) et le bon coloris.
   - [ ] Une requête de checkout avec coloris inconnu, quantité hors 1-5, ou payload malformé
         reçoit un JSON d'erreur typé (400) — jamais de session créée.
-  - [ ] Paiement test réussi → redirection vers `/merci` qui ré-affiche le délai 10-20 jours ;
+  - [ ] Paiement test réussi → redirection vers `/merci` qui ré-affiche le délai 3 à 5 jours ouvrés ;
         paiement annulé → retour `/leurre` avec sélection intacte.
   - [ ] `checkout.session.completed` (signature Stripe valide) déclenche : email de confirmation
         au client (récap commande + délai 10-20 j + lien rétractation) et notification à la boîte

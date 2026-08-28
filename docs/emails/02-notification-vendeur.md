@@ -26,7 +26,7 @@ Nouvelle commande payée (session {session_id}) :
 - {récapitulatif}
 - Total : {montant}
 
-À commander chez le fournisseur, puis renseigner le n° de suivi au client par email.
+À préparer et expédier, puis renseigner le n° de suivi au client par email.
 Détails complets : dashboard Stripe.
 ```
 
@@ -46,7 +46,7 @@ confirmation**. Garder cette variable renseignée n'est pas optionnel.
 
 ## Ce qu'il faut faire en le recevant
 
-1. Passer la commande chez le fournisseur, avec le ou les coloris exacts du récapitulatif.
+1. Préparer le colis avec le ou les coloris exacts du récapitulatif, en enveloppe matelassée noire.
 2. Pour l'offre « 3 achetés, le 4e offert » : commander **les 3 coloris** plus le 4e leurre
    indiqué après « le 4e offert : ». Ce 4e est un choix du client, pas une valeur par défaut.
 3. Récupérer l'adresse de livraison dans le dashboard Stripe (elle n'est pas dans cet email).

@@ -1,35 +1,32 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Marker } from '@/components/ui/Marker'
-import { PRODUCT } from '@/lib/shop/product'
+import { getDictionary, t } from '@/lib/i18n'
+
+/**
+ * Cette page recopiait ses quatre étapes en dur, en double du dictionnaire que
+ * `/en/suivi` utilisait déjà. Les deux ont divergé au passage du dropshipping
+ * au stock français : la version française annonçait encore un « numéro de
+ * suivi international », une activation en 2 à 4 jours et un recours à 30 jours
+ * — trois promesses devenues fausses. Une seule source, désormais.
+ */
+const dict = getDictionary('fr')
 
 export const metadata: Metadata = {
-  title: 'Suivi de commande',
-  description:
-    'Où en est votre commande Alure : confirmation, préparation, expédition avec numéro de suivi, livraison sous 10 à 20 jours ouvrés.',
+  title: t(dict, 'TRACKING.TITLE'),
+  description: t(dict, 'TRACKING.META_DESCRIPTION', {
+    delai: t(dict, 'PRODUCT.DELAY_VALUE'),
+  }),
 }
 
-const STEPS: { title: string; detail: string }[] = [
-  {
-    title: 'Commande confirmée',
-    detail:
-      'Juste après votre paiement, vous recevez un email de confirmation avec le récapitulatif. Pas d’email sous 30 minutes ? Vérifiez vos courriers indésirables.',
-  },
-  {
-    title: 'Préparation',
-    detail:
-      'Nous transmettons votre commande à l’expédition sous 1 à 2 jours ouvrés. Votre coloris part tel que vous l’avez choisi.',
-  },
-  {
-    title: 'Expédition',
-    detail:
-      'Vous recevez par email un numéro de suivi international. Il peut mettre 2 à 4 jours à s’activer chez le transporteur : c’est normal.',
-  },
-  {
-    title: 'Livraison',
-    detail: `Votre leurre arrive sous ${PRODUCT.deliveryDelay} au total. Au-delà de 30 jours ouvrés sans livraison, contactez-nous : renvoi ou remboursement, à votre choix.`,
-  },
-]
+const STEP_KEYS = ['CONFIRMED', 'PREPARED', 'SHIPPED', 'DELIVERED'] as const
+
+const STEPS: { title: string; detail: string }[] = STEP_KEYS.map((key) => ({
+  title: t(dict, `TRACKING.STEP_${key}_TITLE`),
+  detail: t(dict, `TRACKING.STEP_${key}_BODY`, {
+    delai: t(dict, 'PRODUCT.DELAY_VALUE'),
+  }),
+}))
 
 /**
  * Suivi de commande (spec boutique.md T4). Sans compte ni BDD : cette page

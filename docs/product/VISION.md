@@ -30,7 +30,9 @@ Trafic froid venu des réseaux → la landing doit convaincre seule, sans notori
 Pêcheur loisir en France, 18-45 ans, cible carnassiers. Il arrive depuis un réel Instagram ou un
 TikTok, **sur mobile dans ~90 % des cas**, souvent le soir. Il connaît les leurres (il sait ce
 qu'est un jointed swimbait, un hameçon triple, une nage en S) — on lui parle en pêcheur, pas en
-marketeur. Il se méfie des boutiques dropshipping : la transparence (délais, retours, qui on est)
+marketeur. Il se méfie des boutiques dropshipping, et c'est précisément notre argument depuis le
+2026-08-28 : le stock est en France, on expédie soi-même sous 3 à 5 jours ouvrés. La transparence
+(délais, retours, qui on est)
 est une condition d'achat, pas un bonus.
 
 ## Anti-scope (ce qu'on ne fera PAS)

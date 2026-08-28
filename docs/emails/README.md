@@ -16,7 +16,7 @@ ce que l'email ne doit jamais dire.
 | Email | Quand | Urgence |
 |---|---|---|
 | [Expédition et numéro de suivi](04-expedition-suivi.md) | Le colis part de chez le fournisseur | **Promis au client dans la confirmation** |
-| [Retard de livraison](05-retard-livraison.md) | Le 20e jour ouvré est dépassé | Avant que le client réclame |
+| [Retard de livraison](05-retard-livraison.md) | Le 5e jour ouvré est dépassé | Avant que le client réclame |
 | [Coloris épuisé après commande](06-coloris-epuise.md) | Le fournisseur ne peut pas servir le coloris | Sous 24 h |
 | [Rétractation reçue](07-retractation-recue.md) | Le client demande à se rétracter (14 jours) | Sous 48 h, obligation légale |
 | [Remboursement effectué](08-remboursement-effectue.md) | Le remboursement est parti depuis Stripe | Le jour même |
@@ -24,7 +24,7 @@ ce que l'email ne doit jamais dire.
 
 ## Les règles qui valent pour tous
 
-1. **Le délai reste 10 à 20 jours ouvrés.** Jamais atténué, jamais arrondi vers le bas, jamais
+1. **Le délai reste 3 à 5 jours ouvrés.** Jamais atténué, jamais arrondi vers le bas, jamais
    remplacé par « très bientôt ». C'est la règle Alure n°1, et c'est ce qui évite les litiges qui
    gèlent un compte Stripe.
 2. **Aucun chiffre inventé.** Un numéro de suivi qui n'existe pas encore ne s'annonce pas. Une

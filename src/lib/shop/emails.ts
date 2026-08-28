@@ -72,7 +72,7 @@ export function notificationText(order: OrderSummary): string {
     `- ${order.offerSummary}`,
     `- Total : ${formatEuros(order.totalCents)}`,
     '',
-    `À commander chez le fournisseur, puis renseigner le n° de suivi au client par email.`,
+    `À préparer et expédier, puis renseigner le n° de suivi au client par email.`,
     `Détails complets : dashboard Stripe.`,
   ].join('\n')
 }

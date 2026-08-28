@@ -29,7 +29,7 @@ Sommaire : 1. Principes · 2. Arbitrage flèche/surligneur · 3. Tokens · 4. Ty
    graisse intermédiaire (§4).
 5. **Le texte ne touche jamais une photo nue.** Tout texte posé sur photo est posé sur un voile
    (§6). Aucune exception, aucun réglage au cas par cas.
-6. **La transparence est l'argument de vente.** Délai 10-20 jours à côté du prix, TVA art. 293 B
+6. **La transparence est l'argument de vente.** Délai 3 à 5 jours ouvrés à côté du prix, TVA art. 293 B
    sous le prix, faits vérifiables uniquement. Aucune preuve sociale inventée, jamais.
 7. **Deux gestes manuscrits, deux territoires étanches.** La flèche appartient à la marque,
    le surligneur à l'interface (§2). Jamais les deux dans le même viewport.
@@ -341,7 +341,7 @@ bouton pour une action. Zone cliquable ≥ 44 px de haut quand le lien est isol�
   du panneau d'achat desktop, jamais en note de bas de page.
 - **Anatomie** : carte `--color-surface`, radius 1rem, padding 1.25rem, `--shadow-card`.
   Rangée : icône `truck` 1.5rem `--color-info` + colonne texte gap 0.25rem :
-  - Titre 1rem/700 #ffffff : « Livraison sous 10 à 20 jours »
+  - Titre 1rem/700 #ffffff : « Livraison 3 à 5 jours ouvrés »
   - Corps 0.9375rem #9aa7bd : « Votre leurre est expédié depuis notre fournisseur en Chine.
     Vous recevez un numéro de suivi par email dès l'envoi. »
 - Statique : aucun état hover/collapse. C'est une information mise en avant, pas un composant
@@ -355,7 +355,7 @@ bouton pour une action. Zone cliquable ≥ 44 px de haut quand le lien est isol�
 - **Anatomie** : barre fixe bas, fond `--color-surface`, ombre haute
   `0 -10px 26px -14px rgb(2 6 16 / 0.45)`, padding 0.75rem 1.25rem +
   `env(safe-area-inset-bottom)`. Gauche (colonne) : prix 1.125rem/700 tabular blanc ;
-  dessous « Livraison 10-20 jours » 0.75rem #9aa7bd. Droite : bouton « Acheter » (spec 8.1,
+  dessous « Livraison 3 à 5 jours ouvrés » 0.75rem #9aa7bd. Droite : bouton « Acheter » (spec 8.1,
   h 2.75rem, padding-inline 1.5rem).
 - États du bouton : identiques à 8.1 (chargement compris). Desktop (≥ 1024) : pas de barre —
   le panneau d'achat est visible en permanence (colonne collante `top: 6rem` autorisée).
@@ -577,7 +577,7 @@ icône) ; tout **texte** d'erreur passe en `#f56b6f` (§3), qui tient partout.
 
 **À faire**
 - CTA : pilule blanche « Acheter », texte #071128 — le blanc du logo est l'accent du site.
-- Le bandeau « Livraison sous 10 à 20 jours » entre le prix et le bouton d'achat, carte
+- Le bandeau « Livraison 3 à 5 jours ouvrés » entre le prix et le bouton d'achat, carte
   surface, icône info — mis en avant, pas caché.
 - « TVA non applicable, art. 293 B du CGI. » en 0.8125rem directement sous le prix.
 - Titre de la page suivi : « Suivi de commande » avec surligneur `<Marker>` ; nav « Suivi »

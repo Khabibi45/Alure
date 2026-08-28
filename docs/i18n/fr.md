@@ -83,7 +83,7 @@
 - `PRODUCT.COLORWAY_LABEL` — Coloris :
 - `PRODUCT.SOLD_OUT` — Épuisé
 - `PRODUCT.DELIVERY_BANNER` — Livraison {delai}
-- `PRODUCT.DELAY_VALUE` — 10 à 20 jours ouvrés
+- `PRODUCT.DELAY_VALUE` — 3 à 5 jours ouvrés
 - `PRODUCT.BUY` — Acheter
 - `PRODUCT.BUY_LOADING` — Redirection vers le paiement…
 - `PRODUCT.BUY_LOADING_SHORT` — Redirection…
@@ -146,7 +146,7 @@
 ## 6. FAQ
 
 - `FAQ.Q_DELIVERY_TIME` — Quels sont les délais de livraison ?
-- `FAQ.A_DELIVERY_TIME` — Comptez {delai} après votre commande. Nous expédions depuis notre fournisseur, ce qui explique ce délai et le prix du leurre. Le délai est annoncé avant l'achat et rappelé dans votre email de confirmation.
+- `FAQ.A_DELIVERY_TIME` — Comptez {delai} après votre commande. Nous stockons les leurres en France et les expédions nous-mêmes, en enveloppe matelassée noire. Le délai est annoncé avant l'achat et rappelé dans votre email de confirmation.
 - `FAQ.Q_SHIPPING_COST` — Combien coûte la livraison ?
 - `FAQ.A_SHIPPING_COST` — Rien : la livraison en France est incluse dans le prix affiché, quelle que soit l’offre choisie.
 - `FAQ.Q_BULK` — Le prix baisse-t-il si j'en prends plusieurs ?
@@ -167,7 +167,7 @@
 ## 7. TRACKING — page /suivi
 
 - `TRACKING.TITLE` — Suivi de commande
-- `TRACKING.INTRO` — Dès l'expédition, vous recevez un numéro de suivi international par email. Voici ce que chaque étape veut dire.
+- `TRACKING.INTRO` — Dès l'expédition, vous recevez un numéro de suivi par email. Voici ce que chaque étape veut dire.
 
 ## 8. THANKS — page /merci
 
@@ -253,11 +253,11 @@
 - `TRACKING.STEP_CONFIRMED_TITLE` — Commande confirmée
 - `TRACKING.STEP_CONFIRMED_BODY` — Juste après votre paiement, vous recevez un email de confirmation avec le récapitulatif. Pas d’email sous 30 minutes ? Vérifiez vos courriers indésirables.
 - `TRACKING.STEP_PREPARED_TITLE` — Préparation
-- `TRACKING.STEP_PREPARED_BODY` — Nous transmettons votre commande à l’expédition sous 1 à 2 jours ouvrés. Votre coloris part tel que vous l’avez choisi.
+- `TRACKING.STEP_PREPARED_BODY` — Nous préparons votre colis sous 1 jour ouvré, en enveloppe matelassée noire. Votre coloris part tel que vous l’avez choisi.
 - `TRACKING.STEP_SHIPPED_TITLE` — Expédition
-- `TRACKING.STEP_SHIPPED_BODY` — Vous recevez par email un numéro de suivi international. Il peut mettre 2 à 4 jours à s’activer chez le transporteur : c’est normal.
+- `TRACKING.STEP_SHIPPED_BODY` — Vous recevez par email un numéro de suivi. Il peut mettre quelques heures à s’activer chez le transporteur : c’est normal.
 - `TRACKING.STEP_DELIVERED_TITLE` — Livraison
-- `TRACKING.STEP_DELIVERED_BODY` — Votre leurre arrive sous {delai} au total. Au-delà de 30 jours ouvrés sans livraison, contactez-nous : renvoi ou remboursement, à votre choix.
+- `TRACKING.STEP_DELIVERED_BODY` — Votre leurre arrive sous {delai} au total. Au-delà de 10 jours ouvrés sans livraison, contactez-nous : renvoi ou remboursement, à votre choix.
 - `TRACKING.CONTACT` — Pour toute question sur votre commande, répondez à votre email de confirmation : il arrive directement chez nous.
 - `TRACKING.FAQ_LINK` — Lire les questions fréquentes
 
@@ -358,7 +358,7 @@
 - `PRODUCT.H1_MARK` — articulé
 - `PRODUCT.H1_TAIL` — deux sections
 - `PRODUCT.SECTION_VISUAL` — Visuel du leurre
-- `PRODUCT.DELIVERY_BANNER_BODY` — Votre leurre est expédié depuis notre fournisseur en Chine. Vous recevez un numéro de suivi par email dès l'envoi.
+- `PRODUCT.DELIVERY_BANNER_BODY` — Votre leurre part de France, en enveloppe matelassée noire. Vous recevez un numéro de suivi par email dès l'envoi.
 - `PRODUCT.GIFT_LABEL` — Votre 4e leurre, offert :
 - `PRODUCT.GIFT_DUPLICATE_A11Y` — {coloris} — en double, offert
 - `PRODUCT.GIFT_COLLECTOR_A11Y` — {collector} — le collector, offert
@@ -371,17 +371,17 @@
 
 ### ABOUT — routes anglaises (2026-08-26)
 
-- `ABOUT.DESCRIPTION` — Qui vend le leurre Alure : une micro-entreprise française de pêcheurs de carnassiers, un seul leurre articulé au catalogue, des visuels fidèles et des délais annoncés avant l'achat.
-- `ABOUT.H1` — Un seul leurre, choisi par des pêcheurs
+- `ABOUT.DESCRIPTION` — Qui vend le leurre Alure : une micro-entreprise française de pêcheurs de carnassiers. Un seul leurre articulé, stocké en France, expédié par nos soins.
+- `ABOUT.H1` — Un seul leurre, stocké en France
 - `ABOUT.HERO_ALT` — Éclaboussure à la surface d'un lac au lever du jour, sous le logo Alure.
-- `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre — un articulé deux sections de {specs}, taillé pour le black-bass et la perche — parce que c'est celui que nous voulions avoir en boîte.
+- `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre, un articulé deux sections de {specs}, taillé pour le black-bass et la perche, parce que c'est celui que nous voulions avoir en boîte. Les leurres sont stockés chez nous, en France, et nous préparons chaque commande nous-mêmes.
 - `ABOUT.RANGE` — Vous le trouvez ici en {nbColoris} coloris, chacun nommé d'après sa robe — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — Le {collector}, lui, ne s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
 - `ABOUT.VISUALS_TITLE` — Ce que vous voyez est ce que nous vendons
 - `ABOUT.VISUALS_BODY` — Toutes les images du site sont nos rendus 3D du leurre réel — le même modèle que vous manipulez dans la vitrine interactive de l'accueil. Pas de photo d'ambiance empruntée, pas de visuel fournisseur retouché : si un détail vous plaît à l'écran, il existe sur la pièce.
 - `ABOUT.COLORWAY_ALT` — Le leurre Alure, coloris {coloris}, en rendu 3D dans son décor.
-- `ABOUT.TRANSPARENCY_TITLE` — La transparence avant l'achat, pas après
-- `ABOUT.TRANSPARENCY_BODY` — Le délai de livraison — {delai} — est affiché avant que vous payiez, jamais découvert après. Le prix est port inclus. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit. Et vous ne trouverez ici ni faux avis, ni fausse promotion, ni compteur d'urgence : tant que nous n'avons pas de vraies prises et de vrais retours clients à montrer, la page produit vend ce qui se vérifie — les cotes, la nage, l'articulation.
+- `ABOUT.TRANSPARENCY_TITLE` — D'où part votre leurre
+- `ABOUT.TRANSPARENCY_BODY` — Votre leurre part de chez nous, dans une enveloppe matelassée noire que nous déposons à la poste. Comptez {delai} entre votre commande et sa livraison. Ce délai est affiché avant que vous payiez, et rappelé dans votre email de confirmation. Le prix est port inclus. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit.
 - `ABOUT.SCENE_ALT` — Le leurre Alure coloris Orange feu, en rendu 3D au-dessus des herbiers.
 
 ### Îlots clients traduits (2026-08-26)
@@ -433,3 +433,7 @@
 - `PRODUCT.VIEWER_LABEL` — Le leurre en 3D, orientable
 - `PRODUCT.VIEWER_HINT` — Faites glisser pour tourner le leurre. Au clavier : les flèches, et Origine pour revenir.
 - `PRODUCT.VIEWER_FREE` — Angle libre.
+
+### NAV — page Nos projets (2026-08-28)
+
+- `NAV.PROJECTS` — Nos projets

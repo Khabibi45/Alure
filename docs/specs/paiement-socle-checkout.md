@@ -24,7 +24,7 @@ moyens de paiement : [`./paiements-ROADMAP.md`](./paiements-ROADMAP.md).
 | `POST /api/stripe-webhook` | **LIVRÉ + testé** (`route.test.ts`) |
 | Emails de commande (Resend) | **LIVRÉ + testé** (`emails.test.ts`) |
 | Pages `/leurre`, `/merci` (noindex), `/suivi`, `/faq` | **LIVRÉ** |
-| Catalogue, prix, devise | **LIVRÉ** — `PRODUCT` : 2199 centimes, `eur`, 3 coloris, quantité 1-5, délai « 10 à 20 jours ouvrés » |
+| Catalogue, prix, devise | **LIVRÉ** — `PRODUCT` : 2199 centimes, `eur`, 3 coloris, quantité 1-5, délai « 3 à 5 jours ouvrés » |
 | `site-config.ts` | **LIVRÉ** — `Alure` / `https://alure-peche.fr` (domaine **PROVISOIRE**, non tranché) |
 | Domaines Stripe en CSP | **aucun, et c'est correct** — `CONNECT_EXTRA` / `SCRIPT_EXTRA` / `FRAME_EXTRA` de `next.config.ts` sont vides **par choix** (redirection pleine page, zéro script tiers) |
 | Stockage (BDD, KV, fichier) | **aucun, et c'est une règle permanente** — `CLAUDE.md` règle Alure n°4 : pas de BDD ni de comptes en v1, la source de vérité des commandes est Stripe. Ce n'est pas un manque à combler |

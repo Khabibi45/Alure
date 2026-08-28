@@ -30,6 +30,10 @@ import type { OfferId } from '@/lib/shop/product'
 export type LeurreStrings = {
   /* ── La visionneuse 3D orientable ── */
   /** Le nom du groupe manipulable, pour les lecteurs d'écran. */
+  /** Le bandeau de livraison : « Livraison 3 à 5 jours ouvrés » et son détail. */
+  readonly deliveryBannerTitle: string
+  readonly deliveryBannerBody: string
+
   readonly viewerLabel: string
   /** L'indice discret sous le leurre : comment on le fait tourner. */
   readonly viewerHint: string
@@ -102,7 +106,7 @@ export type LeurreStrings = {
   readonly buy: string
   readonly buyLoading: string
   readonly buyLoadingShort: string
-  /** « Livraison 10 à 20 jours ouvrés » — délai pris à `PRODUCT.DELAY_VALUE`. */
+  /** « Livraison 3 à 5 jours ouvrés » — délai pris à `PRODUCT.DELAY_VALUE`. */
   readonly deliveryShort: string
 
   /* ── Les moyens de paiement ── */

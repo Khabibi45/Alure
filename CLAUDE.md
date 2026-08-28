@@ -10,9 +10,14 @@ public professionnel, pas d'un side-project.
 
 ## Règles permanentes spécifiques Alure (e-commerce dropshipping)
 
-1. **Délais honnêtes, partout.** Livraison 10-20 jours affichée AVANT l'achat (page produit,
-   FAQ, récapitulatif checkout) et ré-affichée dans l'email de confirmation. Jamais atténuée,
-   jamais cachée dans une page annexe — les litiges font geler Stripe/PayPal.
+1. **Délais honnêtes, partout.** Livraison **3 à 5 jours ouvrés** affichée AVANT l'achat (page
+   produit, FAQ, récapitulatif checkout) et ré-affichée dans l'email de confirmation. Jamais
+   atténuée, jamais cachée dans une page annexe — les litiges font geler Stripe/PayPal.
+   **Depuis le 2026-08-28, le site ne fait plus de dropshipping** : les leurres sont stockés en
+   France et expédiés par nos soins, en enveloppe matelassée noire. Le délai n'est donc plus subi,
+   il est tenu — et cinq jours annoncés puis manqués se remarquent bien plus vite que vingt. La
+   SOURCE du chiffre est `PRODUCT.deliveryDelay` et sa traduction `PRODUCT.DELAY_VALUE` ; aucune
+   page, aucun email ne réécrit un délai à la main.
    **Livraison France uniquement**, dite AVANT l'achat et **y compris sur la version anglaise**,
    où le visiteur n'a aucune raison de le supposer (clés `SHIPPING_NOTICE`, `docs/i18n/README.md`
    §0). Le checkout n'accepte que `FR` (`src/lib/shop/stripe.ts`) : vendre sans le dire envoie le

@@ -146,7 +146,7 @@ Le parcours, dans l'ordre — chaque ligne est une observation, pas une intentio
 - [ ] Payer avec `4242…` → retour sur **`/merci`**. La page est volontairement générique : elle ne
       lit même pas `session_id` et ne prouve aucun paiement (seul le webhook signé fait foi).
 - [ ] Terminal `stripe listen` : `checkout.session.completed` transféré, réponse **200**.
-- [ ] **Deux emails reçus** : la confirmation client (délai **10 à 20 jours ouvrés** ré-affiché,
+- [ ] **Deux emails reçus** : la confirmation client (délai **3 à 5 jours ouvrés ouvrés** ré-affiché,
       rétractation 14 jours) et la notification interne « commande à traiter ».
 - [ ] Montant de l'email = montant Stripe = `21,99 € × quantité`, au centime.
 - [ ] **Annulation** : relancer un achat, quitter la page Stripe → retour sur `/leurre`, page

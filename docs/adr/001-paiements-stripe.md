@@ -18,7 +18,7 @@ Contraintes qui ont cadré la décision :
   des commandes est le dashboard Stripe. Ce n'est pas un manque à combler, c'est le périmètre.
 - Le kit impose l'échec bruyant, l'isolation de tout tiers fragile derrière un module unique, et
   une seule source de vérité par sujet.
-- Les délais 10-20 jours ouvrés doivent être visibles **avant** le paiement (règle Alure n°1) : le
+- Le délai de 3 à 5 jours ouvrés doit être visible **avant** le paiement (règle Alure n°1) : le
   tunnel doit les porter, pas les cacher.
 
 Cette ADR **consigne une décision déjà appliquée** : le code correspondant est livré, testé

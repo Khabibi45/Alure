@@ -18,7 +18,7 @@ règle juridique n'est écrit ici de mémoire.
 
 Contexte commercial (déjà tranché, cf. `boutique.md`) : mono-produit, **21,99 € port inclus**,
 TVA non applicable art. 293 B du CGI, 3 coloris, quantité 1 à 5, **livraison France uniquement**,
-délai 10 à 20 jours ouvrés annoncé avant l'achat.
+délai 3 à 5 jours ouvrés annoncé avant l'achat.
 
 ---
 

@@ -27,10 +27,11 @@
 - Conversion principale : **achat du leurre** — Stripe Checkout + PayPal. Panier ~15-25 €.
 - **Toute la logique commande vit dans `src/lib/shop/`** (produit, prix, coloris, création de
   session checkout, webhooks). Un seul module à rebrancher si migration Shopify plus tard.
-- Commandes traitées **à la main** sur AliExpress (volume attendu < 10/jour) ; la source de
+- **Stock détenu en France depuis le 2026-08-28** : les commandes sont préparées et expédiées
+  par nos soins, en enveloppe matelassée noire (fin du dropshipping). La source de
   vérité des commandes v1 = le dashboard Stripe/PayPal, **pas de BDD**.
 - Email transactionnel (confirmation de commande, envoi du numéro de suivi) : **Resend**,
-  depuis le domaine du site. La confirmation ré-affiche les délais 10-20 jours.
+  depuis le domaine du site. La confirmation ré-affiche le délai de 3 à 5 jours ouvrés.
 - Formulaire de contact/support (minimisation RGPD) : email + message + n° de commande
   (optionnel). Livraison via Resend → boîte support. Configuré dans `src/app/api/contact/route.ts`.
 
@@ -120,7 +121,7 @@ composants e-commerce, et tous les visuels produit.
 ## Contraintes techniques & légales (surcharge de la stack par défaut)
 
 - **Pas de BDD, pas de comptes utilisateurs en v1.** Source de vérité commandes = Stripe/PayPal.
-- **Délais de livraison 10-20 jours affichés HONNÊTEMENT avant l'achat** (page produit + FAQ +
+- **Délai de livraison 3 à 5 jours ouvrés affiché HONNÊTEMENT avant l'achat** (page produit + FAQ +
   email de confirmation). Non négociable : les litiges font geler les comptes Stripe/PayPal.
 - Micro-entreprise française : **TVA non applicable, art. 293 B du CGI** (à mentionner sur les
   prix/CGV). Rétractation 14 jours. Pages légales complètes dès la v1.

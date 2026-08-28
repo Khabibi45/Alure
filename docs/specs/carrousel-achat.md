@@ -141,7 +141,7 @@ la zone d'achat.
   Les 3 coloris, et le 4e leurre offert : 65,97 €.
 
   Fiche du leurre · Commander Truite seul
-  21,99 € le leurre. Livraison 10 à 20 jours ouvrés.
+  21,99 € le leurre. Livraison 3 à 5 jours ouvrés.
 ```
 
 La rangée vide se lit « 21,99 € · 21,99 € · 21,99 € · offert » : la facture affichée avant le

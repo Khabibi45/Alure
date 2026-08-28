@@ -102,8 +102,18 @@ export const PRODUCT = {
     lengthCm: 6.5,
     weightGrams: 6.5,
   },
-  /** Délai annoncé partout AVANT l'achat (règle Alure n°1) — jamais atténué. */
-  deliveryDelay: '10 à 20 jours ouvrés',
+  /**
+   * Délai annoncé partout AVANT l'achat (règle Alure n°1) — jamais atténué.
+   *
+   * Passé de « 10 à 20 jours ouvrés » à « 3 à 5 » le 2026-08-28 : les leurres
+   * ne partent plus de chez un fournisseur, ils sont stockés EN FRANCE et
+   * expédiés par nos soins, en enveloppe matelassée noire. Le délai n'est donc
+   * plus une contrainte d'acheminement mais une promesse qu'on tient nous-mêmes
+   * — et cinq jours annoncés puis manqués se remarquent bien plus vite que
+   * vingt. Ce chiffre est la SOURCE : tout le site, les emails et le reçu
+   * Stripe en découlent.
+   */
+  deliveryDelay: '3 à 5 jours ouvrés',
 } as const
 
 /**
@@ -199,7 +209,7 @@ export function priceTagline(offerId: string): string {
     : 'Port inclus · TVA non applicable, art. 293 B du CGI.'
 }
 
-/** « Livraison 10 à 20 jours ouvrés » — LA formulation courte, dérivée de la source unique. */
+/** « Livraison 3 à 5 jours ouvrés » — LA formulation courte, dérivée de la source unique. */
 export function deliveryShort(): string {
   return `Livraison ${PRODUCT.deliveryDelay}`
 }

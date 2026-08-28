@@ -98,6 +98,10 @@ export function leurreStrings(locale: Locale): LeurreStrings {
     viewDescriptions[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}_DESC`)
   }
   return {
+    deliveryBannerTitle: t(dict, 'PRODUCT.DELIVERY_BANNER', {
+      delai: t(dict, 'PRODUCT.DELAY_VALUE'),
+    }),
+    deliveryBannerBody: t(dict, 'PRODUCT.DELIVERY_BANNER_BODY'),
     viewerLabel: t(dict, 'PRODUCT.VIEWER_LABEL'),
     viewerHint: t(dict, 'PRODUCT.VIEWER_HINT'),
     viewerFree: t(dict, 'PRODUCT.VIEWER_FREE'),

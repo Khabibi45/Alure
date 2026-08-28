@@ -133,7 +133,8 @@ désactivé, chargement, erreur) :
 - **Sélecteur de coloris** — c'est le choix central du client. Pastilles, noms, état sélectionné.
 - Sélecteur de quantité.
 - Affichage du prix, incluant la mention « TVA non applicable, art. 293 B du CGI ».
-- **Le bandeau de délai de livraison.** Le produit vient de Chine : 10 à 20 jours. Ce délai doit
+- **Le bandeau de délai de livraison.** Stock en France, expédition par nos soins : 3 à 5 jours
+  ouvrés (le produit venait de Chine jusqu'au 2026-08-28). Ce délai doit
   être **visible avant l'achat**, lisible, jamais minimisé ni relégué en bas de page. Traite-le
   comme un élément de confiance à mettre en avant, pas comme une contrainte à cacher. C'est un
   point non négociable : les litiges font geler les comptes de paiement.
@@ -200,7 +201,7 @@ Ton livrable est accepté si, et seulement si :
 - [ ] L'arbitrage flèche/surligneur est tranché et écrit.
 - [ ] Le système de texte sur photo garantit 4,5:1 dans tous les cas de figure.
 - [ ] Chaque composant a ses états chargement, vide et erreur quand ils s'appliquent.
-- [ ] Le délai de livraison 10-20 jours a un traitement visuel dédié et proéminent.
+- [ ] Le délai de livraison 3 à 5 jours ouvrés a un traitement visuel dédié et proéminent.
 - [ ] Aucun composant proposé n'exige de données inventées.
 - [ ] La hiérarchie typographique tient avec deux graisses seulement.
 - [ ] Le mode « animations réduites » est spécifié scène par scène pour la landing.

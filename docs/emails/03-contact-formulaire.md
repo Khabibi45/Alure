@@ -33,8 +33,8 @@ d'adresse. C'est le seul mécanisme de réponse du site.
 
 | Le message porte sur… | Envoyer |
 |---|---|
-| « Où en est ma commande ? » avant le 20e jour ouvré | Une réponse simple : commande passée, délai 10 à 20 jours ouvrés, l'email de suivi partira à l'expédition. |
-| « Où en est ma commande ? » après le 20e jour ouvré | [Retard de livraison](05-retard-livraison.md) |
+| « Où en est ma commande ? » avant le 5e jour ouvré | Une réponse simple : commande passée, délai 3 à 5 jours ouvrés, l'email de suivi partira à l'expédition. |
+| « Où en est ma commande ? » après le 5e jour ouvré | [Retard de livraison](05-retard-livraison.md) |
 | Une demande d'annulation ou de retour | [Rétractation reçue](07-retractation-recue.md) |
 | Un coloris indisponible | [Coloris épuisé](06-coloris-epuise.md) |
 

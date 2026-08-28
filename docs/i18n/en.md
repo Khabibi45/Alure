@@ -85,7 +85,7 @@
 - `PRODUCT.COLORWAY_LABEL` — Colourway:
 - `PRODUCT.SOLD_OUT` — Out of stock
 - `PRODUCT.DELIVERY_BANNER` — Delivery {delai}
-- `PRODUCT.DELAY_VALUE` — 10 to 20 working days
+- `PRODUCT.DELAY_VALUE` — 3 to 5 working days
 - `PRODUCT.BUY` — Buy
 - `PRODUCT.BUY_LOADING` — Redirecting to payment…
 - `PRODUCT.BUY_LOADING_SHORT` — Redirecting…
@@ -148,7 +148,7 @@
 ## 6. FAQ
 
 - `FAQ.Q_DELIVERY_TIME` — How long does delivery take?
-- `FAQ.A_DELIVERY_TIME` — Allow {delai} from your order. We ship from our supplier, which explains both this lead time and the price of the lure. The lead time is stated before you buy and repeated in your confirmation email.
+- `FAQ.A_DELIVERY_TIME` — Allow {delai} from your order. We hold the lures in France and ship them ourselves, in a black padded envelope. The lead time is stated before you buy and repeated in your confirmation email.
 - `FAQ.Q_SHIPPING_COST` — How much does delivery cost?
 - `FAQ.A_SHIPPING_COST` — Nothing: delivery within France is included in the price shown, whichever offer you choose.
 - `FAQ.Q_BULK` — Does the price come down if I take several?
@@ -169,7 +169,7 @@
 ## 7. TRACKING — /suivi page
 
 - `TRACKING.TITLE` — Order tracking
-- `TRACKING.INTRO` — As soon as your order ships, you receive an international tracking number by email. Here is what each stage means.
+- `TRACKING.INTRO` — As soon as your order ships, you receive a tracking number by email. Here is what each stage means.
 
 ## 8. THANKS — /merci page
 
@@ -255,11 +255,11 @@
 - `TRACKING.STEP_CONFIRMED_TITLE` — Order confirmed
 - `TRACKING.STEP_CONFIRMED_BODY` — Right after your payment, you receive a confirmation email with the summary. No email within 30 minutes? Check your spam folder.
 - `TRACKING.STEP_PREPARED_TITLE` — Preparation
-- `TRACKING.STEP_PREPARED_BODY` — We pass your order on for shipping within 1 to 2 working days. Your colourway leaves exactly as you chose it.
+- `TRACKING.STEP_PREPARED_BODY` — We pack your parcel within 1 working day, in a black padded envelope. Your colourway leaves exactly as you chose it.
 - `TRACKING.STEP_SHIPPED_TITLE` — Shipping
-- `TRACKING.STEP_SHIPPED_BODY` — You receive an international tracking number by email. It can take 2 to 4 days to become active with the carrier: that is normal.
+- `TRACKING.STEP_SHIPPED_BODY` — You receive a tracking number by email. It can take a few hours to become active with the carrier: that is normal.
 - `TRACKING.STEP_DELIVERED_TITLE` — Delivery
-- `TRACKING.STEP_DELIVERED_BODY` — Your lure arrives within {delai} in total. If it has not been delivered after 30 working days, contact us: replacement or refund, whichever you prefer.
+- `TRACKING.STEP_DELIVERED_BODY` — Your lure arrives within {delai} in total. If it has not been delivered after 10 working days, contact us: replacement or refund, whichever you prefer.
 - `TRACKING.CONTACT` — For any question about your order, reply to your confirmation email: it comes straight to us.
 - `TRACKING.FAQ_LINK` — Read the frequently asked questions
 
@@ -360,7 +360,7 @@
 - `PRODUCT.H1_MARK` — jointed
 - `PRODUCT.H1_TAIL` — two-section swimbait
 - `PRODUCT.SECTION_VISUAL` — View of the lure
-- `PRODUCT.DELIVERY_BANNER_BODY` — Your lure ships from our supplier in China. You receive a tracking number by email as soon as it leaves.
+- `PRODUCT.DELIVERY_BANNER_BODY` — Your lure leaves from France, in a black padded envelope. You receive a tracking number by email as soon as it ships.
 - `PRODUCT.GIFT_LABEL` — Your free 4th lure:
 - `PRODUCT.GIFT_DUPLICATE_A11Y` — {coloris} — a duplicate, free
 - `PRODUCT.GIFT_COLLECTOR_A11Y` — {collector} — the collector, free
@@ -373,17 +373,17 @@
 
 ### ABOUT — routes anglaises (2026-08-26)
 
-- `ABOUT.DESCRIPTION` — Who sells the Alure lure: a French micro-entreprise run by predator anglers, a single jointed lure in the catalogue, honest visuals and lead times stated before you buy.
-- `ABOUT.H1` — One lure, chosen by anglers
+- `ABOUT.DESCRIPTION` — Who sells the Alure lure: a French micro-entreprise run by predator anglers. One jointed lure, stocked in France and shipped by us.
+- `ABOUT.H1` — One lure, stocked in France
 - `ABOUT.HERO_ALT` — A splash on the surface of a lake at daybreak, beneath the Alure logo.
-- `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure — a two-section jointed swimbait, {specs}, made for black bass and perch — because it is the one we wanted in our own box.
+- `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure, a two-section jointed swimbait, {specs}, made for black bass and perch, because it is the one we wanted in our own box. We keep the lures here in France, and we pack every order ourselves.
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
 - `ABOUT.VISUALS_BODY` — Every image on this site is our own 3D render of the real lure — the same model you turn in the interactive viewer on the home page. No borrowed mood shot, no retouched supplier photo: if a detail catches your eye on screen, it is there on the lure itself.
 - `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, as a 3D render in its setting.
-- `ABOUT.TRANSPARENCY_TITLE` — Transparency before you buy, not after
-- `ABOUT.TRANSPARENCY_BODY` — The delivery time — {delai} — is shown before you pay, never discovered afterwards. The price includes delivery. You have 14 days to change your mind, as the law provides. And you will find no fake reviews here, no fake discount, no urgency counter: until we have real catches and real customer feedback to show, the product page sells what can be checked — the dimensions, the swimming action, the joint.
+- `ABOUT.TRANSPARENCY_TITLE` — Where your lure ships from
+- `ABOUT.TRANSPARENCY_BODY` — Your lure ships from us, in a black padded envelope we take to the post office. Allow {delai} between your order and delivery. That lead time is shown before you pay, and repeated in your confirmation email. The price includes delivery. You have 14 days to change your mind, as French law provides.
 - `ABOUT.SCENE_ALT` — The Alure lure in the Orange feu colourway, as a 3D render above the weed beds.
 
 ### Îlots clients traduits (2026-08-26)
@@ -435,3 +435,7 @@
 - `PRODUCT.VIEWER_LABEL` — The lure in 3D, rotatable
 - `PRODUCT.VIEWER_HINT` — Drag to turn the lure. With a keyboard: the arrow keys, and Home to reset.
 - `PRODUCT.VIEWER_FREE` — Free angle.
+
+### NAV — page Nos projets (2026-08-28)
+
+- `NAV.PROJECTS` — Our projects

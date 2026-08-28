@@ -39,7 +39,7 @@ ne vous a été débité.
 Si vous souhaitez toujours commander, l'article reste disponible ici :
 https://alure-peche.fr/leurre
 
-Le prix et le délai sont inchangés : 10 à 20 jours ouvrés, port inclus.
+Le prix et le délai sont inchangés : 3 à 5 jours ouvrés, port inclus.
 
 Une question ? Répondez simplement à cet email.
 

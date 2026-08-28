@@ -52,7 +52,7 @@ export default async function LeurrePage({
           ISO. Un francophone n'a pas plus de raison qu'un anglophone de le
           deviner, et il ne doit pas le découvrir au formulaire d'adresse,
           après avoir décidé d'acheter. */}
-      <aside className="rounded-card bg-surface shadow-card flex items-start gap-3 p-5">
+      <aside className="rounded-card bg-surface shadow-card mb-8 flex items-start gap-3 p-5 md:mb-12">
         <MapPin className="text-info mt-0.5 size-6 shrink-0" strokeWidth={1.75} aria-hidden />
         <div className="space-y-1">
           <p className="font-bold">{strings.shippingNoticeTitle}</p>
@@ -95,10 +95,14 @@ export default async function LeurrePage({
                         aria-hidden
                       />
                       <div className="space-y-1">
-                        <p className="font-bold">Livraison sous 10 à 20 jours</p>
+                        {/* Le délai et l'origine viennent du dictionnaire, comme
+                            sur /en/leurre : ils étaient écrits en dur ici, et
+                            annonçaient encore un envoi « depuis notre
+                            fournisseur en Chine » après le passage au stock
+                            français. Une seule source, deux langues. */}
+                        <p className="font-bold">{strings.deliveryBannerTitle}</p>
                         <p className="text-[0.9375rem] leading-relaxed text-muted-foreground">
-                          Votre leurre est expédié depuis notre fournisseur en Chine. Vous recevez
-                          un numéro de suivi par email dès l'envoi.
+                          {strings.deliveryBannerBody}
                         </p>
                       </div>
                     </div>
