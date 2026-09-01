@@ -46,8 +46,7 @@ export const LURE_MODELS: readonly LureModel[] = [
     src: '/models/leurre-souple-bleu.glb',
     colorwayId: 'coloris-1',
     collector: false,
-    description:
-      'Le leurre souple Alure en vue 3D, coloris « Bleu ». Il nage sur place.',
+    description: 'Le leurre souple Alure en vue 3D, coloris « Bleu ». Il nage sur place.',
     lines: ['Corps souple, coloris bleu.'],
   },
   {
@@ -56,8 +55,7 @@ export const LURE_MODELS: readonly LureModel[] = [
     src: '/models/leurre-souple-rouge.glb',
     colorwayId: 'coloris-2',
     collector: false,
-    description:
-      'Le leurre souple Alure en vue 3D, coloris « Rouge ». Il nage sur place.',
+    description: 'Le leurre souple Alure en vue 3D, coloris « Rouge ». Il nage sur place.',
     lines: ['Corps souple, coloris rouge.'],
   },
   {
@@ -66,8 +64,7 @@ export const LURE_MODELS: readonly LureModel[] = [
     src: '/models/leurre-souple-vert.glb',
     colorwayId: 'coloris-3',
     collector: false,
-    description:
-      'Le leurre souple Alure en vue 3D, coloris « Vert ». Il nage sur place.',
+    description: 'Le leurre souple Alure en vue 3D, coloris « Vert ». Il nage sur place.',
     lines: ['Corps souple, coloris vert.'],
   },
   {

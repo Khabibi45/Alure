@@ -2,14 +2,9 @@
 import { describe, it, expect } from 'vitest'
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import {
-  LURE_MODELS,
-  SELLABLE_LURE_MODELS,
-  COLLECTOR_LURE_MODEL,
-  wrapIndex,
-} from './lure-models'
+import { LURE_MODELS, SELLABLE_LURE_MODELS, COLLECTOR_LURE_MODEL, wrapIndex } from './lure-models'
 import { GIFT_CHOICE_IDS, PRODUCT, totalCents } from './shop/product'
-import { LURE_SWIM } from './three/swim.config'
+import { LURE_SWIM, TARGET_LURE_LENGTH } from './three/swim.config'
 import {
   LURE_VIEWS,
   DEFAULT_LURE_VIEW,
@@ -45,9 +40,10 @@ describe('LURE_MODELS — le registre des leurres du hero', () => {
     for (const model of LURE_MODELS) {
       expect(model.src.startsWith('/models/')).toBe(true)
       const file = join(process.cwd(), 'public', model.src.replace(/^\//, ''))
-      expect(existsSync(file), `${model.src} est déclaré mais absent — lance \`npm run models\``).toBe(
-        true
-      )
+      expect(
+        existsSync(file),
+        `${model.src} est déclaré mais absent — lance \`npm run models\``
+      ).toBe(true)
     }
   })
 
@@ -61,15 +57,48 @@ describe('LURE_MODELS — le registre des leurres du hero', () => {
   })
 
   it('partage UN réglage de nage plausible — même moule, même battement', () => {
-    // La charnière est STRICTEMENT à l'intérieur du corps : à 0 ou 1, une des deux
-    // pièces n'existerait plus et l'articulation deviendrait une rotation du tout.
-    expect(LURE_SWIM.hingeRatio).toBeGreaterThan(0)
+    // Les deux fractions sont STRICTEMENT à l'intérieur du corps et dans l'ordre.
+    // Égales, le brin serait de longueur nulle — et son inverse, une division par
+    // zéro qui propagerait des NaN à tous les sommets et ferait disparaître le
+    // leurre. Inversées, la rampe partirait à l'envers.
+    expect(LURE_SWIM.stemStartRatio).toBeGreaterThan(0)
     expect(LURE_SWIM.hingeRatio).toBeLessThan(1)
-    // Un débattement nul serait un leurre mort ; au-delà d'un radian, une pièce
-    // arrière qui bat à plus de 57° traverserait visiblement la pièce avant.
-    expect(LURE_SWIM.hingeAmplitude).toBeGreaterThan(0)
-    expect(LURE_SWIM.hingeAmplitude).toBeLessThanOrEqual(1)
+    expect(LURE_SWIM.stemStartRatio).toBeLessThan(LURE_SWIM.hingeRatio)
+    // Un balayage nul serait un leurre mort ; au-delà d'un radian, une palette qui
+    // part à plus de 57° reviendrait visiblement sur le corps.
+    expect(LURE_SWIM.paddleYawAmplitude).toBeGreaterThan(0)
+    expect(LURE_SWIM.paddleYawAmplitude).toBeLessThanOrEqual(1)
+    expect(LURE_SWIM.paddlePitchAmplitude).toBeGreaterThanOrEqual(0)
+    expect(LURE_SWIM.paddlePitchAmplitude).toBeLessThanOrEqual(1)
     expect(LURE_SWIM.speed).toBeGreaterThan(0)
+  })
+
+  it('fait bouger le corps, mais SANS jamais voler la vedette à la palette', () => {
+    // Consigne du 2026-09-01 : « fais légèrement bouger le corps du leurre aussi ».
+    // Le mot qui compte est « légèrement ». Roulis, lacet et bercement portent sur
+    // le leurre ENTIER : laissés à monter, ils feraient disparaître la nage de la
+    // palette derrière un tortillement d'ensemble. On exige donc les deux
+    // moitiés de la consigne — non nul, et nettement plus petit.
+    expect(LURE_SWIM.yawAmplitude).toBeGreaterThan(0)
+    expect(LURE_SWIM.rollAmplitude).toBeGreaterThan(0)
+    expect(LURE_SWIM.bobAmplitude).toBeGreaterThan(0)
+
+    expect(LURE_SWIM.yawAmplitude).toBeLessThan(LURE_SWIM.paddleYawAmplitude / 5)
+    expect(LURE_SWIM.rollAmplitude).toBeLessThan(LURE_SWIM.paddleYawAmplitude / 5)
+    // Le bercement est une TRANSLATION, en unités de scène : on le compare à la
+    // longueur du leurre, pas à un angle. 5 %, c'est déjà beaucoup.
+    expect(LURE_SWIM.bobAmplitude).toBeLessThan(TARGET_LURE_LENGTH * 0.05)
+  })
+
+  it('garde la palette rigide : la rampe sature AVANT elle', () => {
+    // Ce qui rend la palette rigide, c'est que sa rampe vaut 1 partout : tous ses
+    // sommets tournent alors du même angle autour du même pivot, donc rotation
+    // rigide exacte. Si la charnière était à 1, la rampe n'atteindrait son
+    // maximum qu'au dernier sommet et la palette se déformerait.
+    expect(LURE_SWIM.hingeRatio).toBeLessThan(1)
+    // Et le brin doit rester une PORTION du leurre, pas la moitié : au-delà, ce
+    // n'est plus « la partie la plus fine » qui plie, c'est tout l'arrière.
+    expect(LURE_SWIM.hingeRatio - LURE_SWIM.stemStartRatio).toBeLessThan(0.3)
   })
 
   it('donne à chaque leurre un nom affichable et une description parlée', () => {

@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import type { LureBounds } from './lure-anatomy'
 import type { SwimPreset } from './swim.config'
 import { SWIM_NORMAL_CHUNK, SWIM_POSITION_CHUNK, SWIM_UNIFORMS_CHUNK } from './swim.shader'
 
@@ -15,9 +16,20 @@ import { SWIM_NORMAL_CHUNK, SWIM_POSITION_CHUNK, SWIM_UNIFORMS_CHUNK } from './s
 export type SwimUniforms = {
   readonly uSwimTime: THREE.IUniform<number>
   readonly uSwimSpeed: THREE.IUniform<number>
-  /** Position X de la charnière, en unités de scène (espace objet normalisé). */
-  readonly uSwimHingeX: THREE.IUniform<number>
-  readonly uSwimHingeAmplitude: THREE.IUniform<number>
+  /**
+   * Le PIVOT : position X du début du brin fin, en unités de scène (espace objet
+   * normalisé). Tout ce qui est du côté du corps ne bouge pas.
+   */
+  readonly uSwimStemStartX: THREE.IUniform<number>
+  /**
+   * L'inverse SIGNÉ de la longueur du brin. Signé, parce que c'est lui qui porte
+   * l'orientation du modèle : négatif quand la palette est du côté X minimal.
+   * Le shader n'a donc aucun branchement à faire, et une division de moins par
+   * sommet et par frame.
+   */
+  readonly uSwimInvStemSpan: THREE.IUniform<number>
+  readonly uSwimPaddleYawAmplitude: THREE.IUniform<number>
+  readonly uSwimPaddlePitchAmplitude: THREE.IUniform<number>
 }
 
 /**
@@ -25,20 +37,35 @@ export type SwimUniforms = {
  * matériau non patché partageant les mêmes defines recevraient le MÊME programme, et l'un
  * des deux perdrait son animation — de façon non déterministe selon l'ordre de rendu.
  * `v2` : la déformation par onde est devenue une rotation de charnière (2026-08-08).
+ * `v3` : la charnière est devenue une flexion progressive de la queue (2026-09-01).
+ * `v4` : seuls le brin et la palette bougent, et l'orientation est mesurée (2026-09-01).
  */
-const SWIM_PROGRAM_CACHE_KEY = 'swim-articulation-v2'
+const SWIM_PROGRAM_CACHE_KEY = 'swim-articulation-v4'
 
-export function createSwimUniforms(
-  preset: SwimPreset,
-  bounds: { axisMin: number; axisLength: number }
-): SwimUniforms {
+export function createSwimUniforms(preset: SwimPreset, bounds: LureBounds): SwimUniforms {
+  /**
+   * Le preset compte ses fractions DEPUIS LA TÊTE ; la scène, elle, compte en X
+   * croissants. Les deux ne vont dans le même sens que si la tête est du côté
+   * `axisMin` — ce qui n'est PAS le cas des leurres souples. On convertit donc
+   * ici, une fois, plutôt qu'à chaque sommet et à chaque frame.
+   */
+  const headX = bounds.tailAtMin ? bounds.axisMin + bounds.axisLength : bounds.axisMin
+  const towardTail = bounds.tailAtMin ? -1 : 1
+  const at = (ratio: number) => headX + towardTail * ratio * bounds.axisLength
+
+  const stemStartX = at(preset.stemStartRatio)
+  const stemSpan = at(preset.hingeRatio) - stemStartX
+
   return {
     uSwimTime: { value: 0 },
     uSwimSpeed: { value: preset.speed },
-    // Le preset donne une FRACTION de la longueur ; on la convertit en coordonnée de
-    // scène ici, une fois, plutôt qu'à chaque sommet et à chaque frame.
-    uSwimHingeX: { value: bounds.axisMin + preset.hingeRatio * bounds.axisLength },
-    uSwimHingeAmplitude: { value: preset.hingeAmplitude },
+    uSwimStemStartX: { value: stemStartX },
+    // Garde-fou : un brin de longueur nulle (les deux fractions égales) donnerait
+    // une division par zéro — donc des NaN propagés à TOUS les sommets et un
+    // leurre qui disparaît. On préfère une palette immobile à un leurre invisible.
+    uSwimInvStemSpan: { value: stemSpan !== 0 ? 1 / stemSpan : 0 },
+    uSwimPaddleYawAmplitude: { value: preset.paddleYawAmplitude },
+    uSwimPaddlePitchAmplitude: { value: preset.paddlePitchAmplitude },
   }
 }
 

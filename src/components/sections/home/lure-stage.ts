@@ -11,7 +11,12 @@ import {
   YAW_FREQUENCY_RATIO,
 } from '@/lib/three/swim.config'
 import { clampOrbitPitch } from '@/lib/three/lure-views'
-import { applySwimDeformation, createSwimUniforms, type SwimUniforms } from '@/lib/three/swim-material'
+import { measurePeduncleFraction, tailIsAtAxisMin, type LureBounds } from '@/lib/three/lure-anatomy'
+import {
+  applySwimDeformation,
+  createSwimUniforms,
+  type SwimUniforms,
+} from '@/lib/three/swim-material'
 
 /**
  * La scène three du hero, en impératif et sans React : le composant ne garde que l'état et
@@ -181,24 +186,77 @@ function flattenGeometry(mesh: THREE.Mesh): THREE.BufferGeometry {
   return geometry
 }
 
+/**
+ * Le repli quand la géométrie ne dit rien d'exploitable (boîte englobante
+ * absente). `tailAtMin: false` reprend l'ancienne convention : c'est un choix
+ * par défaut, pas une mesure — l'appelant le signale.
+ */
+const FALLBACK_BOUNDS: LureBounds = { axisMin: -1, axisLength: 2, tailAtMin: false }
+
 /** Recentre sur l'origine et ramène tous les leurres à la même longueur : c'est le même
  *  produit, il ne doit pas changer de gabarit d'un coloris à l'autre. */
-function normalizeGeometry(geometry: THREE.BufferGeometry): { axisMin: number; axisLength: number } {
+function normalizeGeometry(geometry: THREE.BufferGeometry): LureBounds {
   geometry.computeBoundingBox()
   const box = geometry.boundingBox
-  if (!box) return { axisMin: -1, axisLength: 2 }
+  if (!box) return FALLBACK_BOUNDS
 
   const center = box.getCenter(new THREE.Vector3())
   geometry.translate(-center.x, -center.y, -center.z)
-  const size = box.getSize(new THREE.Vector3())
-  // X est l'axe long des trois modèles (contrat documenté dans swim.config.ts).
+
+  /**
+   * X DOIT être l'axe long : tout en dépend — la normalisation de taille, le
+   * calage sur la séquence vidéo, et la charnière du shader de nage, qui pivote
+   * autour d'un X donné en fraction de la longueur.
+   *
+   * C'était SUPPOSÉ vrai, parce que les exports de l'articulé sortaient ainsi.
+   * Les leurres souples (2026-09-01) sortent orientés sur Z, et la supposition
+   * a coûté cher : le moteur normalisait sur la LARGEUR, agrandissant le modèle
+   * de 5,9 fois, et la charnière le pliait en travers au lieu de le long.
+   * On mesure donc l'axe long au lieu de le croire, et on fait pivoter la
+   * géométrie une fois pour toutes — le reste du moteur garde son contrat.
+   */
+  let size = box.getSize(new THREE.Vector3())
+  if (size.z > size.x && size.z >= size.y) {
+    geometry.rotateY(Math.PI / 2)
+  } else if (size.y > size.x) {
+    geometry.rotateZ(Math.PI / 2)
+  }
+  geometry.computeBoundingBox()
+  size = geometry.boundingBox?.getSize(new THREE.Vector3()) ?? size
+
   const scale = size.x > 0 ? TARGET_LURE_LENGTH / size.x : 1
   geometry.scale(scale, scale, scale)
   geometry.computeBoundingBox()
 
   const normalized = geometry.boundingBox
-  if (!normalized) return { axisMin: -1, axisLength: 2 }
-  return { axisMin: normalized.min.x, axisLength: normalized.max.x - normalized.min.x }
+  if (!normalized) return FALLBACK_BOUNDS
+
+  const axisMin = normalized.min.x
+  const axisLength = normalized.max.x - axisMin
+
+  /**
+   * De quel côté est la queue — l'AUTRE supposition qui était fausse.
+   *
+   * Le moteur tenait pour acquis que la tête sortait du côté `axisMin`. Les
+   * leurres souples sortent dans l'autre sens, et l'animation de nage
+   * s'appliquait donc au NEZ du poisson. On la mesure au lieu de la croire, par
+   * le pédoncule (cf. `lure-anatomy.ts`).
+   */
+  const position = geometry.getAttribute('position')
+  const peduncle =
+    position instanceof THREE.BufferAttribute
+      ? measurePeduncleFraction(position.array, axisMin, axisLength)
+      : null
+
+  if (peduncle === null) {
+    // Échec bruyant : la nage va s'appliquer au mauvais bout, et ça se VOIT.
+    // Autant que la console le dise, plutôt que de laisser chercher à l'œil.
+    console.warn(
+      'Leurre 3D : impossible de mesurer le pédoncule, orientation supposée (tête en axisMin). La nage peut porter sur le mauvais bout.'
+    )
+  }
+
+  return { axisMin, axisLength, tailAtMin: tailIsAtAxisMin(peduncle) }
 }
 
 /** Clone le matériau et corrige les réglages d'export hostiles au temps réel. */
@@ -252,6 +310,16 @@ export function createLureStage(
     offsetX?: number
     /** Décalage vertical, en fraction de la hauteur visible. Positif = vers le haut. */
     offsetY?: number
+    /**
+     * `true` : le leurre ne nage pas du tout — ni flexion de la queue, ni lacet,
+     * ni bercement. Il ne fait qu'obéir aux vues et à la rotation à la souris.
+     *
+     * C'est le mode de la PAGE PRODUIT (consigne Camil, 2026-09-01) : on y vient
+     * pour examiner un objet et choisir un coloris. Une nage permanente y devient
+     * du bruit — elle empêche de comparer deux coloris et de détailler une forme.
+     * Sur l'accueil, au contraire, elle est l'argument.
+     */
+    still?: boolean
   } = {}
 ): LureStage {
   const count = lures.length
@@ -360,6 +428,11 @@ export function createLureStage(
   }
 
   function swim(): void {
+    // Leurre immobile : on sort AVANT d'écrire quoi que ce soit. Les uniforms et
+    // la transformation gardent leur valeur de repos (0), posée à la construction
+    // — le leurre reste donc exactement dans la pose que les vues lui donnent.
+    if (options.still) return
+
     for (const slot of slots) {
       if (!slot || !slot.root.visible) continue
       const time = swimTime + slot.phaseOffset
