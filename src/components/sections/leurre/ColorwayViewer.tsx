@@ -101,7 +101,9 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
           setStatus('unsupported')
         },
       },
-      { solo: true }
+      // `still` : sur la page produit, le leurre ne nage pas. On y compare des
+      // coloris et on détaille une forme — un mouvement permanent empêche les deux.
+      { solo: true, still: true }
     )
     stageRef.current = stage
     stage.setView(getLureView(DEFAULT_LURE_VIEW).rotation)
@@ -152,8 +154,7 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
   const broken = status === 'unsupported' || status === 'failed'
 
   /** Radians par pixel, dérivés de la largeur RÉELLE du cadre. */
-  const radiansPerPixel = () =>
-    ORBIT_RADIANS_PER_FRAME_WIDTH / Math.max(1, frameSizeRef.current)
+  const radiansPerPixel = () => ORBIT_RADIANS_PER_FRAME_WIDTH / Math.max(1, frameSizeRef.current)
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (broken) return
@@ -230,19 +231,19 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
         onKeyDown={onKeyDown}
         className="rounded-card bg-muted relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ring)] active:cursor-grabbing"
       >
-      <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
+        <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
 
-      {broken && (
-        <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-muted-foreground">
-          {strings.viewerNoWebgl}
-        </p>
-      )}
+        {broken && (
+          <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm text-muted-foreground">
+            {strings.viewerNoWebgl}
+          </p>
+        )}
 
-      {!broken && !isLoaded && (
-        <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
-          {strings.viewerLoading}
-        </p>
-      )}
+        {!broken && !isLoaded && (
+          <p className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
+            {strings.viewerLoading}
+          </p>
+        )}
 
         {/* Le canvas est aria-hidden : voici ce qu'il montre. Le nom du coloris
             reste hors traduction — c'est celui du reçu et de l'email.
@@ -253,7 +254,9 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
           {fillNodes(strings.viewerAlt, {
             coloris: <span translate="no">{colorwayLabel}</span>,
           })}
-          {view.kind === 'preset' ? ` ${strings.viewDescriptions[view.id]}.` : ` ${strings.viewerFree}`}
+          {view.kind === 'preset'
+            ? ` ${strings.viewDescriptions[view.id]}.`
+            : ` ${strings.viewerFree}`}
         </p>
       </div>
 
