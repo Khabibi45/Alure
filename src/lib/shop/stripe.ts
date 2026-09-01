@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import { SITE } from '@/lib/site-config'
 import { PRODUCT, getColorway, checkoutLines, formatSpecs, giftLabel } from './product'
 import {
+  PaymentKeyRejectedError,
   PaymentNotConfiguredError,
   WebhookNotConfiguredError,
   WebhookSignatureError,
@@ -148,6 +149,23 @@ export async function setFulfillmentMarker(
 }
 
 /**
+ * Traduit un refus d'authentification Stripe en erreur typée du module.
+ *
+ * Sans ça, une clé expirée remonte en `StripeAuthenticationError` brute : la
+ * trace complète s'affiche à chaque rendu de page, et rien n'indique au
+ * développeur que le problème est dans son `.env.local`. On garde l'échec
+ * bruyant — il est juste devenu lisible et actionnable.
+ */
+function asTypedStripeError(error: unknown): unknown {
+  // On reconnaît l'erreur à sa NATURE (`type`), pas à son constructeur : un
+  // `instanceof Stripe.errors.…` jette « Right-hand side is not an object » dès
+  // que le module Stripe est simulé, et transforme un test de panne en erreur
+  // de test. Le champ `type` fait partie du contrat public de l'API.
+  const type = (error as { type?: unknown } | null)?.type
+  return type === 'StripeAuthenticationError' ? new PaymentKeyRejectedError(error) : error
+}
+
+/**
  * Compte les commandes PAYÉES — la donnée VRAIE du bandeau d'objectif (règle
  * n°6 : jamais un compteur inventé). Parcourt les sessions Checkout terminées ;
  * « payée » se lit sur `payment_status`, exactement comme au webhook (un moyen
@@ -161,8 +179,12 @@ export async function setFulfillmentMarker(
 export async function countPaidOrders(): Promise<number> {
   const stripe = getStripe()
   let count = 0
-  for await (const session of stripe.checkout.sessions.list({ status: 'complete', limit: 100 })) {
-    if (session.payment_status !== 'unpaid') count += 1
+  try {
+    for await (const session of stripe.checkout.sessions.list({ status: 'complete', limit: 100 })) {
+      if (session.payment_status !== 'unpaid') count += 1
+    }
+  } catch (error) {
+    throw asTypedStripeError(error)
   }
   return count
 }

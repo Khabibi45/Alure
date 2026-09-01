@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getDictionary, t } from '@/lib/i18n'
 import { localePath, type Locale } from '@/lib/i18n/paths'
 import { getOrdersCount } from '@/lib/shop/orders-count'
+import { PaymentKeyRejectedError } from '@/lib/shop/errors'
 import { PRECOMMANDE_ACTIVE, PRECOMMANDE_GOAL, shipByLabel } from '@/lib/shop/precommande'
 import { OFFERS, PRODUCT, formatEuros } from '@/lib/shop/product'
 
@@ -34,10 +35,14 @@ export async function PrecommandeSection({ locale }: { locale: Locale }) {
   try {
     count = await getOrdersCount()
   } catch (error) {
-    console.error(
-      'PrecommandeSection : comptage Stripe indisponible — campagne masquée plutôt qu’un compteur faux.',
-      error
-    )
+    if (error instanceof PaymentKeyRejectedError) {
+      console.warn(`PrecommandeSection : campagne masquée. ${error.message}`)
+    } else {
+      console.error(
+        'PrecommandeSection : comptage Stripe indisponible — campagne masquée plutôt qu’un compteur faux.',
+        error
+      )
+    }
     return null
   }
 

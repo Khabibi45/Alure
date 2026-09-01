@@ -3,6 +3,7 @@ import { getDictionary, t } from '@/lib/i18n'
 import type { Locale } from '@/lib/i18n/paths'
 import { nextMilestone } from '@/lib/shop/milestones'
 import { getOrdersCount } from '@/lib/shop/orders-count'
+import { PaymentKeyRejectedError } from '@/lib/shop/errors'
 
 /**
  * Le bandeau « objectif de lancement » (spec `bandeau-objectif-commandes.md`) :
@@ -23,7 +24,16 @@ export async function OrdersBanner({ locale, href }: { locale: Locale; href?: st
   try {
     count = await getOrdersCount()
   } catch (error) {
-    console.error('OrdersBanner : comptage Stripe indisponible — bandeau masqué.', error)
+    // Une clé refusée est un problème de CONFIGURATION : une phrase et une
+    // consigne suffisent. Empiler une trace complète à chaque rendu de page
+    // noie le message dans l'overlay de développement, et personne ne lit plus
+    // rien. Toute autre panne, elle, garde sa trace entière : c'est un
+    // incident, et on veut tout savoir.
+    if (error instanceof PaymentKeyRejectedError) {
+      console.warn(`OrdersBanner : bandeau masqué. ${error.message}`)
+    } else {
+      console.error('OrdersBanner : comptage Stripe indisponible — bandeau masqué.', error)
+    }
     return null
   }
 

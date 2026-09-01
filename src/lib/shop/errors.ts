@@ -10,6 +10,26 @@ export class PaymentNotConfiguredError extends Error {
   }
 }
 
+/**
+ * Stripe a REFUSÉ la clé : expirée, révoquée, ou d'un autre compte.
+ *
+ * Distincte de `PaymentNotConfiguredError` (clé absente) et d'une panne Stripe,
+ * parce que le geste de réparation n'est pas le même — ici il faut remplacer une
+ * valeur dans `.env.local`, personne n'attend que ça se rétablisse tout seul.
+ * Et distincte d'un incident, parce qu'un incident mérite une trace complète
+ * quand une erreur de configuration mérite une phrase et une consigne.
+ */
+export class PaymentKeyRejectedError extends Error {
+  constructor(cause?: unknown) {
+    super(
+      'Clé Stripe refusée (expirée, révoquée ou d’un autre compte). ' +
+        'Remplacez STRIPE_SECRET_KEY dans .env.local par une clé sk_test_… du dashboard. ' +
+        'Une clé rkcs_… est un jeton temporaire de connecteur : elle expire en quelques heures.'
+    )
+    this.cause = cause
+  }
+}
+
 /** Signature Stripe invalide sur le webhook : requête à rejeter en 400. */
 export class WebhookSignatureError extends Error {
   constructor(cause?: unknown) {
