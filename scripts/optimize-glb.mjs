@@ -148,7 +148,6 @@ function collectUsed(json) {
   return { accessors, views }
 }
 
-
 /* ─────────────────────── Décimation de la géométrie ─────────────────────── */
 
 /**
@@ -185,17 +184,68 @@ function readAccessor(json, bin, index) {
   for (let i = 0; i < acc.count; i++) {
     const at = base + i * stride
     for (let c = 0; c < items; c++) {
-      out[i * items + c] = new Ctor(bin.buffer, bin.byteOffset + at + c * Ctor.BYTES_PER_ELEMENT, 1)[0]
+      out[i * items + c] = new Ctor(
+        bin.buffer,
+        bin.byteOffset + at + c * Ctor.BYTES_PER_ELEMENT,
+        1
+      )[0]
     }
   }
   return { array: out, items, componentType: acc.componentType, type: acc.type }
+}
+
+/**
+ * Prépare les UV et les normales pour le simplificateur, entrelacés en un seul
+ * tableau de flottants comme il les attend.
+ *
+ * Les POIDS disent combien un écart d'attribut « coûte » face à un écart de
+ * position. Ceux-ci ont été choisis en mesurant l'étirement des UV sur le leurre
+ * bleu : les UV pèsent le plus (c'est la texture qui trahit une couture fondue),
+ * les normales cinq fois moins (elles ne servent qu'à retenir le modelé).
+ *
+ * Renvoie `null` si un attribut manque ou n'est pas en flottants : mieux vaut
+ * retomber sur la simplification par positions seules que nourrir le
+ * simplificateur avec des entiers quantifiés lus comme des flottants.
+ */
+const POIDS_UV = 1
+const POIDS_NORMALE = 0.2
+
+function readSimplifyAttributes(json, bin, prim, vertexCount) {
+  const uvIndex = prim.attributes.TEXCOORD_0
+  const normalIndex = prim.attributes.NORMAL
+  if (uvIndex === undefined || normalIndex === undefined) return null
+
+  const uv = readAccessor(json, bin, uvIndex)
+  const normal = readAccessor(json, bin, normalIndex)
+  if (uv.componentType !== 5126 || normal.componentType !== 5126) return null
+  if (uv.array.length / 2 !== vertexCount || normal.array.length / 3 !== vertexCount) return null
+
+  const stride = 5
+  const values = new Float32Array(vertexCount * stride)
+  for (let i = 0; i < vertexCount; i++) {
+    values[i * stride] = uv.array[i * 2]
+    values[i * stride + 1] = uv.array[i * 2 + 1]
+    values[i * stride + 2] = normal.array[i * 3]
+    values[i * stride + 3] = normal.array[i * 3 + 1]
+    values[i * stride + 4] = normal.array[i * 3 + 2]
+  }
+  return {
+    values,
+    stride,
+    weights: [POIDS_UV, POIDS_UV, POIDS_NORMALE, POIDS_NORMALE, POIDS_NORMALE],
+  }
 }
 
 /** Ajoute un tableau typé au GLB comme nouveau bufferView + accessor. */
 function pushAccessor(json, rewritten, array, { items, componentType, type, target, min, max }) {
   const buffer = Buffer.from(array.buffer, array.byteOffset, array.byteLength)
   const viewIndex = json.bufferViews.length
-  json.bufferViews.push({ buffer: 0, byteOffset: 0, byteLength: buffer.length, ...(target ? { target } : {}) })
+  json.bufferViews.push({
+    buffer: 0,
+    byteOffset: 0,
+    byteLength: buffer.length,
+    ...(target ? { target } : {}),
+  })
   rewritten.set(viewIndex, buffer)
   const accessorIndex = json.accessors.length
   json.accessors.push({
@@ -229,14 +279,40 @@ async function simplifyMeshes(json, bin, rewritten, ratio) {
 
       const indices = new Uint32Array(idx.array)
       const positions = new Float32Array(pos.array)
+
+      // Le simplificateur ne regarde que les positions. Quand on lui donne AUSSI
+      // les UV et les normales, il refuse de fondre deux sommets qui se
+      // ressemblent en 3D mais divergent dans la texture — c'est ce qui protège
+      // les coutures de la carte UV et le modelé de l'ombrage.
+      const attrs = readSimplifyAttributes(json, bin, prim, pos.array.length / 3)
       // `LockBorder` garde les bords intacts : sans lui, la silhouette du leurre
       // se met à onduler là où le maillage s'ouvre.
-      const [simplified] = MeshoptSimplifier.simplify(indices, positions, 3, target, 1e-2, ['LockBorder'])
+      const [simplified] = attrs
+        ? MeshoptSimplifier.simplifyWithAttributes(
+            indices,
+            positions,
+            3,
+            attrs.values,
+            attrs.stride,
+            attrs.weights,
+            null,
+            target,
+            1e-2,
+            ['LockBorder']
+          )
+        : MeshoptSimplifier.simplify(indices, positions, 3, target, 1e-2, ['LockBorder'])
 
       // Compactage : on ne garde que les sommets encore référencés.
-      // `compactMesh` retourne un COUPLE [remap, nombre de sommets gardés] —
-      // le prendre pour le remap seul produit des attributs vides et un leurre
-      // invisible, sans la moindre erreur au chargement.
+      //
+      // DEUX PIÈGES, tous deux traversés une fois :
+      // 1. `compactMesh` retourne un COUPLE [remap, nombre de sommets gardés] —
+      //    le prendre pour le remap seul produit des attributs vides et un
+      //    leurre invisible, sans la moindre erreur au chargement.
+      // 2. Il REMAPPE `simplified` SUR PLACE. Le tableau qui ressort est donc
+      //    déjà le tampon d'indices final : réappliquer `remap` derrière donne
+      //    `remap[remap[i]]`, et ces triangles-là relient des sommets au hasard
+      //    d'un bout à l'autre du modèle — à l'écran, des fils tendus entre la
+      //    tête et la queue. Le remap ne sert qu'à ranger les ATTRIBUTS.
       const [remap, kept] = MeshoptSimplifier.compactMesh(simplified)
 
       const nextAttributes = {}
@@ -247,9 +323,15 @@ async function simplifyMeshes(json, bin, rewritten, ratio) {
         for (let i = 0; i < remap.length; i++) {
           const to = remap[i]
           if (to === 0xffffffff) continue
-          for (let c = 0; c < src.items; c++) packed[to * src.items + c] = src.array[i * src.items + c]
+          for (let c = 0; c < src.items; c++)
+            packed[to * src.items + c] = src.array[i * src.items + c]
         }
-        const options = { items: src.items, componentType: src.componentType, type: src.type, target: 34962 }
+        const options = {
+          items: src.items,
+          componentType: src.componentType,
+          type: src.type,
+          target: 34962,
+        }
         if (name === 'POSITION') {
           // La spec EXIGE min/max sur POSITION ; sans eux, three ne sait pas
           // calculer la boîte englobante et le calage du carrousel s'effondre.
@@ -267,9 +349,9 @@ async function simplifyMeshes(json, bin, rewritten, ratio) {
         nextAttributes[name] = pushAccessor(json, rewritten, packed, options)
       }
 
-      const remapped = new Uint32Array(simplified.length)
-      for (let i = 0; i < simplified.length; i++) remapped[i] = remap[simplified[i]]
-      prim.indices = pushAccessor(json, rewritten, remapped, {
+      // `simplified` sort déjà remappé de `compactMesh` (cf. piège 2 ci-dessus) :
+      // on le publie tel quel.
+      prim.indices = pushAccessor(json, rewritten, simplified, {
         items: 1,
         componentType: 5125,
         type: 'SCALAR',
@@ -277,7 +359,7 @@ async function simplifyMeshes(json, bin, rewritten, ratio) {
       })
       prim.attributes = nextAttributes
 
-      report.push({ before, after: remapped.length / 3, verts: kept })
+      report.push({ before, after: simplified.length / 3, verts: kept })
     }
   }
   return report
@@ -290,22 +372,60 @@ async function optimize(input, output, { max, quality, keepTangents, simplify })
   const droppedTangents = keepTangents ? 0 : dropTangents(json)
 
   // 1) Rééchantillonnage des textures. C'est ici que se joue l'essentiel du poids.
+  //
+  //    ⚠️ TOUTES LES TEXTURES NE SONT PAS DES IMAGES. Une carte de normales
+  //    encode un VECTEUR par pixel (RGB = XYZ), une carte metallic/roughness
+  //    encode deux mesures dans le vert et le bleu. Les compresser comme une
+  //    photo — qualité 82, chrominance moyennée par blocs de 2×2 — corrompt la
+  //    donnée elle-même. Sur un matériau entièrement métallique, dont tout le
+  //    rendu vient des reflets, ça se voit immédiatement : le leurre perd son
+  //    relief et ne ressemble plus au fichier d'origine.
+  //
+  //    On classe donc chaque image par son RÔLE dans le matériau, et on
+  //    ménage les cartes de données : pleine résolution conservée plus
+  //    longtemps, qualité haute, aucun sous-échantillonnage.
+  const dataImages = new Set()
+  for (const material of json.materials ?? []) {
+    const pbr = material.pbrMetallicRoughness ?? {}
+    for (const slot of [
+      material.normalTexture,
+      material.occlusionTexture,
+      pbr.metallicRoughnessTexture,
+    ]) {
+      if (slot?.index === undefined) continue
+      const source = json.textures?.[slot.index]?.source
+      if (source !== undefined) dataImages.add(source)
+    }
+  }
   const rewritten = new Map() // index de bufferView -> nouveau Buffer
   const textureReport = []
-  for (const image of json.images ?? []) {
+  for (const [index, image] of (json.images ?? []).entries()) {
     if (image.bufferView === undefined) continue
+    const isData = dataImages.has(index)
+    // Les cartes de données gardent deux fois la résolution des couleurs, et
+    // une chrominance intacte : c'est là que vit le relief.
+    const maxSide = isData ? max * 2 : max
+    const jpegQuality = isData ? Math.max(quality, 95) : quality
     const view = json.bufferViews[image.bufferView]
     const source = bin.subarray(view.byteOffset ?? 0, (view.byteOffset ?? 0) + view.byteLength)
     const meta = await sharp(source).metadata()
     const resized = await sharp(source)
-      .resize({ width: Math.min(meta.width, max), height: Math.min(meta.height, max), fit: 'inside' })
-      .jpeg({ quality, mozjpeg: true, chromaSubsampling: '4:2:0' })
+      .resize({
+        width: Math.min(meta.width, maxSide),
+        height: Math.min(meta.height, maxSide),
+        fit: 'inside',
+      })
+      .jpeg({
+        quality: jpegQuality,
+        mozjpeg: true,
+        chromaSubsampling: isData ? '4:4:4' : '4:2:0',
+      })
       .toBuffer()
     rewritten.set(image.bufferView, resized)
     image.mimeType = 'image/jpeg'
     textureReport.push({
       from: `${meta.width}×${meta.height} ${Math.round(source.length / 1024)} ko`,
-      to: `${Math.min(meta.width, max)}px ${Math.round(resized.length / 1024)} ko`,
+      to: `${Math.min(meta.width, maxSide)}px ${Math.round(resized.length / 1024)} ko${isData ? ' [donnée, chrominance intacte]' : ''}`,
     })
   }
 
