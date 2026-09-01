@@ -129,7 +129,7 @@ export type SwimPreset = {
  * entier oscille — alors que la flexion, elle, ne concerne que le brin et la
  * palette. Les deux se superposent sans se confondre.
  *
- * L'ordre de grandeur EST le sujet : le lacet du corps vaut moins du septième du
+ * L'ordre de grandeur EST le sujet : le lacet du corps reste sous le cinquième du
  * balayage de la palette. Au-delà, le corps cesserait de servir de référence et
  * on ne verrait plus la palette battre — on verrait le leurre entier se tortiller.
  * Un test garde cet écart.
@@ -146,10 +146,12 @@ export const LURE_SWIM: SwimPreset = {
   paddleYawAmplitude: 0.45,
   paddlePitchAmplitude: 0.22,
   speed: 4.6,
-  // Le corps : 3,4° de lacet, 1,4° de roulis, et un bercement de 0,6 % de la
-  // longueur du leurre. Assez pour qu'il ne paraisse pas cloué, pas assez pour
-  // qu'on le regarde à la place de la palette.
-  rollAmplitude: 0.025,
-  yawAmplitude: 0.06,
-  bobAmplitude: 0.012,
+  // Le corps : 4,6° de lacet, 2,0° de roulis, et un bercement de 0,85 % de la
+  // longueur du leurre (relevé d'un tiers le 2026-09-01, consigne Camil : « fais
+  // bouger légèrement plus le corps »). Assez pour qu'il ne paraisse pas cloué,
+  // pas assez pour qu'on le regarde à la place de la palette : le lacet reste à
+  // moins d'un cinquième du balayage de la palette, la borne que tient le test.
+  rollAmplitude: 0.035,
+  yawAmplitude: 0.08,
+  bobAmplitude: 0.017,
 }
