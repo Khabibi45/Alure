@@ -39,6 +39,12 @@ function parseOptions(rest) {
     max: flag('max', 1024),
     quality: flag('quality', 82),
     keepTangents: rest.includes('--keep-tangents'),
+    /**
+     * Part des triangles CONSERVÉS. 1 = aucune décimation (le défaut : on ne
+     * touche pas à un maillage sans le demander). Les leurres souples sortent
+     * à 1,1 million de triangles et se servent autour de 0.12.
+     */
+    simplify: flag('simplify', 1),
   }
 }
 
@@ -142,7 +148,142 @@ function collectUsed(json) {
   return { accessors, views }
 }
 
-async function optimize(input, output, { max, quality, keepTangents }) {
+
+/* ─────────────────────── Décimation de la géométrie ─────────────────────── */
+
+/**
+ * Les leurres souples sortent de Blender à 1,1 million de triangles pièce, soit
+ * 30 Mo une fois les textures réduites — cinq à huit fois les modèles précédents.
+ * Le poids n'est plus dans les images mais dans les sommets, et 90 % du trafic
+ * est mobile.
+ *
+ * On décime donc HORS LIGNE, à la compilation. C'est la seule voie qui ne touche
+ * pas à la CSP : les formats compressés (Draco, meshopt) exigent un décodeur
+ * chargé dans le navigateur, donc `wasm-unsafe-eval` — la décision que l'en-tête
+ * de ce fichier refuse de prendre en douce. Ici, le navigateur reçoit un GLB
+ * ordinaire, simplement plus léger.
+ */
+const COMPONENT = {
+  5120: Int8Array,
+  5121: Uint8Array,
+  5122: Int16Array,
+  5123: Uint16Array,
+  5125: Uint32Array,
+  5126: Float32Array,
+}
+const ITEMS = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4, MAT4: 16 }
+
+/** Lit un accessor en tableau typé compact, en tenant compte de l'entrelacement. */
+function readAccessor(json, bin, index) {
+  const acc = json.accessors[index]
+  const Ctor = COMPONENT[acc.componentType]
+  const items = ITEMS[acc.type]
+  const view = json.bufferViews[acc.bufferView]
+  const base = (view.byteOffset ?? 0) + (acc.byteOffset ?? 0)
+  const out = new Ctor(acc.count * items)
+  const stride = view.byteStride ?? items * Ctor.BYTES_PER_ELEMENT
+  for (let i = 0; i < acc.count; i++) {
+    const at = base + i * stride
+    for (let c = 0; c < items; c++) {
+      out[i * items + c] = new Ctor(bin.buffer, bin.byteOffset + at + c * Ctor.BYTES_PER_ELEMENT, 1)[0]
+    }
+  }
+  return { array: out, items, componentType: acc.componentType, type: acc.type }
+}
+
+/** Ajoute un tableau typé au GLB comme nouveau bufferView + accessor. */
+function pushAccessor(json, rewritten, array, { items, componentType, type, target, min, max }) {
+  const buffer = Buffer.from(array.buffer, array.byteOffset, array.byteLength)
+  const viewIndex = json.bufferViews.length
+  json.bufferViews.push({ buffer: 0, byteOffset: 0, byteLength: buffer.length, ...(target ? { target } : {}) })
+  rewritten.set(viewIndex, buffer)
+  const accessorIndex = json.accessors.length
+  json.accessors.push({
+    bufferView: viewIndex,
+    componentType,
+    count: array.length / items,
+    type,
+    ...(min ? { min, max } : {}),
+  })
+  return accessorIndex
+}
+
+/**
+ * Décime chaque primitive à `ratio` de ses triangles, puis COMPACTE : sans le
+ * compactage, les sommets devenus inutiles resteraient dans le fichier et le
+ * poids ne bougerait pas — c'est le tampon de sommets qui pèse, pas les indices.
+ */
+async function simplifyMeshes(json, bin, rewritten, ratio) {
+  const { MeshoptSimplifier } = await import('meshoptimizer')
+  await MeshoptSimplifier.ready
+  const report = []
+
+  for (const mesh of json.meshes ?? []) {
+    for (const prim of mesh.primitives ?? []) {
+      if (prim.indices === undefined || prim.attributes?.POSITION === undefined) continue
+
+      const idx = readAccessor(json, bin, prim.indices)
+      const pos = readAccessor(json, bin, prim.attributes.POSITION)
+      const before = idx.array.length / 3
+      const target = Math.max(3, Math.floor(before * ratio) * 3)
+
+      const indices = new Uint32Array(idx.array)
+      const positions = new Float32Array(pos.array)
+      // `LockBorder` garde les bords intacts : sans lui, la silhouette du leurre
+      // se met à onduler là où le maillage s'ouvre.
+      const [simplified] = MeshoptSimplifier.simplify(indices, positions, 3, target, 1e-2, ['LockBorder'])
+
+      // Compactage : on ne garde que les sommets encore référencés.
+      // `compactMesh` retourne un COUPLE [remap, nombre de sommets gardés] —
+      // le prendre pour le remap seul produit des attributs vides et un leurre
+      // invisible, sans la moindre erreur au chargement.
+      const [remap, kept] = MeshoptSimplifier.compactMesh(simplified)
+
+      const nextAttributes = {}
+      for (const [name, accessorIndex] of Object.entries(prim.attributes)) {
+        const src = readAccessor(json, bin, accessorIndex)
+        const Ctor = COMPONENT[src.componentType]
+        const packed = new Ctor(kept * src.items)
+        for (let i = 0; i < remap.length; i++) {
+          const to = remap[i]
+          if (to === 0xffffffff) continue
+          for (let c = 0; c < src.items; c++) packed[to * src.items + c] = src.array[i * src.items + c]
+        }
+        const options = { items: src.items, componentType: src.componentType, type: src.type, target: 34962 }
+        if (name === 'POSITION') {
+          // La spec EXIGE min/max sur POSITION ; sans eux, three ne sait pas
+          // calculer la boîte englobante et le calage du carrousel s'effondre.
+          const min = [Infinity, Infinity, Infinity]
+          const max = [-Infinity, -Infinity, -Infinity]
+          for (let i = 0; i < packed.length; i += 3) {
+            for (let c = 0; c < 3; c++) {
+              if (packed[i + c] < min[c]) min[c] = packed[i + c]
+              if (packed[i + c] > max[c]) max[c] = packed[i + c]
+            }
+          }
+          options.min = min
+          options.max = max
+        }
+        nextAttributes[name] = pushAccessor(json, rewritten, packed, options)
+      }
+
+      const remapped = new Uint32Array(simplified.length)
+      for (let i = 0; i < simplified.length; i++) remapped[i] = remap[simplified[i]]
+      prim.indices = pushAccessor(json, rewritten, remapped, {
+        items: 1,
+        componentType: 5125,
+        type: 'SCALAR',
+        target: 34963,
+      })
+      prim.attributes = nextAttributes
+
+      report.push({ before, after: remapped.length / 3, verts: kept })
+    }
+  }
+  return report
+}
+
+async function optimize(input, output, { max, quality, keepTangents, simplify }) {
   const original = await readFile(input)
   const { json, bin } = readGlb(original)
 
@@ -171,6 +312,10 @@ async function optimize(input, output, { max, quality, keepTangents }) {
   // 2) Reconstruction du binaire : les offsets bougent dès qu'une image change
   //    de taille, donc on ré-émet chaque bufferView utilisé, dans l'ordre, en
   //    respectant l'alignement 4 octets exigé par la spec glTF.
+  // 1 bis) Décimation, AVANT le recensement des vues : elle en crée de nouvelles
+  //        et rend les anciennes orphelines, que `collectUsed` écartera.
+  const simplifyReport = simplify < 1 ? await simplifyMeshes(json, bin, rewritten, simplify) : []
+
   const { views: usedViews } = collectUsed(json)
   const keptViewIndexes = json.bufferViews
     .map((_, index) => index)
@@ -240,6 +385,12 @@ async function optimize(input, output, { max, quality, keepTangents }) {
   const mb = (n) => (n / 1048576).toFixed(2) + ' Mo'
   console.log(`${input} → ${output}`)
   for (const t of textureReport) console.log(`   texture ${t.from} → ${t.to}`)
+  for (const s of simplifyReport) {
+    const pct = Math.round((1 - s.after / s.before) * 100)
+    console.log(
+      `   maillage ${s.before.toLocaleString('fr-FR')} → ${s.after.toLocaleString('fr-FR')} triangles (−${pct} %), ${s.verts.toLocaleString('fr-FR')} sommets`
+    )
+  }
   if (droppedTangents) console.log(`   tangentes retirées sur ${droppedTangents} primitive(s)`)
   console.log(
     `   ${mb(original.length)} → ${mb(result.length)} ` +

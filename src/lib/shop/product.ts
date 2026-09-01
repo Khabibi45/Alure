@@ -49,8 +49,16 @@ export const PRODUCT = {
   },
   currency: 'eur' as const,
   /**
-   * Les noms des coloris décrivent la ROBE du leurre — vérifiée sur nos rendus
-   * 3D (2026-08-08), jamais inventée :
+   * Passage aux LEURRES SOUPLES le 2026-09-01 (modèles fournis par Camil) :
+   * les trois coloris vendus deviennent Bleu, Rouge et Vert, et le collector
+   * reste le noir. Les noms sont volontairement les couleurs elles-mêmes —
+   * décrire une robe qu'on n'a pas vue serait l'inventer (règle n°6). À affiner
+   * quand les rendus définitifs seront validés.
+   *
+   * ⚠️ Les IMAGES `/produit/*.webp` sont encore celles du leurre articulé :
+   * elles montrent un autre produit. À régénérer depuis les nouveaux modèles.
+   *
+   * Historique — les noms décrivaient la robe de l'articulé (2026-08-08) :
    *   Truite arc-en-ciel : dos jaune-olive, flanc blanc barré de rose.
    *   Perche : dos vert olive marbré, flanc jaune moucheté. (PAS « brochet » :
    *   la robe est une livrée de perche, et VISION.md interdit de revendiquer le
@@ -61,22 +69,22 @@ export const PRODUCT = {
   colorways: [
     {
       id: 'coloris-1',
-      label: 'Truite arc-en-ciel',
-      shortLabel: 'Truite',
+      label: 'Bleu',
+      shortLabel: 'Bleu',
       available: true,
       image: '/produit/leurre-truite.webp',
     },
     {
       id: 'coloris-2',
-      label: 'Perche',
-      shortLabel: 'Perche',
+      label: 'Rouge',
+      shortLabel: 'Rouge',
       available: true,
       image: '/produit/leurre-perche.webp',
     },
     {
       id: 'coloris-3',
-      label: 'Orange feu',
-      shortLabel: 'Orange',
+      label: 'Vert',
+      shortLabel: 'Vert',
       available: true,
       image: '/produit/leurre-orange.webp',
     },

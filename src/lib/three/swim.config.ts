@@ -67,11 +67,29 @@ export type SwimPreset = {
  * étaient une fiction : l'animation est identique sur tous les modèles 3D,
  * fidèle à la pièce en PVC.
  */
+/**
+ * Réglage RÉVISÉ le 2026-09-01, au passage aux leurres souples.
+ *
+ * L'articulé avait une charnière réelle à 47 % du corps, et le shader la
+ * reproduisait : une cassure nette entre deux pièces rigides. Un leurre souple
+ * n'a pas de charnière — appliquer l'ancien réglage le plierait en deux au
+ * milieu, ce qui ne ressemble à rien.
+ *
+ * On recule donc le pivot vers la caudale et on adoucit le débattement : le
+ * corps reste tenu, la queue travaille. Ce n'est pas encore une ondulation
+ * (le shader ne sait faire qu'une rotation autour d'un axe), mais c'est
+ * l'approximation la plus proche de ce que fait un souple à la traction.
+ *
+ * ⚠️ À REVOIR À L'ŒIL sur les nouveaux modèles : ces trois nombres ont été
+ * choisis par raisonnement, pas mesurés sur le rendu comme les précédents.
+ */
 export const LURE_SWIM: SwimPreset = {
-  hingeRatio: 0.47,
-  hingeAmplitude: 0.3,
-  speed: 5.5,
-  rollAmplitude: 0.08,
-  yawAmplitude: 0.1,
+  // 0.62 : le pivot passe derrière le corps, à l'attache de la caudale.
+  hingeRatio: 0.62,
+  // Plus de débattement qu'un articulé, mais réparti sur une pièce souple.
+  hingeAmplitude: 0.38,
+  speed: 4.6,
+  rollAmplitude: 0.06,
+  yawAmplitude: 0.12,
   bobAmplitude: 0.03,
 }

@@ -41,58 +41,44 @@ export type LureModel = {
 
 export const LURE_MODELS: readonly LureModel[] = [
   {
-    id: 'truite',
-    workingName: 'Truite',
-    src: '/models/leurre-truite.glb',
+    id: 'bleu',
+    workingName: 'Bleu',
+    src: '/models/leurre-souple-bleu.glb',
     colorwayId: 'coloris-1',
     collector: false,
     description:
-      'Le leurre Alure en vue 3D, coloris « Truite arc-en-ciel » : dos jaune-olive, flanc blanc barré de rose, caudale translucide. Il nage sur place.',
-    lines: [
-      'Dos jaune-olive, flanc blanc barré de rose.',
-      'Caudale souple et translucide, deux dorsales olive.',
-      'Œil noir cerclé d’argent, anneau de tête chromé.',
-    ],
+      'Le leurre souple Alure en vue 3D, coloris « Bleu ». Il nage sur place.',
+    lines: ['Corps souple, coloris bleu.'],
   },
   {
-    id: 'brochet',
-    workingName: 'Brochet',
-    src: '/models/leurre-brochet.glb',
+    id: 'rouge',
+    workingName: 'Rouge',
+    src: '/models/leurre-souple-rouge.glb',
     colorwayId: 'coloris-2',
     collector: false,
     description:
-      'Le leurre Alure en vue 3D, coloris « Perche » : dos vert olive marbré, flanc jaune moucheté. Il nage sur place.',
-    lines: [
-      'Dos vert olive marbré, flanc jaune moucheté.',
-      'Caudale souple et translucide, deux dorsales olive.',
-      'Œil noir cerclé d’argent, anneau de tête chromé.',
-    ],
-
+      'Le leurre souple Alure en vue 3D, coloris « Rouge ». Il nage sur place.',
+    lines: ['Corps souple, coloris rouge.'],
   },
   {
-    id: 'orange',
-    workingName: 'Orange',
-    src: '/models/leurre-orange.glb',
+    id: 'vert',
+    workingName: 'Vert',
+    src: '/models/leurre-souple-vert.glb',
     colorwayId: 'coloris-3',
     collector: false,
     description:
-      'Le leurre Alure en vue 3D, coloris « Orange feu » : corps orange vif, ventre plus clair. Il nage sur place.',
-    lines: [
-      'Corps orange vif, ventre plus clair.',
-      'Caudale souple et translucide, deux dorsales assorties.',
-      'Œil noir cerclé d’argent, anneau de tête chromé.',
-    ],
-
+      'Le leurre souple Alure en vue 3D, coloris « Vert ». Il nage sur place.',
+    lines: ['Corps souple, coloris vert.'],
   },
   {
     id: 'noir',
     workingName: 'Noir',
-    src: '/models/leurre-noir.glb',
+    src: '/models/leurre-souple-noir.glb',
     // Ne se vend pas seul : il se CHOISIT comme 4e leurre offert (3 achetés).
     colorwayId: null,
     collector: true,
     description:
-      'Le leurre collector Alure en vue 3D, coloris « Pirate » : corps noir, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.',
+      'Le leurre souple collector Alure en vue 3D, coloris « Pirate » : corps noir, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.',
     lines: [
       'Le collector. Il ne se vend pas : il s’obtient.',
       'À choisir comme 4e leurre offert, dès 3 achetés.',
