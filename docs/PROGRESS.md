@@ -3,6 +3,170 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-09-01 — Les leurres souples (branche `leurres-souples`) : deux bugs de fond trouvés en route
+
+Consigne Camil : remplacer les modèles 3D par quatre leurres souples fournis (bleu, rouge, vert,
+noir), sur une branche. Puis, après un premier essai : « réduis la taille du leurre de 3 à 5 fois »
+et « pourquoi le rendu du glb n'est pas celui que j'avais ».
+
+Les deux remarques avaient **la même cause**, et ce n'était pas celle qu'on croyait.
+
+### Le moteur supposait l'axe long au lieu de le mesurer
+
+`normalizeGeometry` prenait X pour l'axe long du leurre. C'était vrai des exports de l'articulé, et
+c'était écrit comme un contrat (`swim.config.ts`). Les leurres souples sortent orientés sur **Z** :
+0,34 × 0,40 × 1,90.
+
+Deux conséquences, invisibles séparément mais évidentes ensemble. Le moteur normalisait la taille
+sur la **largeur** : le modèle était agrandi **5,9 fois** — exactement le facteur de 3 à 5 que Camil
+avait mesuré à l'œil. Et la charnière de nage, qui pivote autour d'un X, pliait le leurre **en
+travers** au lieu du long. D'où un rendu qui ne ressemblait à rien.
+
+Le moteur mesure désormais l'axe dominant et fait pivoter la géométrie une fois pour toutes. Le
+contrat « X est l'axe long » devient vrai **par construction** au lieu d'être supposé.
+
+### Le script détruisait les cartes de données
+
+Le matériau est **entièrement métallique** (`metallicFactor: 1`) : tout son rendu vient des reflets,
+pilotés par la carte de normales. Or `optimize-glb.mjs` compressait TOUTES les images comme des
+photos — qualité 82, chrominance moyennée par blocs de 2×2. Une carte de normales encode un vecteur
+par pixel : la sous-échantillonner corrompt la donnée. Elle tombait de **7,2 Mo à 16 Ko**.
+
+Le script distingue maintenant les cartes de **données** (normales, metallic/roughness, occlusion)
+des cartes de **couleur** : double résolution, qualité 95, chrominance intacte. La normale passe à
+**476 Ko**.
+
+### Le poids, et la décimation
+
+Les modèles fournis pèsent 48 à 63 Mo pour **1,1 million de triangles** — cinq à huit fois les
+précédents, et 240 Mo qui seraient entrés définitivement dans git. Le script sait désormais **décimer
+hors ligne**, à la compilation, via `meshoptimizer` (déjà présent). Aucun impact CSP : le navigateur
+reçoit un GLB ordinaire. Réglage actuel : 35 % des triangles conservés, soit 383 000 et ~12 Mo pièce.
+**Le taux reste à valider à l'œil par Camil** — c'est un arbitrage entre finesse et poids, pas une
+vérité technique.
+
+### Les « fils » entre la tête et la queue — le double remap
+
+Camil : « la texture est horrible, comme si des fils reliaient la tête et la queue du leurre ». La
+description était littérale : le maillage publié contenait **74 145 arêtes** traversant la carte UV
+et **61 166** traversant le modèle en 3D. La source, elle, n'en a aucune (arête maximale 0,005 pour
+un leurre long de 1,9).
+
+`MeshoptSimplifier.compactMesh` cache **deux pièges**, et j'étais tombé dans les deux :
+
+1. Il retourne un COUPLE `[remap, nombre de sommets gardés]`. Le prendre pour le remap seul produit
+   des attributs vides et un leurre **invisible**, sans la moindre erreur au chargement.
+2. Il **remappe le tableau d'indices SUR PLACE** — la dernière ligne de son helper `reorder` fait
+   `indices[i] = remap[indices[i]]`. Le tableau qui en ressort est donc déjà final. Réappliquer
+   `remap` derrière, comme je le faisais, calcule `remap[remap[i]]` : des triangles qui relient des
+   sommets sans rapport, d'un bout à l'autre du modèle. À l'écran, des fils tendus.
+
+Rien de tout ça ne lève d'erreur : le fichier reste un GLB valide, il s'affiche, il est simplement
+faux. C'est exactement la dégradation silencieuse que le principe n°1 interdit — d'où le
+**diagnostic chiffré** plutôt qu'un jugement à l'œil : on mesure la plus longue arête, avant et
+après, et on exige zéro.
+
+Au passage, la simplification tient désormais compte des **UV et des normales**
+(`simplifyWithAttributes`) et non plus des seules positions : le simplificateur refuse de fondre
+deux sommets qui divergent dans la texture, ce qui protège les coutures de la carte UV.
+
+Après correction, sur les quatre leurres : **0 arête étirée**, UV maximale 0,021 à 0,028.
+
+### Un leurre témoin, le temps de trancher — puis retiré
+
+Pour juger à l'œil ce qui restait imputable à la compression, le carrousel a porté un cinquième
+modèle : le fichier livré par Meshy **copié tel quel**, sans décimation ni recompression, hors du
+commerce et affiché sous son propre nom. Il pesait 65 Mo à lui seul.
+
+La comparaison faite, **il a été retiré** (consigne Camil) : le fichier, son entrée dans
+`LURE_MODELS`, et le drapeau `debug` qui n'avait plus d'usage. Rien de mort ne reste : `public/`
+part dans git, et un modèle de diagnostic qui traîne finit par être servi en production.
+
+Vérifié au passage, ce qui clôt une hypothèse : le GLB d'origine ne contient **ni squelette ni
+animation** (`skins: 0`, `animations: 0`). Aucun fichier d'animation ne « tue » la nage — elle vient
+entièrement de notre shader.
+
+### Le moteur animait le NEZ du poisson
+
+C'est la découverte de la journée, et elle explique pourquoi trois réglages successifs ont tous
+paru faux.
+
+Le moteur tenait pour acquis que la tête sortait du côté `axisMin`. C'était vrai des exports de
+l'articulé. **Les leurres souples sortent de Meshy dans l'autre sens** : tête en `axisMax`, palette
+en `axisMin`. Toute la nage s'appliquait donc au museau.
+
+C'est la MÊME erreur que l'axe long, à quinze jours d'écart : une convention d'export prise pour
+une loi. D'où `src/lib/three/lure-anatomy.ts` — la géométrie répond elle-même à la question. On
+découpe le corps en tranches et on cherche la **section la plus fine** : sur tout leurre en forme de
+poisson, ce point est le pédoncule, et le pédoncule est du côté de la queue. Mesuré sur les cinq
+fichiers servis, à l'identique : fraction 0,164. Le critère naïf « le bout le plus épais est la
+tête » se serait trompé — sur ces modèles la palette est 19 % plus large que le corps.
+
+**Vérifié indépendamment** avant d'écrire une ligne : quatre analyses séparées (géométrie, texture,
+forme fonctionnelle, puis une tentative de réfutation) concluent toutes tête en `axisMax`, en
+confiance forte. L'analyse de texture a trouvé **les deux yeux** dans la carte de couleur — deux
+amas sombres symétriques à la fraction 0,86 — et l'agent de réfutation a rejoué `rotateY(π/2)`
+contre le three.js installé pour chercher une erreur de signe. Il n'y en avait pas.
+
+### La nage refaite : seule la charnière bouge
+
+Consigne Camil : « la seule animation doit se faire depuis la charnière entre le paddle et le corps
+du leurre, la partie la plus fine et striée doit s'onduler à peine, la nage doit être linéaire et le
+paddle seulement doit bouger avec la charnière. »
+
+**Les fractions du réglage ne sont plus choisies, elles sont mesurées.** Le découpage en tranches
+donne l'anatomie, comptée depuis la tête : corps jusqu'à 0,74 ; brin fin et strié de 0,74 à 0,89
+(section minimale à 0,836, seize fois moindre que les épaules ; **sept gorges annulaires** relevées,
+ce sont les stries) ; palette au-delà. D'où `stemStartRatio = 0.74` et `hingeRatio = 0.89`.
+
+Tout le mouvement tient dans une rampe `t = clamp((x − pivot) / (charnière − pivot), 0, 1)`, et les
+trois zones tombent d'elles-mêmes, sans un seul branchement : `t = 0` sur le corps (immobile), `t`
+croissant sur le brin (il plie d'autant moins qu'on est près du corps), `t = 1` sur la palette —
+même angle, même pivot, donc **rotation rigide exacte** : la palette ne se déforme jamais, par
+construction. Le dénominateur est signé, ce qui absorbe l'orientation du modèle.
+
+La nage est linéaire au sens propre : lacet et tangage partagent le même `sin(ωt)`, donc leur
+rapport est constant et la palette parcourt un segment de droite. Un seul `sin()` dans le shader —
+c'est ce qui interdit l'ellipse.
+
+Le corps, lui, garde un mouvement d'ENSEMBLE volontairement discret — 3,4° de lacet, 1,4° de roulis,
+un bercement de 0,6 % de la longueur (consigne : « fais légèrement bouger le corps du leurre
+aussi »). Le mot qui compte est « légèrement », et c'est ce que le test garde : les trois amplitudes
+doivent être non nulles **et** rester sous le cinquième du balayage de la palette. Au-delà, on ne
+verrait plus une palette battre, mais un leurre se tortiller.
+
+### La page produit ne nage plus du tout
+
+Consigne : « quand on est sur la page du leurre pour l'acheter ou qu'on va d'un coloris à l'autre,
+aucune animation du leurre ne doit être visible — juste le gauche-droite, dessus-dessous, et pouvoir
+le bouger dans tous les sens. »
+
+Nouvelle option `still` sur `createLureStage`, posée par `ColorwayViewer`. Elle coupe tout : flexion
+de queue, lacet, roulis, bercement. Le leurre n'obéit plus qu'aux vues nommées et à la souris.
+Le raisonnement est écrit à côté de l'option — on vient sur cette page pour comparer deux coloris et
+détailler une forme, et un mouvement permanent empêche exactement ces deux gestes. Sur l'accueil, au
+contraire, la nage reste l'argument.
+
+### L'erreur Stripe devient une consigne
+
+La clé expirée remontait en trace complète à chaque rendu de page, dans l'overlay de développement.
+Une clé refusée est un problème de **configuration**, pas un incident : nouvelle erreur typée
+`PaymentKeyRejectedError`, reconnue à la NATURE de l'erreur Stripe (`type`) et non par `instanceof`
+— un `instanceof` casse dès que le module est simulé, et transformait un test de panne en erreur de
+test. Le bandeau et la campagne affichent maintenant une phrase et la marche à suivre ; toute autre
+panne garde sa trace entière.
+
+**Gate** : tsc ✅ eslint ✅ vitest 223 passés (+31 sautés) ✅ build ✅.
+
+**Reste ouvert** : les photos produit `/produit/*.webp` montrent encore l'articulé ; tout le site le
+décrit comme un « articulé deux sections » ; et les AMPLITUDES de nage restent à juger à l'œil — les
+fractions, elles, sont mesurées.
+
+Fichiers : `src/components/sections/home/lure-stage.ts`, `scripts/optimize-glb.mjs`,
+`src/lib/lure-models.ts`, `src/lib/shop/product.ts`, `src/lib/three/swim.config.ts`,
+`src/lib/shop/errors.ts`, `src/lib/shop/stripe.ts`, `src/components/sections/OrdersBanner.tsx`,
+`public/models/` (4 remplacés, 4 retirés).
+
 ## 2026-08-28 — La page « Nos projets » a enfin un contenu
 
 Consigne Camil : « complète la page Nos projets ».

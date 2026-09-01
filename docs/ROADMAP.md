@@ -115,6 +115,18 @@
       enfin branchées. Vérifié sur le HTML servi des deux langues
 - [ ] **Visuel produit du Pirate** : seul modèle sans image dans `public/produit/` — nécessaire
       pour la tuile du sélecteur de cadeau (aujourd'hui icône) et tout usage hors 3D
+- [ ] **Le site décrit encore l'ANCIEN produit** (ouvert le 2026-09-01, sur `main`). Les quatre
+      leurres souples sont intégrés, le moteur 3D corrigé et la nage refaite — mais le texte et les
+      photos, eux, parlent toujours de l'articulé. Ces points demandent des décisions ou des
+      éléments que le code ne peut pas inventer :
+      · les photos `public/produit/*.webp` montrent l'articulé — elles sont FAUSSES ;
+      · tout le site décrit un « leurre articulé deux sections », ce qu'un souple n'est pas
+        (nom du produit, accroche, FAQ, JSON-LD, page À propos) — il faut les cotes, le poids et
+        le type réels du souple ;
+      · les AMPLITUDES de nage restent à juger à l'œil (les fractions, elles, sont mesurées).
+      La branche `leurres-souples` a été fusionnée sur consigne de Camil le 2026-09-01 sans
+      attendre ces trois points : c'est un choix assumé, la vitrine 3D valant mieux à jour que le
+      texte qui l'entoure. Ils restent donc ouverts ICI, sur `main`.
 - [x] **Périmètre linguistique ramené à français + anglais** (2026-08-25) : es/de/nl retirés,
       `LOCALES` réduit, sitemap 14 → 8 entrées, redirections 307 posées, règle Alure n°6 gravée
       dans `CLAUDE.md` et tenue par `src/lib/i18n.test.ts`

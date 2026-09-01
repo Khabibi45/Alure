@@ -82,6 +82,35 @@ traitant les images (WebP, dimensions réelles, next/image, SVG-base64 banni, fr
 Conversion : `cwebp -q 80 -resize 1280 0 in.jpg -o out.webp` (paquet Homebrew `webp`) — ou
 `scripts/optimize-images.sh` pour un dossier entier. **Avant** intégration, jamais après.
 
+### 3D — une convention d'export n'est pas une loi (bug payé deux fois, 09/2026)
+Un modèle importé arrive avec l'orientation qu'a choisie l'outil qui l'a produit. Deux fois en
+quinze jours, le moteur a pris cette convention pour un invariant : d'abord « l'axe long est X »
+(les nouveaux modèles sortaient sur Z → objet agrandi 5,9 fois et plié en travers), puis « la tête
+est du côté `axisMin`** (elle était en `axisMax` → l'animation s'appliquait au museau).
+
+→ **Règle : toute orientation dont dépend une animation se MESURE au chargement.** L'axe long est
+le plus grand côté de la bounding box ; le sens se déduit d'un repère de forme (pour un poisson, la
+section la plus fine du corps est le pédoncule, donc le côté de la queue). Deux pièges de méthode :
+le critère « le bout le plus épais » se trompe dès qu'un appendice est plus large que le corps, et
+un minimum de section cherché sans écarter les extrémités tombe toujours sur une pointe.
+
+Symptôme à reconnaître : l'animation « ne ressemble à rien » et chaque nouveau réglage échoue —
+c'est le signe qu'on règle le bon paramètre au mauvais endroit.
+
+### meshoptimizer — `compactMesh` modifie son entrée SUR PLACE (bug payé, 09/2026)
+Deux pièges, dans la même ligne de code, tous deux silencieux :
+1. `compactMesh(indices)` retourne un **couple** `[remap, nombre de sommets gardés]`. Le prendre
+   pour le remap seul donne des attributs vides et un modèle **invisible**, sans erreur.
+2. Il **remappe `indices` sur place** (son helper `reorder` finit par
+   `indices[i] = remap[indices[i]]`). Le tableau qui en ressort est déjà final. Réappliquer `remap`
+   par-dessus calcule `remap[remap[i]]` : des triangles reliant des sommets sans rapport, qui
+   apparaissent à l'écran comme des **fils tendus d'un bout à l'autre du modèle**.
+
+Aucun des deux ne lève d'erreur — le GLB reste valide, il est juste faux. **Ne jamais juger une
+décimation à l'œil** : mesurer la plus longue arête (3D et UV) avant/après et exiger zéro arête
+au-delà d'une fraction de l'objet. Corollaire : `simplify` ne regarde que les positions et fond les
+coutures UV ; utiliser `simplifyWithAttributes` en lui passant UV et normales.
+
 ### Docker — `output: 'standalone'` obligatoire
 Sans lui, l'image prod doit réinstaller TypeScript juste pour lire `next.config.ts` (hack payé
 sur le site précédent). Avec lui : `node server.js`, image minimale. Déjà posé dans le
