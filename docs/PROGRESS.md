@@ -3,6 +3,44 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-09-01 (fin de journée) — Le corps bouge un peu plus, et le leurre dit enfin ce qu'il contient
+
+Deux consignes de Camil, dans la foulée de la mise en ligne de LOT11.
+
+### « Fais bouger légèrement plus le corps du leurre »
+
+Les trois amplitudes d'ENSEMBLE du carrousel de l'accueil (celles qui font osciller le leurre
+entier, à ne pas confondre avec la flexion du brin et de la palette) sont relevées d'un tiers dans
+`src/lib/three/swim.config.ts` : lacet 3,4° → **4,6°**, roulis 1,4° → **2,0°**, bercement 0,6 % →
+**0,85 %** de la longueur. La palette reste la vedette — le lacet du corps vaut toujours moins du
+cinquième de son balayage, la borne que `src/lib/lure-models.test.ts` fait respecter. Le
+commentaire du fichier disait « moins du septième » : il disait la vérité de l'ancien réglage, il
+dit maintenant celle du test.
+
+### La description du leurre : cinq faits, pas des arguments
+
+Jusqu'ici la page produit ne décrivait pas le leurre — la page française portait même en tête la
+réserve « pas de section Caractéristiques tant que les specs ne sont pas vérifiées sur
+l'échantillon reçu » (règle n°6). L'échantillon est là, Camil a relevé ce qu'il contient : gros
+yeux pour la visibilité, paillettes, **barrette d'aluminium** à l'intérieur pour un effet cuillère,
+queue **articulée et striée** pour la vibration, et palette **en patte de canard** — celle qui
+change la nage et qui les a décidés.
+
+Nouveau Server Component `src/components/sections/leurre/LureDetails.tsx`, **partagé** par les deux
+pages produit : c'est ce qui empêche la description d'exister en deux exemplaires qui dérivent. Il
+s'insère entre le visuel et l'offre — on regarde le leurre, on voit son prix, on comprend comment
+il est fait, puis on choisit. Douze clés dans `docs/i18n/fr.md` **et** `docs/i18n/en.md` dans le
+même commit, `npm run i18n` régénéré (358 clés).
+
+Aucun chiffre, aucun avis, aucune promesse de prise : uniquement ce que la pièce contient.
+
+**Fichiers clés** : `src/lib/three/swim.config.ts` · `src/components/sections/leurre/LureDetails.tsx`
+· `src/app/(fr)/leurre/page.tsx` · `src/app/[lang]/leurre/page.tsx` · `docs/i18n/{fr,en}.md`
+
+**Reste ouvert** : le titre et la meta-description de la page produit annoncent encore un « leurre
+articulé 2 sections » (`PRODUCT.TITLE`, `PRODUCT.DESCRIPTION`, `META.DESCRIPTION`, `ABOUT.DESCRIPTION`).
+C'est le vocabulaire de l'ancien produit ; il contredit la description qu'on vient d'écrire.
+
 ## 2026-09-01 — Les leurres souples (branche `leurres-souples`) : deux bugs de fond trouvés en route
 
 Consigne Camil : remplacer les modèles 3D par quatre leurres souples fournis (bleu, rouge, vert,
