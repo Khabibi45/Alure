@@ -7,6 +7,7 @@ import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
+import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
 import { OFFERS, PRODUCT, formatEuros, formatSpecs } from '@/lib/shop/product'
@@ -23,8 +24,9 @@ export const metadata: Metadata = {
  * Server Component ; l'interactivité vit dans l'îlot <BuyBox>, qui reçoit le
  * bandeau délai en slot serveur (la charte l'impose entre le prix et le bouton).
  * Visuels : emplacements en attente du pipeline LOT 3, jamais de photo
- * fournisseur. Pas de section « Caractéristiques » tant que les specs ne sont
- * pas vérifiées sur l'échantillon reçu (règle n°6).
+ * fournisseur. La section « Ce qu'il y a dans le leurre » (`LureDetails`) est
+ * arrivée le 2026-09-01, une fois les caractéristiques relevées sur
+ * l'échantillon reçu — la réserve de la règle n°6 est levée, ce sont des faits.
  *
  * Les îlots client reçoivent leurs textes du serveur, comme sur `/en/leurre` :
  * un seul chemin de textes pour les deux langues, donc pas de version française
@@ -111,6 +113,11 @@ export default async function LeurrePage({
               </div>
             </section>
           </div>
+
+          {/* Ce qu'il y a dans le leurre — les cinq partis pris de fabrication,
+            entre le visuel et l'offre : on regarde le leurre, on voit son prix,
+            on comprend comment il est fait, puis on choisit son offre. */}
+          <LureDetails locale={DEFAULT_LOCALE} />
 
           {/* L'offre, la progression et le CTA — sur toute la largeur de la page
             (consigne Camil 2026-08-12). */}

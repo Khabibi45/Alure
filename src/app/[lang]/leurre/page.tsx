@@ -7,6 +7,7 @@ import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
+import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
 import { OFFERS, PRODUCT, formatEuros, formatLength, formatWeight } from '@/lib/shop/product'
@@ -162,6 +163,11 @@ export default async function LangLeurrePage({
               </div>
             </section>
           </div>
+
+          {/* Ce qu'il y a dans le leurre — les cinq partis pris de fabrication,
+            entre le visuel et l'offre : on regarde le leurre, on voit son prix,
+            on comprend comment il est fait, puis on choisit son offre. */}
+          <LureDetails locale={locale} />
 
           {/* L'offre, la progression et le CTA — sur toute la largeur de la page
             (consigne Camil 2026-08-12). */}

@@ -137,6 +137,21 @@
 - `PRODUCT.REASSURANCE_PAYMENT` — Paiement par Stripe ou PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Suivi de commande par email
 
+### Le leurre en détail (page /leurre)
+
+- `PRODUCT.DETAILS_TITLE` — Ce qu'il y a dans le leurre
+- `PRODUCT.DETAILS_INTRO` — Cinq choix de fabrication, et la raison de chacun.
+- `PRODUCT.DETAIL_EYES_TITLE` — De gros yeux
+- `PRODUCT.DETAIL_EYES_BODY` — Volontairement surdimensionnés : ils se repèrent de loin, et c'est la première chose qu'on voit du leurre.
+- `PRODUCT.DETAIL_GLITTER_TITLE` — Des paillettes dans le corps
+- `PRODUCT.DETAIL_GLITTER_BODY` — Elles accrochent le peu de lumière qui passe et rendent le leurre visible dans l'eau teintée.
+- `PRODUCT.DETAIL_BLADE_TITLE` — Une barrette d'aluminium
+- `PRODUCT.DETAIL_BLADE_BODY` — Glissée à l'intérieur du corps : elle renvoie des éclats à chaque mouvement, comme le ferait une cuillère.
+- `PRODUCT.DETAIL_TAIL_TITLE` — Une queue articulée et striée
+- `PRODUCT.DETAIL_TAIL_BODY` — Les stries et l'articulation ajoutent de la vibration à chaque récupération.
+- `PRODUCT.DETAIL_PADDLE_TITLE` — Une palette en patte de canard
+- `PRODUCT.DETAIL_PADDLE_BODY` — Elle donne une nage qui sort de l'ordinaire, et se reconnaît au premier coup d'œil. C'est ce qui nous a décidés.
+
 ## 5. PRICING
 
 - `PRICING.RULE` — 3 leurres achetés, le 4e offert au choix

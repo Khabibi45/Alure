@@ -139,6 +139,21 @@
 - `PRODUCT.REASSURANCE_PAYMENT` — Payment by Stripe or PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Order tracking by email
 
+### The lure in detail (/leurre page)
+
+- `PRODUCT.DETAILS_TITLE` — What's inside the lure
+- `PRODUCT.DETAILS_INTRO` — Five build choices, and the reason for each one.
+- `PRODUCT.DETAIL_EYES_TITLE` — Oversized eyes
+- `PRODUCT.DETAIL_EYES_BODY` — Deliberately outsized: they show up from a distance, and they are the first thing you see of the lure.
+- `PRODUCT.DETAIL_GLITTER_TITLE` — Glitter in the body
+- `PRODUCT.DETAIL_GLITTER_BODY` — It catches what little light gets through and keeps the lure visible in stained water.
+- `PRODUCT.DETAIL_BLADE_TITLE` — An aluminium strip
+- `PRODUCT.DETAIL_BLADE_BODY` — Set inside the body: it throws off flashes with every movement, the way a spoon does.
+- `PRODUCT.DETAIL_TAIL_TITLE` — A jointed, ribbed tail
+- `PRODUCT.DETAIL_TAIL_BODY` — The ribs and the joint add vibration on every retrieve.
+- `PRODUCT.DETAIL_PADDLE_TITLE` — A duck-foot paddle
+- `PRODUCT.DETAIL_PADDLE_BODY` — It gives the lure an out-of-the-ordinary action, and you spot it at a glance. That is what sold us on it.
+
 ## 5. PRICING
 
 - `PRICING.RULE` — Buy 3 lures, pick a 4th free
