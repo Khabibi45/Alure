@@ -98,13 +98,26 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
       //
       // En X, on vise le centre du corps : 690 px.
       //
-      // En Y, PAS la ligne médiane du corps (352 px). `normalizeGeometry` centre
-      // le modèle sur sa boîte englobante, or celle-ci descend jusqu'au bas des
-      // HAMEÇONS — son centre est donc plus bas que le corps. Aligner les deux
-      // centres ferait remonter le corps 3D au-dessus du corps filmé. On vise
-      // donc le centre de la boîte englobante du leurre filmé, hameçons compris :
-      // du haut des dorsales (~255 px) au bas des triples (~500 px), affiné à l’œil
-      // à 385 px.
+      // En Y, la cible a CHANGÉ le 2026-09-01, et pour deux raisons qui vont dans
+      // le même sens.
+      //
+      // 1. La compensation des hameçons n'a plus lieu d'être. Le calage visait
+      //    382 px, et non la ligne médiane du corps (352 px), parce que
+      //    `normalizeGeometry` centre le modèle sur sa boîte englobante — laquelle,
+      //    sur l'ARTICULÉ, descendait jusqu'au bas des triples. Son centre tombait
+      //    donc sous le corps, et il fallait viser bas pour compenser. Les leurres
+      //    souples n'ont pas d'hameçon : leur boîte, c'est le corps. La correction
+      //    est devenue une erreur.
+      // 2. Camil demande explicitement de remonter le leurre dans le hero.
+      //
+      // D'où 336 px : 352 px pour la ligne médiane du corps, moins 16 px de
+      // remontée voulue. Le leurre monte de 46 px sur 720, soit 6,4 % de la hauteur
+      // du cadre. C'est CE nombre qu'on bouge pour le monter ou le descendre.
+      //
+      // ⚠️ Le fondu vidéo → 3D s'en trouve moins exact : la séquence montre encore
+      // l'ancien leurre articulé, à sa place d'origine. Le raccord était de toute
+      // façon déjà imparfait (ce n'est plus le même produit à l'écran) — et la
+      // régénération des segments est au ROADMAP.
       //
       // `DEFAULT_FRAME_WIDTH` (4,93) encode la taille : le leurre de 2 unités y
       // occupe 2/4,93 = 40,6 %. Les décalages ramènent son centre sur celui du
@@ -113,7 +126,7 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
       // ⚠️ À REVÉRIFIER si les segments sont régénérés (ils le seront, pour
       // retirer le watermark) : refaire la mesure sur la nouvelle image 0121 et
       // ajuster ces trois nombres. Rien d'autre ne dépend d'eux.
-      { offsetX: 691 / 1280 - 0.5, offsetY: 0.5 - 382 / 720 }
+      { offsetX: 691 / 1280 - 0.5, offsetY: 0.5 - 336 / 720 }
     )
     stageRef.current = stage
 
