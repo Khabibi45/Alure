@@ -21,11 +21,16 @@ type Status = 'loading' | 'ready' | 'unsupported' | 'failed'
 
 /**
  * Le visuel principal de la page produit : le leurre en 3D, dans le coloris
- * sélectionné, qui nage sur place.
+ * sélectionné, IMMOBILE.
  *
  * Même scène que le hero de l'accueil, en mode `solo` : un seul leurre au centre,
  * les autres hors cadre. Changer de coloris déplace le rail — le modèle ne se
  * recharge pas, et le passage est amorti comme le reste du site.
+ *
+ * Mais contrairement à l'accueil, il ne nage PAS (option `still`, consigne Camil
+ * du 2026-09-01) : ici on compare deux coloris et on détaille une forme, et un
+ * mouvement permanent empêche exactement ces deux gestes. Sur l'accueil, où la
+ * nage est l'argument, elle continue.
  *
  * Le collector n'y figure pas : il ne se vend pas, il n'a pas de coloris à montrer ici.
  *
