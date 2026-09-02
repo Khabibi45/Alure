@@ -401,11 +401,14 @@
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
-- `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. No supplier visual, no borrowed photo. The scene with a fish in it is a computer-generated image — we will not show a real catch until we have one of our own.
+- `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. We will not show a caught fish until we have one of our own.
 - `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, resting on wet slate.
 - `ABOUT.TRANSPARENCY_TITLE` — Where your lure ships from
 - `ABOUT.TRANSPARENCY_BODY` — Your lure ships from us, in a black padded envelope we take to the post office. Allow {delai} between your order and delivery. That lead time is shown before you pay, and repeated in your confirmation email. The price includes delivery. You have 14 days to change your mind, as French law provides.
-- `ABOUT.SCENE_ALT` — Computer-generated image: a zander held in the hand, the green Alure lure in its mouth.
+- `ABOUT.KIT_ENVELOPE_ALT` — A stack of black padded envelopes.
+- `ABOUT.KIT_LURES_ALT` — The four Alure lures held in the palm of a hand, by the water.
+- `ABOUT.KIT_CARD_ALT` — The back of the card tucked into every envelope, carrying the Alure name.
+- `ABOUT.KIT_CAPTION` — What you get, and nothing else.
 
 ### Îlots clients traduits (2026-08-26)
 

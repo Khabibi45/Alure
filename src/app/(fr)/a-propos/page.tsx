@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PRODUCT, formatSpecs } from '@/lib/shop/product'
 import { getDictionary, t as translate } from '@/lib/i18n'
+import { AboutScene } from '@/components/sections/AboutScene'
 
 /**
  * Cette page recopiait ses textes en dur, en double du dictionnaire que
@@ -91,17 +92,12 @@ export default function AProposPage() {
         </p>
       </div>
 
-      {/* Le format suit l'image : le 3:2 garde à la fois la tête du poisson et la
-        palette du leurre, là où le panoramique précédent coupait les deux. */}
-      <div className="relative mt-8 aspect-[3/2] overflow-hidden rounded-card">
-        <Image
-          src="/produit/prise-vert.webp"
-          alt={translate(dict, 'ABOUT.SCENE_ALT')}
-          fill
-          sizes="(min-width: 768px) 48rem, 100vw"
-          className="object-cover"
-        />
-      </div>
+      <AboutScene
+        envelopeAlt={translate(dict, 'ABOUT.KIT_ENVELOPE_ALT')}
+        luresAlt={translate(dict, 'ABOUT.KIT_LURES_ALT')}
+        cardAlt={translate(dict, 'ABOUT.KIT_CARD_ALT')}
+        caption={translate(dict, 'ABOUT.KIT_CAPTION')}
+      />
 
       <div className="mt-10 mb-8">
         <Link href="/leurre" className="px-btn px-btn--primary px-btn--lg">

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PRODUCT, formatSpecs } from '@/lib/shop/product'
 import { getDictionary, t, isLocale, localePath, hreflangAlternates } from '@/lib/i18n'
+import { AboutScene } from '@/components/sections/AboutScene'
 
 /**
  * « Qui on est », dans les langues sous préfixe — le pendant de
@@ -120,17 +121,12 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
         <p>{t(dict, 'SHIPPING_NOTICE.BODY')}</p>
       </div>
 
-      {/* Le format suit l'image : le 3:2 garde à la fois la tête du poisson et la
-        palette du leurre, là où le panoramique précédent coupait les deux. */}
-      <div className="relative mt-8 aspect-[3/2] overflow-hidden rounded-card">
-        <Image
-          src="/produit/prise-vert.webp"
-          alt={t(dict, 'ABOUT.SCENE_ALT')}
-          fill
-          sizes="(min-width: 768px) 48rem, 100vw"
-          className="object-cover"
-        />
-      </div>
+      <AboutScene
+        envelopeAlt={t(dict, 'ABOUT.KIT_ENVELOPE_ALT')}
+        luresAlt={t(dict, 'ABOUT.KIT_LURES_ALT')}
+        cardAlt={t(dict, 'ABOUT.KIT_CARD_ALT')}
+        caption={t(dict, 'ABOUT.KIT_CAPTION')}
+      />
 
       <div className="mt-10 mb-8">
         <Link href={localePath(locale, '/leurre')} className="px-btn px-btn--primary px-btn--lg">
