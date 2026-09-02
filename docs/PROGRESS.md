@@ -27,6 +27,40 @@ n'en avons pas de nous**. L'`alt` le dit aussi, dans les deux langues.
 `ABOUT.COLORWAY_ALT` parlait encore de « rendu 3D dans son décor » alors que les vignettes sont
 désormais les photos de studio : corrigé.
 
+### Sur téléphone, le leurre est recentré
+
+Consigne Camil. Le décalage du hero (`offsetX`/`offsetY`, `LureCarousel`) n'est pas un réglage
+esthétique : il aligne le leurre 3D sur le leurre **filmé**, mesuré à 691 × 336 dans une image de
+1280 × 720. Sur un téléphone, cette image est rognée en « cover » — la cible n'est plus où le
+calcul la place. Et `PORTRAIT_ZOOM` divise la largeur visible par deux pendant que le décalage ne
+bouge pas : il pèse donc **deux fois plus** dans le cadre. Le leurre dérivait vers la droite, sur
+l'écran où il est déjà le plus petit.
+
+En portrait, `lure-stage` remet donc les deux décalages à zéro. Le raccord avec la séquence y perd,
+mais il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
+
+### La deuxième vidéo du hero est coupée, et le leurre est recentré sur téléphone
+
+**La boucle du décor.** Passer `HERO_VARIANT` à `scroll` avait retiré la vidéo d'OUVERTURE ; celle
+qui tourne derrière le leurre 3D (`backdrop-clean.mp4`, `HeroBackdrop`) continuait, elle. Un
+booléen la coupe : `HERO_BACKDROP_ANIMATED = false`, à côté de `HERO_VARIANT`, même doctrine — une
+décision, un mot, aucun fichier supprimé.
+
+À `false`, l'élément vidéo **n'est même pas monté** : rien ne se télécharge, et le décor est
+`backdrop-poster.webp`, l'image fixe qui servait DÉJÀ de repli quand la lecture automatique est
+refusée ou en mouvement réduit. Le rendu est donc exactement celui que voyaient ces visiteurs-là,
+pas une dégradation inventée pour l'occasion.
+
+**Le recentrage sur téléphone.** Le décalage du hero (`offsetX`/`offsetY`, `LureCarousel`) n'est
+pas un réglage esthétique : il aligne le leurre 3D sur le leurre **filmé**, mesuré à 691 × 336 dans
+une image de 1280 × 720. Sur un téléphone, cette image est rognée en « cover » — la cible n'est
+plus où le calcul la place. Et `PORTRAIT_ZOOM` divise la largeur visible par deux pendant que le
+décalage ne bouge pas : il pèse donc **deux fois plus** dans le cadre. Le leurre dérivait vers la
+droite, sur l'écran où il est déjà le plus petit.
+
+En portrait, `lure-stage` remet les deux décalages à zéro. Le raccord avec la séquence y perd, mais
+il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
+
 ### Le domaine est tranché, et le compte Instagram existe
 
 `SITE.url` passe du provisoire `alure-peche.fr` — jamais acheté, marqué « à remplacer avant toute
