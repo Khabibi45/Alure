@@ -24,7 +24,15 @@
 
 export type HeroVariant = 'cine' | 'scroll' | 'video'
 
-export const HERO_VARIANT: HeroVariant = 'cine'
+/**
+ * En ligne depuis le 2026-09-02 : `scroll` (consigne Camil, « masque la vidéo de
+ * la Hero Section »). L'accueil n'ouvre donc plus sur la vidéo qui se joue
+ * toute seule — le visiteur pilote la séquence au défilement, du premier pixel.
+ *
+ * `cine` reste disponible, et la vidéo aussi : rien n'est supprimé, ni fichier
+ * ni composant. Remettre l'ouverture filmée, c'est remettre `cine` ici.
+ */
+export const HERO_VARIANT: HeroVariant = 'scroll'
 
 /**
  * LA vidéo du hero : le lancer, la plongée, la nage. Jouée seule (`video`),
