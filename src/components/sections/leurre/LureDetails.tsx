@@ -43,7 +43,13 @@ export function LureDetails({ strings }: { strings: LeurreStrings }) {
         {strings.detailsIntro}
       </p>
 
-      <ul className="mt-6 space-y-4 md:mt-8 md:space-y-6">
+      {/* Cinq cartes COMPACTES (consigne Camil 2026-09-02 : « réduites à fond »).
+        Le gros plan tombe à une vignette de 96 px posée à gauche du texte, et
+        les cinq tiennent sur deux rangs au lieu de cinq pleines largeurs : la
+        section se lit d'un coup d'œil au lieu de se dérouler. Le fichier servi
+        reste le 640×480 — `sizes` annonce la taille réelle, et c'est le
+        navigateur qui prend la variante, jamais plus lourde que nécessaire. */}
+      <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {strings.details.map((detail) => {
           // Le coloris vient d'un état client, donc d'une valeur qui pourrait ne
           // plus exister au catalogue. Pas de photo → pas de bloc muet : on
@@ -53,21 +59,19 @@ export function LureDetails({ strings }: { strings: LeurreStrings }) {
           return (
             <li
               key={detail.id}
-              className="rounded-card bg-surface shadow-card overflow-hidden md:flex md:items-center md:gap-6"
+              className="rounded-card bg-surface shadow-card flex items-start gap-3 p-3"
             >
               <Image
                 src={photo.src}
                 alt={photo.alt}
                 width={640}
                 height={480}
-                sizes="(min-width: 768px) 40vw, 100vw"
-                className="h-auto w-full md:w-2/5 md:shrink-0"
+                sizes="96px"
+                className="rounded-row h-auto w-24 shrink-0"
               />
-              <div className="space-y-1 p-5 md:py-5 md:pr-6 md:pl-0">
-                <p className="font-bold">{detail.title}</p>
-                <p className="text-[0.9375rem] leading-relaxed text-muted-foreground">
-                  {detail.body}
-                </p>
+              <div className="min-w-0 space-y-0.5">
+                <p className="text-[0.875rem] leading-tight font-bold">{detail.title}</p>
+                <p className="text-[0.8125rem] leading-snug text-muted-foreground">{detail.body}</p>
               </div>
             </li>
           )

@@ -27,6 +27,15 @@ n'en avons pas de nous**. L'`alt` le dit aussi, dans les deux langues.
 `ABOUT.COLORWAY_ALT` parlait encore de « rendu 3D dans son décor » alors que les vignettes sont
 désormais les photos de studio : corrigé.
 
+### Les cinq blocs de « Ce qu'il y a dans le leurre », compactés
+
+Consigne Camil : « réduits à fond, le plus possible ». Le gros plan passe d'une image de 40 % de
+large à une vignette de 96 px posée à gauche du texte, et les cinq cartes tiennent sur deux rangs
+(2 colonnes à partir de 640 px, 3 à partir de 1024) au lieu de cinq pleines largeurs. La section
+se lit d'un coup d'œil au lieu de se dérouler. Le fichier servi reste le 640×480 : c'est `sizes`
+qui annonce la taille réelle, et le navigateur prend la variante — jamais plus lourde que
+nécessaire.
+
 ### ⚠️ À INSTRUIRE — « le leurre noir n'est plus collector »
 
 Camil l'a signalé le 2026-09-02. **Rien n'a été changé dans le code** : c'est une décision
