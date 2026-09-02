@@ -396,19 +396,21 @@
 
 - `ABOUT.DESCRIPTION` — Who sells the Alure lure: a French micro-entreprise run by predator anglers. One jointed lure, stocked in France and shipped by us.
 - `ABOUT.H1` — One lure, stocked in France
-- `ABOUT.HERO_ALT` — A splash on the surface of a lake at daybreak, beneath the Alure logo.
+- `ABOUT.HERO_ALT` — Computer-generated image: a zander held in the hand, the green Alure lure in its mouth.
 - `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure, a two-section jointed swimbait, {specs}, made for black bass and perch, because it is the one we wanted in our own box. We keep the lures here in France, and we pack every order ourselves.
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
-- `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. We will not show a caught fish until we have one of our own.
+- `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. The image at the top of this page is a computer-generated one — we will not show a real catch until we have one of our own.
 - `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, resting on wet slate.
 - `ABOUT.TRANSPARENCY_TITLE` — Where your lure ships from
 - `ABOUT.TRANSPARENCY_BODY` — Your lure ships from us, in a black padded envelope we take to the post office. Allow {delai} between your order and delivery. That lead time is shown before you pay, and repeated in your confirmation email. The price includes delivery. You have 14 days to change your mind, as French law provides.
 - `ABOUT.KIT_ENVELOPE_ALT` — A stack of black padded envelopes.
 - `ABOUT.KIT_LURES_ALT` — The four Alure lures held in the palm of a hand, by the water.
 - `ABOUT.KIT_CARD_ALT` — The back of the card tucked into every envelope, carrying the Alure name.
-- `ABOUT.KIT_CAPTION` — What you get, and nothing else.
+- `ABOUT.KIT_ENVELOPE_CAPTION` — A bubble mailer, posted from the post office nearest us.
+- `ABOUT.KIT_LURES_CAPTION` — Our best lures, from your basket to your door.
+- `ABOUT.KIT_CARD_CAPTION` — A personal note from whoever packed your order, and discounts for the regulars.
 
 ### Îlots clients traduits (2026-08-26)
 

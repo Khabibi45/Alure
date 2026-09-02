@@ -33,9 +33,11 @@ export default function AProposPage() {
         {translate(dict, 'ABOUT.H1')}
       </h1>
 
-      <div className="relative mt-8 aspect-[1200/568] overflow-hidden rounded-card">
+      {/* Le 3:2 suit l'image : le panoramique coupait la tête du poisson et la
+        palette du leurre, c'est-à-dire les deux choses qu'il y a à voir. */}
+      <div className="relative mt-8 aspect-[3/2] overflow-hidden rounded-card">
         <Image
-          src="/produit/marque-lac.webp"
+          src="/produit/prise-vert.webp"
           alt={translate(dict, 'ABOUT.HERO_ALT')}
           fill
           priority
@@ -94,9 +96,11 @@ export default function AProposPage() {
 
       <AboutScene
         envelopeAlt={translate(dict, 'ABOUT.KIT_ENVELOPE_ALT')}
+        envelopeCaption={translate(dict, 'ABOUT.KIT_ENVELOPE_CAPTION')}
         luresAlt={translate(dict, 'ABOUT.KIT_LURES_ALT')}
+        luresCaption={translate(dict, 'ABOUT.KIT_LURES_CAPTION')}
         cardAlt={translate(dict, 'ABOUT.KIT_CARD_ALT')}
-        caption={translate(dict, 'ABOUT.KIT_CAPTION')}
+        cardCaption={translate(dict, 'ABOUT.KIT_CARD_CAPTION')}
       />
 
       <div className="mt-10 mb-8">

@@ -394,19 +394,21 @@
 
 - `ABOUT.DESCRIPTION` — Qui vend le leurre Alure : une micro-entreprise française de pêcheurs de carnassiers. Un seul leurre articulé, stocké en France, expédié par nos soins.
 - `ABOUT.H1` — Un seul leurre, stocké en France
-- `ABOUT.HERO_ALT` — Éclaboussure à la surface d'un lac au lever du jour, sous le logo Alure.
+- `ABOUT.HERO_ALT` — Image de synthèse : un sandre tenu à la main, le leurre Alure vert dans la gueule.
 - `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre, un articulé deux sections de {specs}, taillé pour le black-bass et la perche, parce que c'est celui que nous voulions avoir en boîte. Les leurres sont stockés chez nous, en France, et nous préparons chaque commande nous-mêmes.
 - `ABOUT.RANGE` — Vous le trouvez ici en {nbColoris} coloris, chacun nommé d'après sa robe — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — Le {collector}, lui, ne s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
 - `ABOUT.VISUALS_TITLE` — Ce que vous voyez est ce que nous vendons
-- `ABOUT.VISUALS_BODY` — Les visuels des leurres viennent de nous : la vitrine interactive de l'accueil est notre modèle 3D du leurre réel, et les gros plans de la boutique montrent la pièce, détail par détail. Nous n'affichons pas de prise de poisson tant que nous n'en avons pas de nous.
+- `ABOUT.VISUALS_BODY` — Les visuels des leurres viennent de nous : la vitrine interactive de l'accueil est notre modèle 3D du leurre réel, et les gros plans de la boutique montrent la pièce, détail par détail. L'image qui ouvre cette page, elle, est une image de synthèse — nous n'affichons pas de prise réelle tant que nous n'en avons pas de nous.
 - `ABOUT.COLORWAY_ALT` — Le leurre Alure, coloris {coloris}, posé sur une ardoise mouillée.
 - `ABOUT.TRANSPARENCY_TITLE` — D'où part votre leurre
 - `ABOUT.TRANSPARENCY_BODY` — Votre leurre part de chez nous, dans une enveloppe matelassée noire que nous déposons à la poste. Comptez {delai} entre votre commande et sa livraison. Ce délai est affiché avant que vous payiez, et rappelé dans votre email de confirmation. Le prix est port inclus. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit.
 - `ABOUT.KIT_ENVELOPE_ALT` — Une pile d'enveloppes matelassées noires.
 - `ABOUT.KIT_LURES_ALT` — Les quatre leurres Alure tenus au creux d'une main, au bord de l'eau.
 - `ABOUT.KIT_CARD_ALT` — Le dos de la carte glissée dans chaque enveloppe, au nom d'Alure.
-- `ABOUT.KIT_CAPTION` — Ce que vous recevez, et rien d'autre.
+- `ABOUT.KIT_ENVELOPE_CAPTION` — Enveloppe à bulles, postée depuis le bureau de poste le plus proche de chez nous.
+- `ABOUT.KIT_LURES_CAPTION` — Nos plus beaux leurres, de votre panier à chez vous.
+- `ABOUT.KIT_CARD_CAPTION` — Un mot personnalisé de la personne qui a préparé votre commande, et des réductions pour reconnaître les fidèles.
 
 ### Îlots clients traduits (2026-08-26)
 

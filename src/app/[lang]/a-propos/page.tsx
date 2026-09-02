@@ -60,9 +60,11 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
         {t(dict, 'ABOUT.H1')}
       </h1>
 
-      <div className="relative mt-8 aspect-[1200/568] overflow-hidden rounded-card">
+      {/* Le 3:2 suit l'image : le panoramique coupait la tête du poisson et la
+        palette du leurre, c'est-à-dire les deux choses qu'il y a à voir. */}
+      <div className="relative mt-8 aspect-[3/2] overflow-hidden rounded-card">
         <Image
-          src="/produit/marque-lac.webp"
+          src="/produit/prise-vert.webp"
           alt={t(dict, 'ABOUT.HERO_ALT')}
           fill
           priority
@@ -123,9 +125,11 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
 
       <AboutScene
         envelopeAlt={t(dict, 'ABOUT.KIT_ENVELOPE_ALT')}
+        envelopeCaption={t(dict, 'ABOUT.KIT_ENVELOPE_CAPTION')}
         luresAlt={t(dict, 'ABOUT.KIT_LURES_ALT')}
+        luresCaption={t(dict, 'ABOUT.KIT_LURES_CAPTION')}
         cardAlt={t(dict, 'ABOUT.KIT_CARD_ALT')}
-        caption={t(dict, 'ABOUT.KIT_CAPTION')}
+        cardCaption={t(dict, 'ABOUT.KIT_CARD_CAPTION')}
       />
 
       <div className="mt-10 mb-8">
