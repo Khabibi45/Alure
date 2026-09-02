@@ -31,8 +31,19 @@ export type Colorway = {
   shortLabel: string
   /** Passé à false à la main en cas de rupture : affiché « Épuisé », non commandable. */
   available: boolean
-  /** Visuel produit (rendu 3D maison, `public/produit/`) — jamais une image fournisseur. */
+  /** Visuel produit (`public/produit/`) — jamais une image fournisseur. */
   image: string
+  /**
+   * La racine des fichiers de CE coloris dans `public/produit/` : la photo
+   * principale est `leurre-<slug>.webp`, les gros plans
+   * `details/<slug>-<detail>.webp`.
+   *
+   * Le slug, et non le chemin complet, parce que les gros plans sont CINQ par
+   * coloris (cf. `lure-details.ts`) : les écrire un par un ferait quinze
+   * chemins à maintenir à la main, et un fichier renommé casserait en silence.
+   * Un test vérifie que les six fichiers de chaque slug existent vraiment.
+   */
+  photoSlug: string
 }
 
 export const PRODUCT = {
@@ -55,8 +66,10 @@ export const PRODUCT = {
    * décrire une robe qu'on n'a pas vue serait l'inventer (règle n°6). À affiner
    * quand les rendus définitifs seront validés.
    *
-   * ⚠️ Les IMAGES `/produit/*.webp` sont encore celles du leurre articulé :
-   * elles montrent un autre produit. À régénérer depuis les nouveaux modèles.
+   * Les IMAGES sont les photos de shooting des leurres souples (2026-09-01,
+   * fournies par Camil) : plus aucun visuel de l'articulé, qui montrait un
+   * autre produit. Même plan, même ardoise mouillée sur les quatre — c'est ce
+   * qui rend les coloris comparables entre eux.
    *
    * Historique — les noms décrivaient la robe de l'articulé (2026-08-08) :
    *   Truite arc-en-ciel : dos jaune-olive, flanc blanc barré de rose.
@@ -72,21 +85,24 @@ export const PRODUCT = {
       label: 'Bleu',
       shortLabel: 'Bleu',
       available: true,
-      image: '/produit/leurre-truite.webp',
+      image: '/produit/leurre-bleu.webp',
+      photoSlug: 'bleu',
     },
     {
       id: 'coloris-2',
       label: 'Rouge',
       shortLabel: 'Rouge',
       available: true,
-      image: '/produit/leurre-perche.webp',
+      image: '/produit/leurre-rouge.webp',
+      photoSlug: 'rouge',
     },
     {
       id: 'coloris-3',
       label: 'Vert',
       shortLabel: 'Vert',
       available: true,
-      image: '/produit/leurre-orange.webp',
+      image: '/produit/leurre-vert.webp',
+      photoSlug: 'vert',
     },
   ] satisfies Colorway[],
   /**
@@ -100,6 +116,14 @@ export const PRODUCT = {
   collector: {
     id: 'pirate',
     label: 'Pirate',
+    /**
+     * Sa photo, au même titre que les trois coloris vendus : le Pirate ne
+     * s'achète pas, mais il se CHOISIT — et on ne choisit pas un leurre qu'on
+     * n'a pas vu. La pastille du 4e leurre offert montrait jusqu'ici une tête
+     * de mort ; c'était une icône, pas le produit.
+     */
+    image: '/produit/leurre-pirate.webp',
+    photoSlug: 'pirate',
   },
   /**
    * Dimensions réelles du leurre, confirmées par Camil le 2026-08-06 (le journal

@@ -212,13 +212,21 @@ describe('offerSummary — la ligne lue dans les emails', () => {
 
 describe('orderableError — disponibilité réelle', () => {
   const fixtures: Colorway[] = [
-    { id: 'ok', label: 'Dispo', shortLabel: 'Dispo', available: true, image: '/produit/test.webp' },
+    {
+      id: 'ok',
+      label: 'Dispo',
+      shortLabel: 'Dispo',
+      available: true,
+      image: '/produit/test.webp',
+      photoSlug: 'test',
+    },
     {
       id: 'epuise',
       label: 'Épuisé',
       shortLabel: 'Épuisé',
       available: false,
       image: '/produit/test.webp',
+      photoSlug: 'test',
     },
   ]
 
