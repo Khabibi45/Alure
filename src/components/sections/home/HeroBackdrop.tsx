@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from 'react'
 import NextImage from 'next/image'
-import { HERO_BACKDROP_VIDEO, HERO_BACKDROP_POSTER } from '@/lib/hero-variant'
+import {
+  HERO_BACKDROP_ANIMATED,
+  HERO_BACKDROP_VIDEO,
+  HERO_BACKDROP_POSTER,
+} from '@/lib/hero-variant'
 
 /**
  * Le décor derrière le leurre 3D : une boucle sous-marine muette.
@@ -18,6 +22,8 @@ export function HeroBackdrop({ alive = true }: { alive?: boolean }) {
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
   useEffect(() => {
+    // Boucle coupée : il n'y a pas d'élément à piloter, et rien à écouter.
+    if (!HERO_BACKDROP_ANIMATED) return
     const video = videoRef.current
     if (!video) return
     // Tant que la scène n'est pas rendue au décor, la boucle attend sur sa
@@ -55,17 +61,19 @@ export function HeroBackdrop({ alive = true }: { alive?: boolean }) {
         sizes="100vw"
         className="object-cover"
       />
-      <video
-        ref={videoRef}
-        muted
-        loop
-        playsInline
-        preload="auto"
-        style={{ opacity: alive ? 1 : 0, transition: `opacity 1200ms var(--ease-out-soft)` }}
-        className="absolute inset-0 size-full object-cover"
-      >
-        <source src={HERO_BACKDROP_VIDEO} type="video/mp4" />
-      </video>
+      {HERO_BACKDROP_ANIMATED && (
+        <video
+          ref={videoRef}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          style={{ opacity: alive ? 1 : 0, transition: `opacity 1200ms var(--ease-out-soft)` }}
+          className="absolute inset-0 size-full object-cover"
+        >
+          <source src={HERO_BACKDROP_VIDEO} type="video/mp4" />
+        </video>
+      )}
     </div>
   )
 }

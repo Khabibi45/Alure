@@ -68,6 +68,21 @@ export const HERO_BACKDROP_POSTER = '/hero-video/backdrop-poster.webp'
 export const HERO_LAST_FRAME = '/hero-frames/0302.webp'
 
 /**
+ * La boucle du décor est-elle JOUÉE ? Coupée le 2026-09-02 (consigne Camil :
+ * « masque la vidéo du hero »). Passer `HERO_VARIANT` à `scroll` avait retiré la
+ * vidéo d'OUVERTURE ; celle-ci, derrière le leurre 3D, continuait de tourner.
+ *
+ * À `false`, l'élément vidéo n'est même pas monté : rien ne se télécharge, et le
+ * décor est l'image fixe `HERO_BACKDROP_POSTER` — celle qui servait déjà de repli
+ * quand la lecture automatique est refusée ou en mouvement réduit. Le rendu est
+ * donc exactement celui que voyaient déjà ces visiteurs-là, pas une dégradation
+ * inventée pour l'occasion.
+ *
+ * Le fichier reste en place et testé : remettre la boucle, c'est remettre `true`.
+ */
+export const HERO_BACKDROP_ANIMATED = false
+
+/**
  * Le fond ANIMÉ derrière le carrousel 3D : une boucle sous-marine, muette, qui
  * remplace l'image fixe. Le leurre 3D y nage donc dans un décor vivant plutôt
  * que collé sur une photo. Version NETTOYÉE (`npm run video:mobile`) : la
