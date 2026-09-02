@@ -510,8 +510,24 @@ export function createLureStage(
 
     // Les décalages sont exprimés en fraction de l'image de RÉFÉRENCE, pas du
     // conteneur : ce sont donc des constantes de scène, justes à toute taille.
-    track.position.x = offsetX * frameWidth
-    track.position.y = offsetY * referenceHeight
+    //
+    // SAUF EN PORTRAIT, où on RECENTRE (consigne Camil, 2026-09-02 : « recentre
+    // bien le leurre sur la version téléphone »).
+    //
+    // Ces décalages ne sont pas un réglage esthétique : ils alignent le leurre 3D
+    // sur le leurre FILMÉ, mesuré à 691 × 336 dans une image de 1280 × 720. Sur un
+    // téléphone, cette image est rognée en « cover » — la cible n'est donc plus où
+    // le calcul la place. Et `PORTRAIT_ZOOM` divise la largeur visible par deux
+    // pendant que le décalage, lui, ne bouge pas : il pèse deux fois plus dans le
+    // cadre. Résultat, le leurre dérivait vers la droite sur l'écran où il est
+    // déjà le plus petit.
+    //
+    // Au centre, il est là où on le cherche. Le raccord avec la séquence y perd,
+    // mais il était déjà faux : sur téléphone, l'image de référence n'est pas
+    // celle qui s'affiche.
+    const portrait = aspect < 1
+    track.position.x = portrait ? 0 : offsetX * frameWidth
+    track.position.y = portrait ? 0 : offsetY * referenceHeight
 
     camera.updateProjectionMatrix()
   }
