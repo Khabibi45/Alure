@@ -34,8 +34,36 @@ même commit, `npm run i18n` régénéré (358 clés).
 
 Aucun chiffre, aucun avis, aucune promesse de prise : uniquement ce que la pièce contient.
 
-**Fichiers clés** : `src/lib/three/swim.config.ts` · `src/components/sections/leurre/LureDetails.tsx`
-· `src/app/(fr)/leurre/page.tsx` · `src/app/[lang]/leurre/page.tsx` · `docs/i18n/{fr,en}.md`
+### Les photos remplacent les rendus de l'articulé
+
+Le catalogue portait depuis le 2026-08-09 un avertissement dans son propre code : « les images
+`/produit/*.webp` sont encore celles du leurre articulé, elles montrent un autre produit ». C'est
+réglé. Camil a fourni quatre photos de shooting (même plan, même ardoise mouillée, un leurre par
+coloris) et quatre planches « toutes vues » sur fond blanc.
+
+Ce qui en sort, tout en WebP dimensionné, jamais une source publiée :
+
+- **4 photos principales** 1200×900 (57 à 72 Ko). Elles ouvrent la colonne visuelle de la page
+  produit, AU-DESSUS de la 3D : une photo dit ce qu'on reçoit, la 3D dit comment c'est fait.
+- **20 gros plans** 640×480 (4 à 16 Ko) — cinq par leurre, un par bloc de la description :
+  l'œil, les paillettes, le corps translucide où se devine la barrette, la queue striée, et la
+  palette vue de face. Ils **suivent le coloris choisi** dans l'îlot d'achat : c'est la même
+  sélection que la visionneuse 3D, jamais un second état qui dériverait.
+
+Le **Pirate** a lui aussi sa photo : sa pastille de 4e leurre offert montrait une tête de mort —
+une icône, pas le produit. On ne choisit pas son leurre sur un pictogramme.
+
+Le lien entre un coloris et ses six fichiers passe par un `photoSlug` unique, et
+`src/lib/shop/lure-details.test.ts` va chercher les **vingt-quatre fichiers sur le disque**. C'est
+le genre de panne qui ne fait aucun bruit : un `next/image` sans source ne lève rien, ne casse pas
+le build, et laisse un trou dans la page en production.
+
+Les trois anciens `.webp` de l'articulé sont supprimés.
+
+**Fichiers clés** : `src/lib/three/swim.config.ts` · `src/lib/shop/lure-details.ts` ·
+`src/lib/shop/product.ts` · `src/components/sections/leurre/{LureDetails,ColorwayPhoto,BuyBox}.tsx`
+· `src/lib/i18n/leurre-strings.ts` · `src/app/(fr)/leurre/page.tsx` ·
+`src/app/[lang]/leurre/page.tsx` · `docs/i18n/{fr,en}.md` · `public/produit/`
 
 **Reste ouvert** : le titre et la meta-description de la page produit annoncent encore un « leurre
 articulé 2 sections » (`PRODUCT.TITLE`, `PRODUCT.DESCRIPTION`, `META.DESCRIPTION`, `ABOUT.DESCRIPTION`).
