@@ -39,6 +39,27 @@ l'écran où il est déjà le plus petit.
 En portrait, `lure-stage` remet donc les deux décalages à zéro. Le raccord avec la séquence y perd,
 mais il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
 
+### « À propos » : le colis à la verticale, la scène de pêche en tête
+
+Consigne Camil, deux changements sur la même page.
+
+**Le colis passe à la verticale.** Les trois visuels s'empilent, en pleine largeur, chacun sous sa
+légende — d'où part le colis, ce que contient l'enveloppe, ce qu'il y a d'écrit sur la carte. Une
+image ne dit pas qu'elle a été postée au bureau du coin ; la légende, si. Les fichiers sont
+régénérés plus grands (1134 à 1400 px de large) : les 700–800 px précédents étaient calibrés pour
+une rangée de trois, ils auraient été mous en pleine largeur.
+
+**La scène de pêche revient en tête de page**, à la place de l'éclaboussure sur le lac
+(`marque-lac.webp`, supprimée, plus référencée nulle part). Le cadre passe du panoramique 1200/568
+au 3:2 : le panoramique coupait la tête du sandre et la palette du leurre, c'est-à-dire les deux
+choses qu'il y a à voir.
+
+**Et la phrase de transparence revient avec elle.** `ABOUT.VISUALS_BODY` avait perdu sa mention
+« image de synthèse » quand la scène avait quitté la page — elle ne décrivait plus rien. L'image
+étant de retour, et en OUVERTURE cette fois, la mention revient : « L'image qui ouvre cette page
+est une image de synthèse — nous n'affichons pas de prise réelle tant que nous n'en avons pas de
+nous. » Sur la page qui s'appelle « Ce que vous voyez est ce que nous vendons », c'est le minimum.
+
 ### La deuxième vidéo du hero est coupée, et le leurre est recentré sur téléphone
 
 **La boucle du décor.** Passer `HERO_VARIANT` à `scroll` avait retiré la vidéo d'OUVERTURE ; celle
