@@ -401,11 +401,11 @@
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
-- `ABOUT.VISUALS_BODY` — Every image on this site is our own 3D render of the real lure — the same model you turn in the interactive viewer on the home page. No borrowed mood shot, no retouched supplier photo: if a detail catches your eye on screen, it is there on the lure itself.
-- `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, as a 3D render in its setting.
+- `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. No supplier visual, no borrowed photo. The scene with a fish in it is a computer-generated image — we will not show a real catch until we have one of our own.
+- `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, resting on wet slate.
 - `ABOUT.TRANSPARENCY_TITLE` — Where your lure ships from
 - `ABOUT.TRANSPARENCY_BODY` — Your lure ships from us, in a black padded envelope we take to the post office. Allow {delai} between your order and delivery. That lead time is shown before you pay, and repeated in your confirmation email. The price includes delivery. You have 14 days to change your mind, as French law provides.
-- `ABOUT.SCENE_ALT` — The Alure lure in the Orange feu colourway, as a 3D render above the weed beds.
+- `ABOUT.SCENE_ALT` — Computer-generated image: a zander held in the hand, the green Alure lure in its mouth.
 
 ### Îlots clients traduits (2026-08-26)
 

@@ -120,9 +120,11 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
         <p>{t(dict, 'SHIPPING_NOTICE.BODY')}</p>
       </div>
 
-      <div className="relative mt-8 aspect-[1200/568] overflow-hidden rounded-card">
+      {/* Le format suit l'image : le 3:2 garde à la fois la tête du poisson et la
+        palette du leurre, là où le panoramique précédent coupait les deux. */}
+      <div className="relative mt-8 aspect-[3/2] overflow-hidden rounded-card">
         <Image
-          src="/produit/marque-scene.webp"
+          src="/produit/prise-vert.webp"
           alt={t(dict, 'ABOUT.SCENE_ALT')}
           fill
           sizes="(min-width: 768px) 48rem, 100vw"

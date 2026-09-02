@@ -3,6 +3,55 @@
 > Le journal vivant : le plus récent **en haut**. L'agent écrit ici à la fin de chaque session qui
 > change l'état du produit (date + ce qui a changé + fichiers clés). C'est la trace de reprise.
 
+## 2026-09-02 — La scène de pêche sur « À propos », et une décision produit à instruire
+
+### L'image sous « D'où part votre leurre »
+
+Remplacée (consigne Camil) par la scène qui montre un sandre, le leurre vert dans la gueule :
+`public/produit/prise-vert.webp`, 1200×800, 44 Ko. Le cadre passe du panoramique 1200/568 au 3:2 —
+le panoramique coupait à la fois la tête du poisson et la palette. L'ancien `marque-scene.webp`
+(rendu 3D de l'articulé, coloris « Orange feu » qui n'existe plus au catalogue) est supprimé.
+
+**Et ce qu'il a fallu corriger avec.** Le paragraphe juste au-dessus, `ABOUT.VISUALS_BODY`,
+affirmait : « Toutes les images du site sont nos rendus 3D du leurre réel […] pas de photo
+d'ambiance empruntée ». Le fichier fourni, `fish_leurre_vert_souple.jpg`, est l'ancien
+`Gemini_Generated_Image_as1czias1czias1c.jpg` renommé — mêmes octets, mêmes dimensions, même
+horodatage. C'est une image de synthèse.
+
+Poser cette image sous cette phrase-là, sur la section qui s'appelle « Ce que vous voyez est ce que
+nous vendons », en aurait fait un mensonge à l'endroit exact où le site promet le contraire. Le
+texte dit maintenant ce qui est : les visuels des leurres viennent de nous, et **la scène qui
+montre un poisson est une image de synthèse — nous n'affichons pas de prise réelle tant que nous
+n'en avons pas de nous**. L'`alt` le dit aussi, dans les deux langues.
+
+`ABOUT.COLORWAY_ALT` parlait encore de « rendu 3D dans son décor » alors que les vignettes sont
+désormais les photos de studio : corrigé.
+
+### ⚠️ À INSTRUIRE — « le leurre noir n'est plus collector »
+
+Camil l'a signalé le 2026-09-02. **Rien n'a été changé dans le code** : c'est une décision
+commerciale, pas une retouche, et elle touche large. Aujourd'hui le site affirme partout le
+contraire, y compris dans un document qui engage :
+
+- **`docs/i18n/fr.md` / `en.md`** — `ABOUT.COLLECTOR_RULE`, `PRODUCT.COLLECTOR_LOCKED` et
+  `_EARNED`, `OFFER.COLLECTION_DETAIL`, `PROGRESS.STEP_COLLECTOR`, `FAQ.A_BULK`,
+  `PROJECTS.DONE_BODY`, `CART.GIFT_A11Y` : « le Pirate ne s'achète pas, il se choisit comme 4e
+  leurre offert ».
+- **`LEGAL.TERMS_S2_BODY` (les CGV)** — décrit l'offre « 3 achetés, le 4e offert » et le coloris
+  collector remis gracieusement. Modifier une offre décrite aux CGV n'est pas un travail de copie.
+- **Le code** — `PRODUCT.collector` (`src/lib/shop/product.ts`), le champ `cadeau` du checkout
+  (`src/app/api/checkout/route.ts` + son schéma partagé), `COLLECTOR_LURE_MODEL` et
+  `SELLABLE_LURE_MODELS` (`src/lib/lure-models.ts`), le sélecteur de 4e leurre de `BuyBox`,
+  `OfferPanel`, `OfferProgress`, le carrousel de l'accueil. Vingt-cinq fichiers le mentionnent.
+
+Deux lectures possibles, et elles ne mènent pas au même travail : soit le noir devient un **4e
+coloris vendable** (l'offre groupée passe à quatre coloris au choix, plus de collector), soit
+l'offre « 3 achetés, le 4e offert » **disparaît avec lui**. La question est posée à Camil ; tant
+qu'elle n'est pas tranchée, le site continue d'annoncer une règle qui n'est plus vraie.
+
+**Fichiers clés** : `public/produit/prise-vert.webp` · `src/app/(fr)/a-propos/page.tsx` ·
+`src/app/[lang]/a-propos/page.tsx` · `docs/i18n/{fr,en}.md`
+
 ## 2026-09-01 (fin de journée) — Le corps bouge un peu plus, et le leurre dit enfin ce qu'il contient
 
 Deux consignes de Camil, dans la foulée de la mise en ligne de LOT11.

@@ -399,11 +399,11 @@
 - `ABOUT.RANGE` — Vous le trouvez ici en {nbColoris} coloris, chacun nommé d'après sa robe — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — Le {collector}, lui, ne s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
 - `ABOUT.VISUALS_TITLE` — Ce que vous voyez est ce que nous vendons
-- `ABOUT.VISUALS_BODY` — Toutes les images du site sont nos rendus 3D du leurre réel — le même modèle que vous manipulez dans la vitrine interactive de l'accueil. Pas de photo d'ambiance empruntée, pas de visuel fournisseur retouché : si un détail vous plaît à l'écran, il existe sur la pièce.
-- `ABOUT.COLORWAY_ALT` — Le leurre Alure, coloris {coloris}, en rendu 3D dans son décor.
+- `ABOUT.VISUALS_BODY` — Les visuels des leurres viennent de nous : la vitrine interactive de l'accueil est notre modèle 3D du leurre réel, et les gros plans de la boutique montrent la pièce, détail par détail. Aucun visuel de fournisseur, aucune photo empruntée. La scène qui montre un poisson, elle, est une image de synthèse — nous n'affichons pas de prise réelle tant que nous n'en avons pas de nous.
+- `ABOUT.COLORWAY_ALT` — Le leurre Alure, coloris {coloris}, posé sur une ardoise mouillée.
 - `ABOUT.TRANSPARENCY_TITLE` — D'où part votre leurre
 - `ABOUT.TRANSPARENCY_BODY` — Votre leurre part de chez nous, dans une enveloppe matelassée noire que nous déposons à la poste. Comptez {delai} entre votre commande et sa livraison. Ce délai est affiché avant que vous payiez, et rappelé dans votre email de confirmation. Le prix est port inclus. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit.
-- `ABOUT.SCENE_ALT` — Le leurre Alure coloris Orange feu, en rendu 3D au-dessus des herbiers.
+- `ABOUT.SCENE_ALT` — Image de synthèse : un sandre tenu à la main, le leurre Alure vert dans la gueule.
 
 ### Îlots clients traduits (2026-08-26)
 
