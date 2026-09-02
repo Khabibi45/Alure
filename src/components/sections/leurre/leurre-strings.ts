@@ -1,5 +1,6 @@
 import type { LureViewId } from '@/lib/three/lure-views'
 import type { OfferId } from '@/lib/shop/product'
+import type { LureDetailId } from '@/lib/shop/lure-details'
 
 /**
  * TOUS les textes de la page produit, tels qu'ils traversent la frontière
@@ -27,6 +28,30 @@ import type { OfferId } from '@/lib/shop/product'
  *    rendent avec `fillNodes()`, qui isole le nom dans un `translate="no"`.
  *    `fill()` (qui rend une chaîne) ne le permettrait pas.
  */
+/** Une image et son équivalent textuel, résolus pour UN leurre. */
+export type LurePhoto = {
+  readonly src: string
+  readonly alt: string
+}
+
+/**
+ * Un des cinq blocs de « Ce qu'il y a dans le leurre » : son texte, et le gros
+ * plan correspondant POUR CHAQUE leurre.
+ *
+ * Les photos arrivent toutes préparées, indexées par identifiant de coloris,
+ * pour la même raison que les prix par palier : le coloris regardé est un état
+ * CLIENT (radio), le serveur ne peut pas le connaître. Il prépare donc les
+ * quatre, et le composant lit la bonne. L'`alt` est RÉSOLU (le nom du coloris
+ * déjà dedans) et non laissé en gabarit : un attribut `alt` est une chaîne, il
+ * ne peut pas passer par `fillNodes()`.
+ */
+export type LureDetailBlock = {
+  readonly id: LureDetailId
+  readonly title: string
+  readonly body: string
+  readonly photos: Readonly<Record<string, LurePhoto>>
+}
+
 export type LeurreStrings = {
   /* ── La visionneuse 3D orientable ── */
   /** Le nom du groupe manipulable, pour les lecteurs d'écran. */
@@ -113,6 +138,16 @@ export type LeurreStrings = {
   readonly paymentCard: string
   readonly paymentPaypal: string
   readonly paymentSafety: string
+
+  /* ── Les photos, par leurre (clé = id du coloris, ou du collector) ── */
+  /** La photo principale, celle qui ouvre la page produit. */
+  readonly photos: Readonly<Record<string, LurePhoto>>
+
+  /* ── « Ce qu'il y a dans le leurre » ── */
+  readonly detailsTitle: string
+  readonly detailsIntro: string
+  /** Les cinq blocs, dans l'ordre de la page : de la tête à la palette. */
+  readonly details: readonly LureDetailBlock[]
 
   /* ── Les échecs du passage en caisse ── */
   readonly errorFormInvalid: string

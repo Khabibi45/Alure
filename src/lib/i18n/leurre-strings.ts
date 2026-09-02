@@ -16,7 +16,17 @@ const VIEW_KEYS: Record<LureViewId, string> = {
   devant: 'FRONT',
   derriere: 'BACK',
 }
-import type { LeurreStrings } from '@/components/sections/leurre/leurre-strings'
+import type {
+  LeurreStrings,
+  LureDetailBlock,
+  LurePhoto,
+} from '@/components/sections/leurre/leurre-strings'
+import {
+  LURE_DETAIL_IDS,
+  PHOTOGRAPHED_LURES,
+  lureDetailPhotoSrc,
+  type LureDetailId,
+} from '@/lib/shop/lure-details'
 import {
   OFFER_IDS,
   PRODUCT,
@@ -50,6 +60,19 @@ import {
 const OFFER_KEYS: Record<OfferId, string> = {
   solo: 'SOLO',
   collection: 'COLLECTION',
+}
+
+/**
+ * Le pont entre l'identifiant d'un détail (français, clé technique jamais
+ * affichée) et le suffixe de ses trois clés de dictionnaire : `_TITLE`, `_BODY`
+ * et `_ALT`. Même principe que `VIEW_KEYS` et `OFFER_KEYS`.
+ */
+const DETAIL_KEYS: Record<LureDetailId, string> = {
+  yeux: 'EYES',
+  paillettes: 'GLITTER',
+  barrette: 'BLADE',
+  queue: 'TAIL',
+  palette: 'PADDLE',
 }
 
 export function leurreStrings(locale: Locale): LeurreStrings {
@@ -97,6 +120,33 @@ export function leurreStrings(locale: Locale): LeurreStrings {
     views[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}`)
     viewDescriptions[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}_DESC`)
   }
+  // Les photos des QUATRE leurres, préparées d'avance : le coloris regardé est
+  // un état client, et un `alt` doit arriver résolu (cf. `LureDetailBlock`).
+  const photos = {} as Record<string, LurePhoto>
+  for (const lure of PHOTOGRAPHED_LURES) {
+    photos[lure.id] = {
+      src: lure.image,
+      alt: t(dict, 'PRODUCT.PHOTO_ALT', { coloris: lure.label }),
+    }
+  }
+
+  const details: LureDetailBlock[] = LURE_DETAIL_IDS.map((id) => {
+    const suffix = DETAIL_KEYS[id]
+    const perLure = {} as Record<string, LurePhoto>
+    for (const lure of PHOTOGRAPHED_LURES) {
+      perLure[lure.id] = {
+        src: lureDetailPhotoSrc(lure.photoSlug, id),
+        alt: t(dict, `PRODUCT.DETAIL_${suffix}_ALT`, { coloris: lure.label }),
+      }
+    }
+    return {
+      id,
+      title: t(dict, `PRODUCT.DETAIL_${suffix}_TITLE`),
+      body: t(dict, `PRODUCT.DETAIL_${suffix}_BODY`),
+      photos: perLure,
+    }
+  })
+
   return {
     deliveryBannerTitle: t(dict, 'PRODUCT.DELIVERY_BANNER', {
       delai: t(dict, 'PRODUCT.DELAY_VALUE'),
@@ -150,6 +200,11 @@ export function leurreStrings(locale: Locale): LeurreStrings {
     paymentCard: t(dict, 'PAYMENT.CARD'),
     paymentPaypal: t(dict, 'PAYMENT.PAYPAL'),
     paymentSafety: t(dict, 'PAYMENT.SAFETY'),
+
+    photos,
+    detailsTitle: t(dict, 'PRODUCT.DETAILS_TITLE'),
+    detailsIntro: t(dict, 'PRODUCT.DETAILS_INTRO'),
+    details,
 
     errorFormInvalid: t(dict, 'STATES.FORM_INVALID'),
     errorColorwayUnknown: t(dict, 'STATES.COLORWAY_UNKNOWN'),

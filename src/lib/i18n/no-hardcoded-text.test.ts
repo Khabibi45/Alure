@@ -110,8 +110,8 @@ function fichiersDe(dossier: string): string[] {
 
 /**
  * Retire ce qui n'est pas du texte visible : commentaires, imports, valeurs de
- * `className`/`class` (elles contiennent des espaces par nature), et les
- * chaînes passées à `t(dict, '…')` — ce sont des CLÉS, pas du texte.
+ * `className`/`class` et de `sizes` (elles contiennent des espaces par nature),
+ * et les chaînes passées à `t(dict, '…')` — ce sont des CLÉS, pas du texte.
  */
 function codeVisible(source: string): string {
   return (
@@ -121,6 +121,11 @@ function codeVisible(source: string): string {
       .replace(/^import[\s\S]*?from\s+['"][^'"]+['"]\s*$/gm, ' ')
       .replace(/className=\{?["'`][\s\S]*?["'`]\}?/g, ' ')
       .replace(/class=["'][^"']*["']/g, ' ')
+      // `sizes` de next/image : une liste de conditions média et de largeurs
+      // (« (min-width: 768px) 40vw, 100vw »). C'est du CSS, jamais du texte, et
+      // ça ne se traduit pas — même raison que `(prefers-reduced-motion: reduce)`
+      // dans la liste blanche.
+      .replace(/sizes=\{?["'`][^"'`]*["'`]\}?/g, ' ')
       // Les logs serveur ne s'affichent jamais au visiteur : ils restent en
       // français, c'est la langue de l'équipe qui les lit.
       .replace(/console\.(?:error|warn|info|log)\([\s\S]*?\)/g, ' ')

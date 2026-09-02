@@ -7,6 +7,7 @@ import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
+import { ColorwayPhoto } from '@/components/sections/leurre/ColorwayPhoto'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
@@ -23,10 +24,11 @@ export const metadata: Metadata = {
  * Page produit / achat (spec boutique.md T2 + charte V.02 §8).
  * Server Component ; l'interactivité vit dans l'îlot <BuyBox>, qui reçoit le
  * bandeau délai en slot serveur (la charte l'impose entre le prix et le bouton).
- * Visuels : emplacements en attente du pipeline LOT 3, jamais de photo
- * fournisseur. La section « Ce qu'il y a dans le leurre » (`LureDetails`) est
- * arrivée le 2026-09-01, une fois les caractéristiques relevées sur
- * l'échantillon reçu — la réserve de la règle n°6 est levée, ce sont des faits.
+ * Visuels : les photos de shooting des quatre leurres (2026-09-01), plus la
+ * visionneuse 3D — jamais une image du fournisseur. La section « Ce qu'il y a
+ * dans le leurre » (`LureDetails`) est arrivée le même jour, une fois les
+ * caractéristiques relevées sur l'échantillon reçu : la réserve de la règle n°6
+ * est levée, ce sont des faits, et chacun est montré en gros plan.
  *
  * Les îlots client reçoivent leurs textes du serveur, comme sur `/en/leurre` :
  * un seul chemin de textes pour les deux langues, donc pas de version française
@@ -71,7 +73,12 @@ export default async function LeurrePage({
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
               colonne grid et fait déborder toute la page à 375px. */}
             <section aria-label="Visuel du leurre" className="min-w-0">
-              <ColorwayViewer strings={strings} />
+              {/* La photo d'abord — elle dit ce qu'on reçoit ; la 3D dessous,
+                pour tourner autour (décision Camil 2026-09-01). */}
+              <ColorwayPhoto strings={strings} />
+              <div className="mt-4">
+                <ColorwayViewer strings={strings} />
+              </div>
             </section>
 
             {/* Prix + coloris — l'offre et le CTA sont en pleine largeur dessous. */}
@@ -117,7 +124,7 @@ export default async function LeurrePage({
           {/* Ce qu'il y a dans le leurre — les cinq partis pris de fabrication,
             entre le visuel et l'offre : on regarde le leurre, on voit son prix,
             on comprend comment il est fait, puis on choisit son offre. */}
-          <LureDetails locale={DEFAULT_LOCALE} />
+          <LureDetails strings={strings} />
 
           {/* L'offre, la progression et le CTA — sur toute la largeur de la page
             (consigne Camil 2026-08-12). */}

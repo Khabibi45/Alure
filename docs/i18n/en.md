@@ -153,6 +153,12 @@
 - `PRODUCT.DETAIL_TAIL_BODY` — The ribs and the joint add vibration on every retrieve.
 - `PRODUCT.DETAIL_PADDLE_TITLE` — A duck-foot paddle
 - `PRODUCT.DETAIL_PADDLE_BODY` — It gives the lure an out-of-the-ordinary action, and you spot it at a glance. That is what sold us on it.
+- `PRODUCT.PHOTO_ALT` — The Alure lure in {coloris}, resting on wet slate.
+- `PRODUCT.DETAIL_EYES_ALT` — Close-up of the lure's oversized eye, {coloris} colourway.
+- `PRODUCT.DETAIL_GLITTER_ALT` — Close-up of the glitter inside the body, {coloris} colourway.
+- `PRODUCT.DETAIL_BLADE_ALT` — Close-up of the translucent body, {coloris} colourway: the strip shows through.
+- `PRODUCT.DETAIL_TAIL_ALT` — Close-up of the jointed, ribbed tail, {coloris} colourway.
+- `PRODUCT.DETAIL_PADDLE_ALT` — The duck-foot paddle seen head-on, {coloris} colourway.
 
 ## 5. PRICING
 

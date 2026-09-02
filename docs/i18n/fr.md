@@ -151,6 +151,12 @@
 - `PRODUCT.DETAIL_TAIL_BODY` — Les stries et l'articulation ajoutent de la vibration à chaque récupération.
 - `PRODUCT.DETAIL_PADDLE_TITLE` — Une palette en patte de canard
 - `PRODUCT.DETAIL_PADDLE_BODY` — Elle donne une nage qui sort de l'ordinaire, et se reconnaît au premier coup d'œil. C'est ce qui nous a décidés.
+- `PRODUCT.PHOTO_ALT` — Le leurre Alure, coloris {coloris}, posé sur une ardoise mouillée.
+- `PRODUCT.DETAIL_EYES_ALT` — Gros plan sur l'œil surdimensionné du leurre, coloris {coloris}.
+- `PRODUCT.DETAIL_GLITTER_ALT` — Gros plan sur les paillettes du corps, coloris {coloris}.
+- `PRODUCT.DETAIL_BLADE_ALT` — Gros plan sur le corps translucide, coloris {coloris} : la barrette se devine à l'intérieur.
+- `PRODUCT.DETAIL_TAIL_ALT` — Gros plan sur la queue articulée et striée, coloris {coloris}.
+- `PRODUCT.DETAIL_PADDLE_ALT` — La palette en patte de canard, vue de face, coloris {coloris}.
 
 ## 5. PRICING
 

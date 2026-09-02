@@ -7,6 +7,7 @@ import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
+import { ColorwayPhoto } from '@/components/sections/leurre/ColorwayPhoto'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
@@ -115,7 +116,12 @@ export default async function LangLeurrePage({
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
               colonne grid et fait déborder toute la page à 375px. */}
             <section aria-label={t(dict, 'PRODUCT.SECTION_VISUAL')} className="min-w-0">
-              <ColorwayViewer strings={strings} />
+              {/* La photo d'abord — elle dit ce qu'on reçoit ; la 3D dessous,
+                pour tourner autour (décision Camil 2026-09-01). */}
+              <ColorwayPhoto strings={strings} />
+              <div className="mt-4">
+                <ColorwayViewer strings={strings} />
+              </div>
             </section>
 
             {/* Prix + coloris — l'offre et le CTA sont en pleine largeur dessous. */}
@@ -167,7 +173,7 @@ export default async function LangLeurrePage({
           {/* Ce qu'il y a dans le leurre — les cinq partis pris de fabrication,
             entre le visuel et l'offre : on regarde le leurre, on voit son prix,
             on comprend comment il est fait, puis on choisit son offre. */}
-          <LureDetails locale={locale} />
+          <LureDetails strings={strings} />
 
           {/* L'offre, la progression et le CTA — sur toute la largeur de la page
             (consigne Camil 2026-08-12). */}

@@ -2,7 +2,6 @@
 
 import { type ReactNode } from 'react'
 import Image from 'next/image'
-import { Skull } from 'lucide-react'
 import { PRODUCT, giftLabel } from '@/lib/shop/product'
 import { useColorwaySelection } from './colorway-context'
 import { useCheckout } from './checkout-context'
@@ -177,13 +176,22 @@ export function BuyBox({
                 }}
                 className="sr-only"
               />
+              {/* Sa photo, comme les trois autres : la pastille montrait une tête
+                  de mort — une icône, pas le leurre. On ne choisit pas son 4e
+                  leurre sur un pictogramme. */}
               <span
                 aria-hidden
-                className={`flex size-14 items-center justify-center rounded-card bg-foreground text-background transition-shadow ${tileRing(
+                className={`relative size-14 overflow-hidden rounded-card bg-muted transition-shadow ${tileRing(
                   cadeau === PRODUCT.collector.id
                 )}`}
               >
-                <Skull className="size-6" strokeWidth={1.75} />
+                <Image
+                  src={PRODUCT.collector.image}
+                  alt=""
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
               </span>
               <span className="sr-only">
                 {fillNodes(strings.giftCollectorA11y, {
