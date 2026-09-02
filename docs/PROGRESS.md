@@ -27,6 +27,78 @@ n'en avons pas de nous**. L'`alt` le dit aussi, dans les deux langues.
 `ABOUT.COLORWAY_ALT` parlait encore de « rendu 3D dans son décor » alors que les vignettes sont
 désormais les photos de studio : corrigé.
 
+### Le domaine est tranché, et le compte Instagram existe
+
+`SITE.url` passe du provisoire `alure-peche.fr` — jamais acheté, marqué « à remplacer avant toute
+mise en ligne » depuis le 2026-08-05 — à **`alure-outdoor.com`**. Un seul fichier à changer, et
+le sitemap, `robots.txt`, les URL canoniques, les `hreflang` et le JSON-LD suivent.
+`SITE.socialLinks` porte désormais `https://www.instagram.com/alurefishing/`, repris en `sameAs`
+dans le JSON-LD : c'est ce qui permet à Google de relier le site au compte.
+
+### En fin de « À propos », le colis remplace la scène de pêche
+
+Consigne Camil : montrer l'enveloppe, les leurres et la carte côte à côte, reliés par des « + ».
+L'addition dit d'un coup d'œil ce qu'on reçoit, là où une phrase demanderait à être lue.
+`AboutScene` ne rend plus une image mais trois, plus une légende.
+
+Trois décisions :
+
+- **Les cadrages d'origine sont gardés.** Deux images sont en 3:2, la troisième en portrait ; on
+  les aligne sur une HAUTEUR commune plutôt que sur un format commun. La main qui tient les quatre
+  leurres ne survivrait pas à un rognage en 3:2.
+- **Sous 768 px, l'addition se lit de haut en bas.** Trois images en ligne sur 375 px feraient
+  90 px chacune : on ne verrait ni les leurres ni le texte de la carte.
+- **Les « + » sont `aria-hidden`.** Ce sont des signes de mise en page ; le contenu de l'enveloppe
+  est porté par les trois `alt` et par la légende.
+
+La scène du sandre (`prise-vert.webp`) est supprimée, et avec elle la phrase de
+`ABOUT.VISUALS_BODY` qui la déclarait « image de synthèse » — elle n'aurait plus décrit aucune
+image de la page. Le texte garde l'engagement qui compte : **nous n'affichons pas de prise de
+poisson tant que nous n'en avons pas de nous.**
+
+⚠️ **À vérifier** : l'origine de `enveloppesBulle.png`. Si c'est un visuel repris d'une annonce
+fournisseur, la règle Alure n°3 l'interdit en publication et il faut le remplacer par notre propre
+prise de vue.
+
+### La scène de « À propos » est signée
+
+Consigne Camil : poser le wordmark et la flèche sur l'image de « D'où part votre leurre ». Le bloc
+était dupliqué dans les deux pages « À propos » : il devient un composant unique,
+`src/components/sections/AboutScene.tsx`. Une image signée d'un seul côté serait arrivée tôt ou
+tard.
+
+Trois décisions qui méritent d'être écrites :
+
+- **Le voile.** Le lock-up est blanc, la photo ne l'est pas partout — il se poserait aussi bien
+  sur l'eau sombre que sur la manche claire du pêcheur. Le dégradé du bas utilise le token
+  `scrim`, celui que la charte définit pour « du texte sur une photo », contraste vérifié au pire
+  cas. La lisibilité ne dépend donc plus de l'image.
+- **Le wordmark est du TEXTE, pas `alure-wordmark.svg`.** Ce fichier contient un `<text>` en
+  « Glacial Indifference » : dans une balise `<img>`, un SVG ne charge aucune police web — le mot
+  sortirait dans la police par défaut du navigateur. Le site le rend partout en HTML avec
+  `font-display`, comme au footer et sur le hero. La flèche, elle, est bien `alure-fleche-1.svg`,
+  inline via `AlureArrow` pour suivre `currentColor`.
+- **Dérogation à la charte §8.16** (« le lock-up complet ne vit qu'au footer »), demandée par le
+  propriétaire — la deuxième après celle de la vidéo d'ouverture, et bornée comme elle à une image
+  précise.
+
+Vérifié dans le CSS de production : `.from-scrim` est bien émise et résout sur `#071128a3`.
+
+### Le hero n'ouvre plus sur la vidéo
+
+Consigne Camil : « masque la vidéo de la Hero Section ». `HERO_VARIANT` passe de `cine` à
+`scroll` — un mot, comme l'architecture le prévoit : aucun composant, aucun asset, aucun import
+touché. L'accueil n'ouvre donc plus sur `hero.mp4` qui se joue toute seule ; le visiteur pilote la
+séquence au défilement dès le premier pixel. En mode `scroll`, la vidéo d'ouverture n'est même pas
+MONTÉE (`HeroScroll`, `intro=false`) : ce n'est pas un `display:none`, l'élément n'existe pas.
+
+Ce qui reste, et qu'il faut savoir : la boucle sous-marine muette du décor (`backdrop-clean.mp4`,
+`HeroBackdrop`) continue de tourner derrière le carrousel 3D — c'est un décor, pas la vidéo du
+hero. Si c'est elle qui devait disparaître, c'est un autre réglage.
+
+Rien n'est supprimé : `cine`, `video`, la vidéo et ses variantes mobiles restent en place et
+testées. Remettre l'ouverture filmée = remettre `cine` dans `src/lib/hero-variant.ts`.
+
 ### Les cinq blocs de « Ce qu'il y a dans le leurre », compactés
 
 Consigne Camil : « réduits à fond, le plus possible ». Le gros plan passe d'une image de 40 % de
@@ -35,6 +107,13 @@ large à une vignette de 96 px posée à gauche du texte, et les cinq cartes tie
 se lit d'un coup d'œil au lieu de se dérouler. Le fichier servi reste le 640×480 : c'est `sizes`
 qui annonce la taille réelle, et le navigateur prend la variante — jamais plus lourde que
 nécessaire.
+
+**Réglage `width={80} height={200}` sur les cinq vignettes**, relevé par Camil dans son
+navigateur et poussé sur sa consigne. Ces deux nombres ne dimensionnent rien — `w-24 h-auto` fixe
+la largeur à 96 px — ils ne réservent qu'un RAPPORT, 2:5 en portrait, alors que les gros plans
+sont en 4:3 paysage : le navigateur calcule 96 × 240 px et **étire l'image** dedans. Trois sorties
+avaient été proposées (`object-cover` pour recadrer, `80×60` + `w-20` pour garder le 4:3, ou tel
+quel) ; c'est « tel quel » qui part. Un `object-cover` suffit à revenir en arrière.
 
 ### ⚠️ À INSTRUIRE — « le leurre noir n'est plus collector »
 
