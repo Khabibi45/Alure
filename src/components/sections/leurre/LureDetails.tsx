@@ -48,7 +48,15 @@ export function LureDetails({ strings }: { strings: LeurreStrings }) {
         les cinq tiennent sur deux rangs au lieu de cinq pleines largeurs : la
         section se lit d'un coup d'œil au lieu de se dérouler. Le fichier servi
         reste le 640×480 — `sizes` annonce la taille réelle, et c'est le
-        navigateur qui prend la variante, jamais plus lourde que nécessaire. */}
+        navigateur qui prend la variante, jamais plus lourde que nécessaire.
+
+        ⚠️ `width`/`height` valent 80×200 par CONSIGNE (Camil, 2026-09-02, réglage
+        relevé dans son navigateur). Ces deux nombres ne dimensionnent rien ici —
+        `w-24 h-auto` fixe la largeur à 96 px — ils ne servent qu'à réserver le
+        RAPPORT, soit 2:5. La source, elle, est en 4:3 : la vignette est donc
+        étirée en hauteur (96 × 240 px). Un `object-cover` recadrerait au lieu
+        d'étirer ; il n'est pas posé parce que la consigne portait sur ces
+        réglages-là. */}
       <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {strings.details.map((detail) => {
           // Le coloris vient d'un état client, donc d'une valeur qui pourrait ne
@@ -64,8 +72,8 @@ export function LureDetails({ strings }: { strings: LeurreStrings }) {
               <Image
                 src={photo.src}
                 alt={photo.alt}
-                width={640}
-                height={480}
+                width={80}
+                height={200}
                 sizes="96px"
                 className="rounded-row h-auto w-24 shrink-0"
               />
