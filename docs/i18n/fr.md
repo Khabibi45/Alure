@@ -75,6 +75,15 @@
 - `HOME.VIEW_BACK_DESC` — de dos, caudale vers vous
 - `HOME.MODEL_ALT` — Le leurre Alure en vue 3D, modèle {nom}. Il nage sur place. Vue : {vue}.
 
+### Le prochain leurre (accueil, sous le carrousel)
+
+- `HOME.NEXT_OVERLINE` — Prochaine sélection
+- `HOME.NEXT_TITLE` — Le goujon
+- `HOME.NEXT_BODY` — Notre prochain leurre est un goujon, taillé pour la pêche de l'aspe.
+- `HOME.NEXT_STATUS` — Il n'est pas encore en vente, et nous n'annoncerons pas de date tant que nous n'en serons pas sûrs.
+- `HOME.NEXT_LINK` — Où en est Alure
+- `HOME.NEXT_ALT` — Le goujon Alure en vue 3D, le prochain leurre de la sélection. Il tourne lentement sur lui-même.
+
 ## 4. PRODUCT — page /leurre
 
 - `PRODUCT.TITLE` — Leurre articulé 2 sections — {prixSolo} port inclus

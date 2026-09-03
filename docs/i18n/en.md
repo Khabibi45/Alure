@@ -77,6 +77,15 @@
 - `HOME.VIEW_BACK_DESC` — from behind, tail fin towards you
 - `HOME.MODEL_ALT` — The Alure lure in 3D, {nom} model. It swims on the spot. View: {vue}.
 
+### The next lure (home page, below the carousel)
+
+- `HOME.NEXT_OVERLINE` — Next selection
+- `HOME.NEXT_TITLE` — The gudgeon
+- `HOME.NEXT_BODY` — Our next lure is a gudgeon, built for asp fishing.
+- `HOME.NEXT_STATUS` — It is not on sale yet, and we will not announce a date until we are sure of it.
+- `HOME.NEXT_LINK` — Where Alure stands
+- `HOME.NEXT_ALT` — The Alure gudgeon in 3D, the next lure in the selection. It turns slowly on itself.
+
 ## 4. PRODUCT — /leurre page
 
 - `PRODUCT.TITLE` — Two-section jointed swimbait — {prixSolo}, delivery included

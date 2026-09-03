@@ -85,6 +85,22 @@ export const LURE_MODELS: readonly LureModel[] = [
 ] as const
 
 /**
+ * Le modèle du PROCHAIN leurre — celui que la section « Prochaine sélection »
+ * fait tourner sur l'accueil.
+ *
+ * Il est déclaré À PART, et pas dans `LURE_MODELS`, parce que ce registre-là
+ * commande le carrousel et le sélecteur de coloris : y ajouter le goujon le
+ * mettrait en vente. Or il ne se vend pas, il n'a pas de coloris, et il n'a
+ * même pas de nom de catalogue.
+ *
+ * Mais il est SERVI, donc il doit être déclaré quelque part : le test qui
+ * traque les `.glb` orphelins de `public/models/` compte cette entrée avec les
+ * autres. Sans elle, ajouter un modèle hors carrousel sortirait en gate rouge —
+ * et le supprimer du code laisserait 8 Mo servis pour rien.
+ */
+export const NEXT_LURE_MODEL = '/models/goujon.glb'
+
+/**
  * Le nom PUBLIC d'un modèle : le libellé du coloris au catalogue pour un modèle
  * vendable, celui du collector sinon. Le `workingName` (nom du fichier) ne sort
  * jamais à l'écran — deux sources de nommage finiraient par diverger.

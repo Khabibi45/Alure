@@ -2,7 +2,13 @@
 import { describe, it, expect } from 'vitest'
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { LURE_MODELS, SELLABLE_LURE_MODELS, COLLECTOR_LURE_MODEL, wrapIndex } from './lure-models'
+import {
+  LURE_MODELS,
+  NEXT_LURE_MODEL,
+  SELLABLE_LURE_MODELS,
+  COLLECTOR_LURE_MODEL,
+  wrapIndex,
+} from './lure-models'
 import { GIFT_CHOICE_IDS, PRODUCT, totalCents } from './shop/product'
 import { LURE_SWIM, TARGET_LURE_LENGTH } from './three/swim.config'
 import {
@@ -51,7 +57,12 @@ describe('LURE_MODELS — le registre des leurres du hero', () => {
     // L'oubli symétrique : le .glb a été traité mais jamais enregistré, donc jamais
     // affiché. On préfère un gate rouge à un fichier de plusieurs Mo servi pour rien.
     const onDisk = readdirSync(PUBLIC_MODELS).filter((f) => f.endsWith('.glb'))
-    const registered = new Set(LURE_MODELS.map((m) => m.src.replace('/models/', '')))
+    // Les modèles servis HORS carrousel comptent aussi : le goujon de la section
+    // « Prochaine sélection » n'est pas au catalogue, mais il est bien affiché.
+    const registered = new Set([
+      ...LURE_MODELS.map((m) => m.src.replace('/models/', '')),
+      NEXT_LURE_MODEL.replace('/models/', ''),
+    ])
     const orphans = onDisk.filter((f) => !registered.has(f))
     expect(orphans, `à enregistrer dans LURE_MODELS : ${orphans.join(', ')}`).toEqual([])
   })

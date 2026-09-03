@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/home/Hero'
+import { NextLure } from '@/components/sections/home/NextLure'
 import { OrdersBanner } from '@/components/sections/OrdersBanner'
 import { carouselStrings } from '@/lib/i18n/chrome'
 import { HERO_VARIANT } from '@/lib/hero-variant'
@@ -37,6 +38,7 @@ export default async function LangHomePage({ params }: { params: Promise<{ lang:
   return (
     <main>
       <Hero variant={HERO_VARIANT} title={t(dict, 'HOME.H1')} strings={carouselStrings(locale)} />
+      <NextLure locale={locale} />
       <OrdersBanner locale={locale} href={localePath(locale, '/nos-projets')} />
     </main>
   )

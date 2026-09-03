@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/home/Hero'
+import { NextLure } from '@/components/sections/home/NextLure'
 import { OrdersBanner } from '@/components/sections/OrdersBanner'
 import { carouselStrings } from '@/lib/i18n/chrome'
 import { HERO_VARIANT } from '@/lib/hero-variant'
@@ -28,6 +29,7 @@ export default function HomePage() {
         title={t(getDictionary('fr'), 'HOME.H1')}
         strings={carouselStrings('fr')}
       />
+      <NextLure locale={'fr'} />
       <OrdersBanner locale={'fr'} href={localePath('fr', '/nos-projets')} />
     </main>
   )
