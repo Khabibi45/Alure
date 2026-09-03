@@ -91,42 +91,31 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
           setStatus('unsupported')
         },
       },
-      // CALAGE SUR LA SÉQUENCE VIDÉO — c'est ce qui rend le fondu invisible.
+      // ── LE CADRAGE : PLUS PETIT, ET CENTRÉ (consigne Camil, 2026-09-03) ──
       //
-      // Mesuré sur la dernière image (`public/hero-frames/0121.webp`, 1280×720) :
-      // le leurre y va de x=430 à x=950, soit 520 px = 40,6 % de la largeur.
+      // Jusqu'ici le leurre 3D était DÉCALÉ, à 691 × 336 dans une image de
+      // 1280 × 720 : ces deux nombres l'alignaient sur le leurre FILMÉ, pour que
+      // le fondu de la séquence vers la 3D ne bouge pas d'un pixel.
       //
-      // En X, on vise le centre du corps : 690 px.
+      // Ce calage n'a plus d'objet, et c'est ce qui le rend supprimable plutôt
+      // que réglable :
       //
-      // En Y, la cible a CHANGÉ le 2026-09-01, et pour deux raisons qui vont dans
-      // le même sens.
+      //   - la séquence montre encore l'ARTICULÉ, un autre produit que celui
+      //     qu'on vend depuis les leurres souples — le raccord était déjà faux ;
+      //   - sur téléphone, l'image de référence est rognée pour remplir l'écran,
+      //     donc la cible n'était pas là où le calcul la plaçait ;
+      //   - la boucle vidéo du décor est coupée depuis le 2026-09-02.
       //
-      // 1. La compensation des hameçons n'a plus lieu d'être. Le calage visait
-      //    382 px, et non la ligne médiane du corps (352 px), parce que
-      //    `normalizeGeometry` centre le modèle sur sa boîte englobante — laquelle,
-      //    sur l'ARTICULÉ, descendait jusqu'au bas des triples. Son centre tombait
-      //    donc sous le corps, et il fallait viser bas pour compenser. Les leurres
-      //    souples n'ont pas d'hameçon : leur boîte, c'est le corps. La correction
-      //    est devenue une erreur.
-      // 2. Camil demande explicitement de remonter le leurre dans le hero.
+      // Sans décalage, le leurre est au centre de la scène, donc au centre du
+      // cadre. C'est ce qu'on cherche quand on regarde un produit.
       //
-      // D'où 336 px : 352 px pour la ligne médiane du corps, moins 16 px de
-      // remontée voulue. Le leurre monte de 46 px sur 720, soit 6,4 % de la hauteur
-      // du cadre. C'est CE nombre qu'on bouge pour le monter ou le descendre.
-      //
-      // ⚠️ Le fondu vidéo → 3D s'en trouve moins exact : la séquence montre encore
-      // l'ancien leurre articulé, à sa place d'origine. Le raccord était de toute
-      // façon déjà imparfait (ce n'est plus le même produit à l'écran) — et la
-      // régénération des segments est au ROADMAP.
-      //
-      // `DEFAULT_FRAME_WIDTH` (4,93) encode la taille : le leurre de 2 unités y
-      // occupe 2/4,93 = 40,6 %. Les décalages ramènent son centre sur celui du
-      // leurre filmé. La caméra suit le même recadrage « cover » que l'image.
-      //
-      // ⚠️ À REVÉRIFIER si les segments sont régénérés (ils le seront, pour
-      // retirer le watermark) : refaire la mesure sur la nouvelle image 0121 et
-      // ajuster ces trois nombres. Rien d'autre ne dépend d'eux.
-      { offsetX: 691 / 1280 - 0.5, offsetY: 0.5 - 336 / 720 }
+      // `zoom` COMMANDE LA TAILLE, et il agit sur la CAMÉRA, pas sur le modèle :
+      // en dessous de 1, le cadre s'élargit et le leurre occupe moins de place.
+      // Il ne faut surtout pas mettre le modèle à l'échelle — l'amplitude de nage
+      // est une fraction de la longueur du corps, l'ondulation changerait avec.
+      // À 0,8, le leurre occupe 32 % de la largeur du cadre au lieu de 41 %.
+      // C'est CE nombre qu'on bouge pour l'agrandir ou le réduire.
+      { zoom: 0.8 }
     )
     stageRef.current = stage
 
