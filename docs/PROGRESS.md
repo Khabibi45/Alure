@@ -39,6 +39,46 @@ l'écran où il est déjà le plus petit.
 En portrait, `lure-stage` remet donc les deux décalages à zéro. Le raccord avec la séquence y perd,
 mais il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
 
+## 2026-09-03 — Le prochain leurre s'annonce, et le carrousel se recadre
+
+### « Prochaine sélection » : le goujon, sous le carrousel
+
+Consigne Camil : teaser le prochain leurre, argument « pêche à l'aspe ». Nouvelle section sur
+l'accueil, sous le hero, dans les deux langues.
+
+**Le modèle.** `goujon.glb` pesait 78 Mo à l'export. La chaîne du projet le ramène à **8,4 Mo**
+(`--simplify=0.12`, la valeur de convention : 1,95 M → 234 k triangles, textures rééchantillonnées,
+cartes de données préservées). Sans la décimation il sortait à 54 Mo — c'est elle qui fait le
+travail, pas la compression des textures.
+
+**Il ne se charge pas au chargement de la page.** La section vit sous la ligne de flottaison :
+faire payer 8,4 Mo à chaque visiteur, souvent en 4G, pour un fichier que la plupart ne verront
+jamais, ce serait une régression. La scène n'est montée qu'à l'entrée dans le champ
+(`IntersectionObserver`), et sa boucle de rendu s'arrête dès qu'elle en sort — un canvas WebGL qui
+tourne hors écran consomme de la batterie pour rien. `prefers-reduced-motion` coupe la rotation :
+le leurre reste posé sur son angle, net et visible.
+
+**Le texte est la partie sensible, et c'est là qu'on invente le plus facilement.** Trois
+garde-fous, écrits dans le composant :
+
+1. **Aucune date.** Ni « bientôt », ni saison. La section dit explicitement qu'il n'y en aura pas
+   tant qu'on n'en sera pas sûr — même doctrine que le délai de livraison, jamais atténué.
+2. **Aucune caractéristique** : ni taille, ni poids, ni coloris. Rien n'est mesuré sur cette pièce.
+   Le seul argument affiché, la pêche de l'aspe, est celui dicté par Camil — pas déduit du modèle.
+3. **Aucun bouton d'achat.** Il ne se vend pas. Le seul lien part vers « Nos projets ».
+
+### Le carrousel : leurre plus petit, et centré
+
+Consigne Camil. Le leurre 3D était DÉCALÉ à 691 × 336 dans une image de 1280 × 720 — deux nombres
+qui l'alignaient sur le leurre FILMÉ pour rendre le fondu invisible. Ce calage n'a plus d'objet, et
+c'est ce qui le rend supprimable plutôt que réglable : la séquence montre encore l'articulé (un
+autre produit), sur téléphone l'image de référence est rognée, et la boucle du décor est coupée
+depuis hier. Sans décalage, le leurre est au centre de la scène, donc du cadre.
+
+La taille passe par `zoom: 0.8`, qui agit sur la **caméra** : le leurre occupe 32 % de la largeur
+au lieu de 41 %. Surtout pas une mise à l'échelle du modèle — l'amplitude de nage est une fraction
+de la longueur du corps, l'ondulation changerait avec.
+
 ### « À propos » : le colis à la verticale, la scène de pêche en tête
 
 Consigne Camil, deux changements sur la même page.
