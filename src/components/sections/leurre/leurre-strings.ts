@@ -1,5 +1,5 @@
 import type { LureViewId } from '@/lib/three/lure-views'
-import type { OfferId } from '@/lib/shop/product'
+import type { PackId } from '@/lib/shop/product'
 import type { LureDetailId } from '@/lib/shop/lure-details'
 
 /**
@@ -18,10 +18,10 @@ import type { LureDetailId } from '@/lib/shop/lure-details'
  *    `formatEuros(cents, locale)`. C'était la fuite la plus visible de la page
  *    anglaise — le prix principal y affichait « 21,99 € » au lieu de « €21.99 ».
  *    Aucun composant ne reformate un montant.
- * 2. **Ce qui dépend de l'offre choisie arrive en `Record<OfferId, …>`** : le
- *    palier est un état CLIENT (radio), le serveur ne peut pas le connaître — il
- *    prépare donc les deux valeurs, et le composant lit la bonne. Jamais de
- *    calcul de montant côté client.
+ * 2. **Ce qui dépend du pack choisi arrive en `Record<PackId, …>`** : le pack
+ *    est un état CLIENT (radio), le serveur ne peut pas le connaître — il
+ *    prépare donc les deux, et le composant lit le bon. Jamais de calcul de
+ *    montant côté client.
  * 3. **Ce qui contient un NOM PROPRE arrive en gabarit BRUT** (`{coloris}`,
  *    `{collector}`). Les noms du catalogue restent en français dans les deux
  *    langues — ils doivent correspondre au reçu Stripe et à l'email — et ils se
@@ -50,6 +50,17 @@ export type LureDetailBlock = {
   readonly title: string
   readonly body: string
   readonly photos: Readonly<Record<string, LurePhoto>>
+}
+
+/** Ce qu'un pack affiche : son nom, son contenu, son prix, et le prix à la pièce. */
+export type PackStrings = {
+  readonly title: string
+  /** Ce qu'il y a dedans, en une ligne — « Une unité de chaque coloris ». */
+  readonly contents: string
+  /** Le prix du pack, formaté à la langue. */
+  readonly price: string
+  /** « Soit moins de 2,80 € le leurre. » — `null` quand la division ne tombe pas juste. */
+  readonly perUnit: string | null
 }
 
 export type LeurreStrings = {
@@ -88,49 +99,22 @@ export type LeurreStrings = {
   /** Gabarit `{coloris}` — l'équivalent textuel du canvas, qui est `aria-hidden`. */
   readonly viewerAlt: string
 
-  /* ── Le prix, par palier ── */
-  /** Le total de l'offre, formaté : « 21,99 € » / « 65,97 € » — « €21.99 » en anglais. */
-  readonly total: Record<OfferId, string>
-  /** La ligne sous le prix : port et TVA, plus la règle de l'offre groupée. */
-  readonly tagline: Record<OfferId, string>
+  /* ── Les deux packs ── */
+  /** Le libellé du groupe de choix — « Votre pack ». */
+  readonly packLegend: string
   /**
-   * L'économie annoncée, phrase complète — `null` quand il n'y en a pas.
-   * C'est le serveur qui tranche : une économie nulle ne s'affiche pas, et
-   * aucun composant n'a de raison de savoir la calculer (règle n°6 : jamais de
-   * chiffre fabriqué dans l'UI).
+   * Tout ce qu'un pack affiche, préparé POUR LES DEUX : le pack choisi est un
+   * état client (radio), et aucun montant ne se calcule côté navigateur. Les
+   * prix arrivent déjà ponctués à la langue servie — sans quoi `/en/leurre`
+   * afficherait « 10,99 € » sur l'écran qui doit être le plus limpide.
    */
-  readonly savings: Record<OfferId, string | null>
+  readonly packs: Readonly<Record<PackId, PackStrings>>
+  /** « + 3,60 € de livraison (Lettre Verte suivie) » — elle n'est plus incluse. */
+  readonly shippingLine: string
 
-  /* ── Le sélecteur de coloris ── */
+  /* ── Le sélecteur de coloris (informatif : le pack les contient tous) ── */
   readonly colorwayLabel: string
   readonly soldOut: string
-
-  /* ── Le 4e leurre offert, au choix ── */
-  readonly giftLabel: string
-  /** Gabarit `{coloris}` — le nom accessible d'un coloris pris en double. */
-  readonly giftDuplicateA11y: string
-  /** Gabarit `{collector}`. */
-  readonly giftCollectorA11y: string
-
-  /* ── Le sélecteur d'offre ── */
-  readonly offerLegend: string
-  readonly offerTitle: Record<OfferId, string>
-  /** Gabarits `{coloris}` (solo) et `{nbColoris}` `{collector}` (collection). */
-  readonly offerDetail: Record<OfferId, string>
-  /** « Soit 21,99 € le leurre. » / « Soit moins de 17,00 € le leurre. » — résolu. */
-  readonly perLure: Record<OfferId, string>
-
-  /* ── La progression en quatre points ── */
-  readonly progressFirst: string
-  readonly progressSecond: string
-  readonly progressThird: string
-  /** Gabarit `{collector}`. */
-  readonly progressCollector: string
-  readonly progressCollectorDone: string
-  readonly progressCollectorTodo: string
-  readonly progressLockedA11y: string
-  /** Le prix d'un leurre seul, formaté — le pas de chaque palier de la progression. */
-  readonly soloPrice: string
 
   /* ── Le bouton d'achat et la barre collante mobile ── */
   readonly buy: string
@@ -156,8 +140,8 @@ export type LeurreStrings = {
 
   /* ── Les échecs du passage en caisse ── */
   readonly errorFormInvalid: string
-  readonly errorColorwayUnknown: string
-  readonly errorColorwaySoldOut: string
+  readonly errorPackUnknown: string
+  readonly errorPackSoldOut: string
   readonly errorRateLimited: string
   readonly errorPaymentUnavailable: string
   readonly errorPaymentFailed: string

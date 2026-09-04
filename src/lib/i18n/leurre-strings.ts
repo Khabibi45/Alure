@@ -20,6 +20,7 @@ import type {
   LeurreStrings,
   LureDetailBlock,
   LurePhoto,
+  PackStrings,
 } from '@/components/sections/leurre/leurre-strings'
 import {
   LURE_DETAIL_IDS,
@@ -28,14 +29,14 @@ import {
   type LureDetailId,
 } from '@/lib/shop/lure-details'
 import {
-  OFFER_IDS,
+  PACKS,
+  PACK_IDS,
   PRODUCT,
+  SHIPPING,
   formatEuros,
-  perLureAtMostCents,
-  perLureCents,
-  savingsCents,
-  totalCents,
-  type OfferId,
+  perUnitAtMostCents,
+  perUnitCents,
+  type PackId,
 } from '@/lib/shop/product'
 
 /**
@@ -56,10 +57,10 @@ import {
  * rendu par `fillNodes()` dans un `translate="no"` (cf. `fill-nodes.tsx`).
  */
 
-/** Le pont entre l'identifiant d'un palier et le suffixe de ses clés. */
-const OFFER_KEYS: Record<OfferId, string> = {
-  solo: 'SOLO',
-  collection: 'COLLECTION',
+/** Le pont entre l'identifiant d'un pack et le suffixe de ses clés. */
+const PACK_KEYS: Record<PackId, string> = {
+  leurres: 'LEURRES',
+  goujons: 'GOUJONS',
 }
 
 /**
@@ -78,40 +79,29 @@ const DETAIL_KEYS: Record<LureDetailId, string> = {
 export function leurreStrings(locale: Locale): LeurreStrings {
   const dict = getDictionary(locale)
 
-  // Tout ce qui dépend du palier est préparé POUR LES DEUX : le palier est un
-  // état client (radio), et aucun montant ne se calcule côté navigateur.
-  const total = {} as Record<OfferId, string>
-  const tagline = {} as Record<OfferId, string>
-  const savings = {} as Record<OfferId, string | null>
-  const offerTitle = {} as Record<OfferId, string>
-  const offerDetail = {} as Record<OfferId, string>
-  const perLure = {} as Record<OfferId, string>
-
-  for (const id of OFFER_IDS) {
-    const suffix = OFFER_KEYS[id]
-    total[id] = formatEuros(totalCents(id), locale)
-    tagline[id] = t(dict, `PRICING.TAGLINE_${suffix}`)
-    offerTitle[id] = t(dict, `OFFER.${suffix}_TITLE`)
-    // Gabarit brut : `{coloris}` (solo) et `{collector}` (collection) sont des
-    // noms propres, rendus par le composant hors traduction automatique.
-    offerDetail[id] = raw(dict, `OFFER.${suffix}_DETAIL`)
-
-    // Une économie nulle ne s'affiche pas : pas de « Vous économisez 0,00 € »,
-    // et surtout jamais un prix de référence gonflé (règle n°6).
-    const saved = savingsCents(id)
-    savings[id] =
-      saved > 0 ? t(dict, 'PRICING.SAVINGS', { montant: formatEuros(saved, locale) }) : null
-
-    // Le prix par leurre : exact quand la division tombe juste, « moins de X »
-    // sinon. C'est le domaine qui tranche (`perLureCents` rend `null`), pas le
+  // Tout ce qui dépend du pack est préparé POUR LES DEUX : le pack est un état
+  // client (radio), et aucun montant ne se calcule côté navigateur.
+  const packs = {} as Record<PackId, PackStrings>
+  for (const id of PACK_IDS) {
+    const suffix = PACK_KEYS[id]
+    // Le prix par pièce : exact quand la division tombe juste, « moins de »
+    // sinon. C'est le domaine qui tranche (`perUnitCents` rend `null`), pas le
     // texte — on n'annonce jamais un montant arrondi en notre faveur.
-    const exact = perLureCents(id)
-    perLure[id] =
-      exact !== null
-        ? t(dict, 'OFFER.PER_LURE_EXACT', { montant: formatEuros(exact, locale) })
-        : t(dict, 'OFFER.PER_LURE_AT_MOST', {
-            montant: formatEuros(perLureAtMostCents(id), locale),
-          })
+    const exact = perUnitCents(id)
+    packs[id] = {
+      title: t(dict, `PACK.${suffix}_TITLE`),
+      contents: t(dict, `PACK.${suffix}_CONTENTS`, {
+        coloris: PRODUCT.colorways.map((c) => c.label).join(', '),
+        nombre: String(PACKS[id].unitCount),
+      }),
+      price: formatEuros(PACKS[id].amountCents, locale),
+      perUnit:
+        exact !== null
+          ? t(dict, 'PACK.PER_UNIT_EXACT', { montant: formatEuros(exact, locale) })
+          : t(dict, 'PACK.PER_UNIT_AT_MOST', {
+              montant: formatEuros(perUnitAtMostCents(id), locale),
+            }),
+    }
   }
 
   const views = {} as Record<LureViewId, string>
@@ -167,30 +157,15 @@ export function leurreStrings(locale: Locale): LeurreStrings {
     viewerNoWebgl: t(dict, 'PRODUCT.VIEWER_NO_WEBGL'),
     viewerAlt: raw(dict, 'PRODUCT.VIEWER_ALT'),
 
-    total,
-    tagline,
-    savings,
+    packLegend: t(dict, 'PACK.LEGEND'),
+    packs,
+    shippingLine: t(dict, 'PRODUCT.SHIPPING_LINE', {
+      montant: formatEuros(SHIPPING.amountCents, locale),
+      transporteur: SHIPPING.carrier,
+    }),
 
     colorwayLabel: t(dict, 'PRODUCT.COLORWAY_LABEL'),
     soldOut: t(dict, 'PRODUCT.SOLD_OUT'),
-
-    giftLabel: t(dict, 'PRODUCT.GIFT_LABEL'),
-    giftDuplicateA11y: raw(dict, 'PRODUCT.GIFT_DUPLICATE_A11Y'),
-    giftCollectorA11y: raw(dict, 'PRODUCT.GIFT_COLLECTOR_A11Y'),
-
-    offerLegend: t(dict, 'OFFER.LEGEND'),
-    offerTitle,
-    offerDetail,
-    perLure,
-
-    progressFirst: t(dict, 'PROGRESS.STEP_FIRST'),
-    progressSecond: t(dict, 'PROGRESS.STEP_SECOND'),
-    progressThird: t(dict, 'PROGRESS.STEP_THIRD'),
-    progressCollector: raw(dict, 'PROGRESS.STEP_COLLECTOR'),
-    progressCollectorDone: t(dict, 'PROGRESS.COLLECTOR_PICK'),
-    progressCollectorTodo: t(dict, 'PROGRESS.COLLECTOR_TODO'),
-    progressLockedA11y: t(dict, 'PROGRESS.LOCKED_A11Y'),
-    soloPrice: formatEuros(PRODUCT.pricing.soloCents, locale),
 
     buy: t(dict, 'PRODUCT.BUY'),
     buyLoading: t(dict, 'PRODUCT.BUY_LOADING'),
@@ -210,8 +185,8 @@ export function leurreStrings(locale: Locale): LeurreStrings {
     details,
 
     errorFormInvalid: t(dict, 'STATES.FORM_INVALID'),
-    errorColorwayUnknown: t(dict, 'STATES.COLORWAY_UNKNOWN'),
-    errorColorwaySoldOut: t(dict, 'STATES.COLORWAY_SOLD_OUT'),
+    errorPackUnknown: t(dict, 'STATES.PACK_UNKNOWN'),
+    errorPackSoldOut: t(dict, 'STATES.PACK_SOLD_OUT'),
     errorRateLimited: t(dict, 'STATES.RATE_LIMITED'),
     errorPaymentUnavailable: t(dict, 'STATES.PAYMENT_UNAVAILABLE'),
     errorPaymentFailed: t(dict, 'STATES.PAYMENT_FAILED'),

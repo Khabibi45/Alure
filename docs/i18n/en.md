@@ -172,6 +172,17 @@
 - `PRODUCT.DETAIL_TAIL_ALT` — Close-up of the jointed, ribbed tail, {coloris} colourway.
 - `PRODUCT.DETAIL_PADDLE_ALT` — The duck-foot paddle seen head-on, {coloris} colourway.
 
+## 4bis. PACK — the two packs
+
+- `PACK.LEGEND` — Your pack
+- `PACK.LEURRES_TITLE` — The soft-lure pack
+- `PACK.LEURRES_CONTENTS` — One of each colourway: {coloris}.
+- `PACK.GOUJONS_TITLE` — The gudgeon pack
+- `PACK.GOUJONS_CONTENTS` — {nombre} gudgeons, built for asp fishing.
+- `PACK.PER_UNIT_EXACT` — That is {montant} apiece.
+- `PACK.PER_UNIT_AT_MOST` — That is under {montant} apiece.
+- `PRODUCT.SHIPPING_LINE` — + {montant} delivery ({transporteur}). TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
+
 ## 5. PRICING
 
 - `PRICING.RULE` — Buy 3 lures, pick a 4th free
@@ -436,8 +447,8 @@
 - `PRICING.TAGLINE_COLLECTION` — Buy 3 lures, pick a 4th free · delivery included · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
 - `PROGRESS.COLLECTOR_PICK` — pick it above — it ships in your parcel
 - `PRODUCT.VIEWER_ALT` — The Alure lure in 3D, {coloris} colourway. It swims on the spot.
-- `STATES.COLORWAY_UNKNOWN` — That colourway does not exist.
-- `STATES.COLORWAY_SOLD_OUT` — That colourway is sold out.
+- `STATES.PACK_UNKNOWN` — That pack does not exist.
+- `STATES.PACK_SOLD_OUT` — That pack is unavailable right now.
 
 ### PRECOMMANDE — la campagne des 100 (2026-08-26)
 

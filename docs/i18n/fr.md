@@ -170,6 +170,17 @@
 - `PRODUCT.DETAIL_TAIL_ALT` — Gros plan sur la queue articulée et striée, coloris {coloris}.
 - `PRODUCT.DETAIL_PADDLE_ALT` — La palette en patte de canard, vue de face, coloris {coloris}.
 
+## 4bis. PACK — les deux packs
+
+- `PACK.LEGEND` — Votre pack
+- `PACK.LEURRES_TITLE` — Le pack de leurres souples
+- `PACK.LEURRES_CONTENTS` — Une unité de chaque coloris : {coloris}.
+- `PACK.GOUJONS_TITLE` — Le pack de goujons
+- `PACK.GOUJONS_CONTENTS` — {nombre} goujons, taillés pour l'aspe.
+- `PACK.PER_UNIT_EXACT` — Soit {montant} la pièce.
+- `PACK.PER_UNIT_AT_MOST` — Soit moins de {montant} la pièce.
+- `PRODUCT.SHIPPING_LINE` — + {montant} de livraison ({transporteur}). TVA non applicable, art. 293 B du CGI.
+
 ## 5. PRICING
 
 - `PRICING.RULE` — 3 leurres achetés, le 4e offert au choix
@@ -434,8 +445,8 @@
 - `PRICING.TAGLINE_COLLECTION` — 3 leurres achetés, le 4e offert au choix · port inclus · TVA non applicable, art. 293 B du CGI.
 - `PROGRESS.COLLECTOR_PICK` — choisissez-le ci-dessus, il part dans votre colis
 - `PRODUCT.VIEWER_ALT` — Le leurre Alure en vue 3D, coloris {coloris}. Il nage sur place.
-- `STATES.COLORWAY_UNKNOWN` — Ce coloris n’existe pas.
-- `STATES.COLORWAY_SOLD_OUT` — Ce coloris est épuisé.
+- `STATES.PACK_UNKNOWN` — Ce pack n’existe pas.
+- `STATES.PACK_SOLD_OUT` — Ce pack est momentanément indisponible.
 
 ### PRECOMMANDE — la campagne des 100 (2026-08-26)
 

@@ -1,25 +1,39 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+} from 'react'
 import { usePathname } from 'next/navigation'
 import { checkoutSchema } from '@/lib/shop/checkout-schema'
 import { splitLocalePath } from '@/lib/i18n/paths'
-import { getColorway, orderableError } from '@/lib/shop/product'
-import { useColorwaySelection } from './colorway-context'
+import { PACKS, orderableError, type PackId } from '@/lib/shop/product'
 import type { LeurreStrings } from './leurre-strings'
 
 /**
- * L'état du passage en caisse, partagé entre les deux panneaux de la page
- * produit : l'îlot prix/coloris (colonne) et le panneau d'offre (pleine
- * largeur). Le CTA vit dans le second, mais le premier doit savoir qu'un
- * paiement démarre (radios verrouillés) et pouvoir effacer une erreur quand la
- * sélection change. Un seul endroit décide — deux statuts divergents seraient
- * exactement l'état illégal que web-illegal-states interdit.
+ * LE PACK CHOISI et l'état du passage en caisse, au même endroit.
+ *
+ * Les deux vont ensemble : changer de pack change le prix affiché ET doit
+ * effacer une erreur périmée. Les séparer laisserait exister un instant où le
+ * bouton paie un pack pendant que le prix en montre un autre — exactement
+ * l'état illégal que `web-illegal-states` interdit.
+ *
+ * Le coloris, lui, vit ailleurs (`colorway-context`) : depuis les packs, ce
+ * n'est plus une décision d'achat, seulement ce qu'on regarde.
  */
 export type CheckoutStatus =
   { state: 'idle' } | { state: 'loading' } | { state: 'error'; message: string }
 
 type Checkout = {
+  /** Le pack qui sera payé. */
+  pack: PackId
+  setPack: Dispatch<SetStateAction<PackId>>
   status: CheckoutStatus
   /** Valide la sélection, crée la session Stripe et part vers le paiement. */
   submit: () => Promise<void>
@@ -32,29 +46,26 @@ const CheckoutContext = createContext<Checkout | null>(null)
 export function CheckoutProvider({
   children,
   strings,
+  initialPack,
 }: {
   children: ReactNode
   strings: LeurreStrings
+  /** Pack ouvert à l'arrivée, si l'URL en désigne un. */
+  initialPack?: PackId
 }) {
   const pathname = usePathname()
-  const { coloris, offre, cadeau } = useColorwaySelection()
+  const [pack, setPack] = useState<PackId>(initialPack ?? 'leurres')
   const [status, setStatus] = useState<CheckoutStatus>({ state: 'idle' })
 
   // La logique vient telle quelle de l'ancienne BuyBox (spec boutique.md T2) :
   // schéma partagé, disponibilité revérifiée, et navigation UNIQUEMENT vers
   // checkout.stripe.com — défense en profondeur, pas une politesse.
   const submit = useCallback(async () => {
-    // Le cadeau n'existe qu'avec l'offre groupée — jamais relayé en solo.
     // La langue se lit dans l'URL courante : c'est elle qui décidera de la
     // langue de la page Stripe et des pages de retour. Sans ce champ, un
     // acheteur venu de `/en` payait sur un écran français.
     const { locale } = splitLocalePath(pathname)
-    const parsed = checkoutSchema.safeParse({
-      coloris,
-      offre,
-      langue: locale,
-      ...(offre === 'collection' ? { cadeau } : {}),
-    })
+    const parsed = checkoutSchema.safeParse({ pack, langue: locale })
     if (!parsed.success) {
       setStatus({ state: 'error', message: strings.errorFormInvalid })
       return
@@ -62,12 +73,10 @@ export function CheckoutProvider({
     // La règle reste au domaine ; seul le TEXTE change de langue. `orderableError`
     // répond en français (il sert aussi la route API et les emails) : on ne
     // relaie donc pas sa phrase, on redit la même chose dans la langue de la page.
-    if (orderableError(parsed.data.coloris) !== null) {
+    if (orderableError(parsed.data.pack) !== null) {
       setStatus({
         state: 'error',
-        message: getColorway(parsed.data.coloris)
-          ? strings.errorColorwaySoldOut
-          : strings.errorColorwayUnknown,
+        message: parsed.data.pack in PACKS ? strings.errorPackSoldOut : strings.errorPackUnknown,
       })
       return
     }
@@ -108,7 +117,7 @@ export function CheckoutProvider({
     } catch {
       setStatus({ state: 'error', message: strings.errorPaymentOffline })
     }
-  }, [coloris, offre, cadeau, pathname, strings])
+  }, [pack, pathname, strings])
 
   // Mise à jour fonctionnelle : pas de dépendance au statut courant.
   const clearError = useCallback(() => {
@@ -116,8 +125,8 @@ export function CheckoutProvider({
   }, [])
 
   const value = useMemo<Checkout>(
-    () => ({ status, submit, clearError }),
-    [status, submit, clearError]
+    () => ({ pack, setPack, status, submit, clearError }),
+    [pack, status, submit, clearError]
   )
 
   return <CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>
