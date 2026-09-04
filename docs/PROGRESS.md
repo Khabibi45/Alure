@@ -39,6 +39,56 @@ l'écran où il est déjà le plus petit.
 En portrait, `lure-stage` remet donc les deux décalages à zéro. Le raccord avec la séquence y perd,
 mais il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
 
+## 2026-09-04 — Le leurre s'appelle enfin « souple », et la page produit tient en un bloc
+
+### Le mot juste, partout
+
+Le site vendait encore un « leurre articulé deux sections ». Ce produit n'existe plus depuis le
+passage aux leurres souples : le titre, la description SEO, le H1 de la page produit, les CGV, la
+page « À propos », « Nos projets », le JSON-LD et **le nom qui part sur le reçu Stripe**
+(`PRODUCT.name`) décrivaient tous autre chose que ce qu'on livre. Corrigé dans les deux langues.
+
+Une occurrence est restée, et c'est volontaire : **« queue articulée et striée »**. Celle-là est
+vraie — c'est la charnière du leurre souple, décrite par Camil lui-même.
+
+### La page produit : un seul bloc, photo OU 3D
+
+La photo et la scène 3D s'empilaient. C'était deux fois la même chose l'une sous l'autre, et
+surtout deux gestes qui ne se pratiquent pas en même temps : voir le produit tel qu'il arrive, OU
+tourner autour. Un sélecteur (`ColorwayMedia`) dit ce choix ; un empilement le subissait.
+
+**La photo est le défaut, et ce n'est pas qu'un goût.** La scène 3D pèse une douzaine de mégaoctets
+par coloris et se chargeait à l'ouverture de la page, pour tout le monde. Derrière le sélecteur,
+elle ne se télécharge que si le visiteur la demande — sur la page qui VEND, celle où le premier
+affichage compte le plus. Le cadre 3D passe en 4:3 pour épouser celui de la photo : sans ça,
+basculer ferait sauter la page.
+
+### Ce qu'on voit en arrivant, et la taille des scènes
+
+Sur l'accueil, le carrousel ouvre désormais sur le **Pirate, vu de gauche** (consigne Camil) —
+l'index est CHERCHÉ dans le registre, pas écrit en dur : un 3 en dur montrerait un autre leurre le
+jour où l'ordre change, sans que rien ne le signale.
+
+Les trois scènes 3D reculent d'un cran : carrousel `zoom: 0.72`, page produit et prochain leurre
+`0.85`. C'est la CAMÉRA qui recule, jamais le modèle qui rétrécit — l'amplitude de nage est une
+fraction de la longueur du corps, mettre le maillage à l'échelle changerait l'ondulation avec.
+
+### ⚠️ EN ATTENTE — « vendus par 3 », et les prix
+
+Camil : « on les vend par 3 », un pack contient tous les coloris, **10,99 € le pack, frais de
+livraison NON compris**, et « le pack de 5 goujon est à 5,99 € ».
+
+**Rien n'a été touché côté prix.** Ce n'est pas de la prudence excessive : le site entier repose
+sur `soloCents = 2199` et sur « port inclus », affiché dans les CGV, le récapitulatif, les emails
+et le reçu Stripe. Passer à 10,99 € le pack de 3 et à des frais de port séparés, c'est changer le
+prix affiché, le montant encaissé, la mention légale des CGV et la configuration Stripe — quatre
+endroits qui doivent bouger ensemble, sous peine de litige.
+
+Quatre questions restent ouvertes, et aucune ne se devine : le MONTANT des frais de livraison
+(obligatoire avant l'achat), si le Pirate entre dans le pack (« tous les coloris » = 3 ou 4), si le
+goujon est désormais en vente (la page d'accueil vient d'annoncer le contraire), et ce que devient
+l'offre « 3 achetés, le 4e offert ».
+
 ## 2026-09-03 — Le prochain leurre s'annonce, et le carrousel se recadre
 
 ### « Prochaine sélection » : le goujon, sous le carrousel
