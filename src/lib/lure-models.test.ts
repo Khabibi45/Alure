@@ -2,14 +2,8 @@
 import { describe, it, expect } from 'vitest'
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import {
-  LURE_MODELS,
-  NEXT_LURE_MODEL,
-  SELLABLE_LURE_MODELS,
-  COLLECTOR_LURE_MODEL,
-  wrapIndex,
-} from './lure-models'
-import { GIFT_CHOICE_IDS, PRODUCT, totalCents } from './shop/product'
+import { LURE_MODELS, NEXT_LURE_MODEL, SELLABLE_LURE_MODELS, wrapIndex } from './lure-models'
+import { PRODUCT, totalCents, PACKS, SHIPPING } from './shop/product'
 import { LURE_SWIM, TARGET_LURE_LENGTH } from './three/swim.config'
 import {
   LURE_VIEWS,
@@ -137,20 +131,17 @@ describe('LURE_MODELS — le registre des leurres du hero', () => {
     expect(SELLABLE_LURE_MODELS).toHaveLength(PRODUCT.colorways.length)
   })
 
-  it('ne rattache le collector à aucun coloris — il ne se vend pas', () => {
-    expect(COLLECTOR_LURE_MODEL).not.toBeNull()
-    expect(COLLECTOR_LURE_MODEL?.colorwayId).toBeNull()
-    expect(SELLABLE_LURE_MODELS.some((m) => m.collector)).toBe(false)
+  it('ne garde aucun modèle « collector » — le noir se vend comme les autres', () => {
+    // La mécanique du 4e leurre offert a disparu le 2026-09-04. Le drapeau
+    // reste dans le type (il resservira le jour où une pièce ne se vendra pas),
+    // mais aucun modèle ne doit le porter aujourd'hui : un modèle marqué
+    // collector sortirait silencieusement du carrousel et du pack.
+    expect(LURE_MODELS.some((m) => m.collector)).toBe(false)
+    expect(SELLABLE_LURE_MODELS).toHaveLength(LURE_MODELS.length)
   })
 
-  it('le collector est un CHOIX de cadeau — jamais un article vendu', () => {
-    expect(GIFT_CHOICE_IDS).toContain(PRODUCT.collector.id)
-  })
-
-  it('n’ajoute jamais le collector au montant payé', () => {
-    // Le 4e est OFFERT : le total de l'offre reste trois fois le prix d'un
-    // leurre, quel que soit le cadeau choisi.
-    expect(totalCents('collection')).toBe(PRODUCT.pricing.soloCents * 3)
+  it('le pack facture les quatre coloris d’un bloc, livraison en sus', () => {
+    expect(totalCents('leurres')).toBe(PACKS.leurres.amountCents + SHIPPING.amountCents)
   })
 })
 

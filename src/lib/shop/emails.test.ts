@@ -7,14 +7,13 @@ import {
   notificationText,
   type OrderSummary,
 } from './emails'
-import { PRODUCT, offerSummary, totalCents } from './product'
+import { PRODUCT, packSummary, totalCents } from './product'
 
 const order: OrderSummary = {
   sessionId: 'cs_test_123',
   customerEmail: 'client@exemple.fr',
-  colorisLabel: PRODUCT.colorways[0].label,
-  offerSummary: offerSummary('collection', PRODUCT.colorways[0].label),
-  totalCents: totalCents('collection'),
+  packLabel: packSummary('leurres'),
+  totalCents: totalCents('leurres'),
 }
 
 describe('gabarits des emails de commande', () => {
@@ -25,7 +24,7 @@ describe('gabarits des emails de commande', () => {
 
   it('la confirmation contient le récapitulatif exact', () => {
     const text = confirmationText(order)
-    expect(text).toContain(order.offerSummary)
+    expect(text).toContain(order.packLabel)
     // Le montant vient de la source unique — jamais un chiffre en dur qui
     // dérive quand le barème change. Intl formate avec une espace insécable
     // fine (U+202F) : on normalise.
@@ -33,7 +32,7 @@ describe('gabarits des emails de commande', () => {
       style: 'currency',
       currency: 'EUR',
     })
-      .format(totalCents('collection') / 100)
+      .format(totalCents('leurres') / 100)
       .replace(/\s/g, ' ')
     expect(text.replace(/\s/g, ' ')).toContain(totalAffiche)
     expect(text).toContain('rétractation de 14 jours')
@@ -46,7 +45,7 @@ describe('gabarits des emails de commande', () => {
   })
 
   it('le HTML échappe les valeurs interpolées', () => {
-    const hostile = { ...order, colorisLabel: '<script>alert(1)</script>' }
+    const hostile = { ...order, packLabel: '<script>alert(1)</script>' }
     expect(confirmationHtml(hostile)).not.toContain('<script>')
   })
 
@@ -54,7 +53,7 @@ describe('gabarits des emails de commande', () => {
     const text = notificationText(order)
     expect(text).toContain('cs_test_123')
     expect(text).toContain('client@exemple.fr')
-    expect(text).toContain(order.offerSummary)
+    expect(text).toContain(order.packLabel)
   })
 
   it('le sujet dit ce qui s’est passé', () => {

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Marker } from '@/components/ui/Marker'
 import { LEGAL, LEGAL_COMPLETE } from '@/lib/legal-config'
 import { SITE } from '@/lib/site-config'
-import { OFFERS, PRODUCT, formatEuros } from '@/lib/shop/product'
+import { PACKS, SHIPPING, PRODUCT, formatEuros } from '@/lib/shop/product'
 import { getDictionary, t, isLocale, localePath, hreflangAlternates } from '@/lib/i18n'
 
 /**
@@ -79,8 +79,11 @@ export default async function LangCgvPage({ params }: { params: Promise<{ lang: 
       <p className="mt-3">
         {t(dict, 'LEGAL.TERMS_S2_BODY', {
           marque: SITE.name,
-          prixSolo: formatEuros(PRODUCT.pricing.soloCents, locale),
-          prixCollection: formatEuros(OFFERS.collection.amountCents, locale),
+          prixPack: formatEuros(PACKS.leurres.amountCents, locale),
+          prixGoujons: formatEuros(PACKS.goujons.amountCents, locale),
+          livraison: formatEuros(SHIPPING.amountCents, locale),
+          nbColoris: String(PRODUCT.colorways.length),
+          coloris: PRODUCT.colorways.map((c) => c.label).join(', '),
         })}
       </p>
 

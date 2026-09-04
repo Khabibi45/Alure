@@ -32,7 +32,11 @@ export function SegmentedControl<T extends string>({
   className,
 }: SegmentedControlProps<T>) {
   return (
-    <div role="group" aria-label={ariaLabel} className={['px-seg', className ?? ''].filter(Boolean).join(' ')}>
+    <div
+      role="group"
+      aria-label={ariaLabel}
+      className={['px-seg', className ?? ''].filter(Boolean).join(' ')}
+    >
       {options.map((option) => (
         <button
           key={option.value}

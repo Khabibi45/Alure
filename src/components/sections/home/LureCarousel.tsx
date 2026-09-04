@@ -1,25 +1,13 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
-import Link from 'next/link'
-import { LURE_MODELS, lureDisplayName, wrapIndex, type LureModel } from '@/lib/lure-models'
-import { PRODUCT, getColorway } from '@/lib/shop/product'
-import {
-  CART_MAX,
-  cartBoxState,
-  cartStatus,
-  collectionAvailable,
-  giftBoxState,
-  isInCart,
-} from '@/lib/shop/collection-selection'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { LURE_MODELS, lureDisplayName, wrapIndex } from '@/lib/lure-models'
 import { fill } from '@/lib/i18n/fill'
 import type { CarouselStrings } from './carousel-strings'
 import { LURE_VIEWS, getLureView, type LureViewId } from '@/lib/three/lure-views'
-import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { AlureLoader } from '@/components/ui/AlureLoader'
-import { useCollectionSelection } from './use-collection-selection'
 import { createLureStage, type LureStage } from './lure-stage'
 import { LureSpecs } from './LureSpecs'
 
@@ -30,6 +18,9 @@ import { LureSpecs } from './LureSpecs'
  * qu'elles se suivent.
  */
 const INITIAL_VIEW: LureViewId = 'gauche'
+
+/** Le coloris montré à l'ouverture de l'accueil. */
+const OPENING_COLORWAY = 'coloris-4'
 
 /** Fraction de la largeur du cadre à parcourir pour passer au leurre suivant. */
 const DRAG_TRAVEL = 0.55
@@ -57,15 +48,16 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
   const movedRef = useRef(0)
 
   // Ce qu'on voit EN ARRIVANT sur la page (consigne Camil, 2026-09-03) : le
-  // Pirate, de gauche. Pas le premier du registre — le collector est celui qui
-  // ne s'achète pas, donc celui qui donne envie de lire la suite.
+  // Le NOIR, de gauche (consigne Camil). Il s'appelait « Pirate » et ne se
+  // vendait pas ; c'est aujourd'hui un coloris comme les autres, mais il reste
+  // celui qu'on montre en premier.
   //
   // L'index est CHERCHÉ, pas écrit : `LURE_MODELS` peut changer d'ordre, et un 3
   // en dur montrerait alors un autre leurre sans que rien ne le signale.
   const [target, setTarget] = useState(() =>
     Math.max(
       0,
-      LURE_MODELS.findIndex((m) => m.collector)
+      LURE_MODELS.findIndex((m) => m.colorwayId === OPENING_COLORWAY)
     )
   )
   const [status, setStatus] = useState<Status>('loading')
@@ -75,8 +67,6 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
   const [specsOpen, setSpecsOpen] = useState(false)
   /** Progression réelle du téléchargement de chaque modèle (`null` = non mesurable). */
   const [modelProgress, setModelProgress] = useState<Record<number, number | null>>({})
-  /** Le panier : un ENSEMBLE de coloris distincts — il montre le colis. */
-  const { selection, toggle, clear } = useCollectionSelection()
 
   const active = wrapIndex(target)
   const activeModel = LURE_MODELS[active]
@@ -187,15 +177,6 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
   const go = useCallback((step: number) => setTarget((current) => current + step), [])
 
   /** Amène le carrousel sur le modèle du coloris demandé (chemin le plus court). */
-  const jumpToColorway = useCallback((colorwayId: string) => {
-    const index = LURE_MODELS.findIndex((m) => m.colorwayId === colorwayId)
-    if (index >= 0) setTarget((now) => now + ringStep(now, index))
-  }, [])
-
-  const jumpToCollector = useCallback(() => {
-    const index = LURE_MODELS.findIndex((m) => m.collector)
-    if (index >= 0) setTarget((now) => now + ringStep(now, index))
-  }, [])
 
   // L'auto-avance après un ajout a été SUPPRIMÉE (2026-08-25) : elle faisait
   // pivoter le carrousel vers un autre leurre dans le même geste que le clic,
@@ -322,20 +303,7 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
           />
         )}
 
-        {specsOpen && (
-          <LureSpecs
-            model={activeModel}
-            onClose={() => setSpecsOpen(false)}
-            footer={
-              <SheetAction
-                model={activeModel}
-                selection={selection}
-                strings={strings}
-                onToggle={toggle}
-              />
-            }
-          />
-        )}
+        {specsOpen && <LureSpecs model={activeModel} onClose={() => setSpecsOpen(false)} />}
       </div>
 
       {/* Le bloc « Offert » du collector a été SUPPRIMÉ (consigne Camil
@@ -378,286 +346,21 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
           </div>
         )}
 
-        {/* LE PANIER (consigne Camil 2026-08-25 : « un vrai panier à cliquer et à
-            consulter »). Il remplace les anciennes puces de navigation : chaque
-            case navigue ET porte son état, donc la rangée sert deux fois. */}
-        <CartBand
-          model={activeModel}
-          selection={selection}
-          strings={strings}
-          onToggle={toggle}
-          onClear={clear}
-          onShowColorway={jumpToColorway}
-          onShowCollector={jumpToCollector}
-          onOpenSheet={() => setSpecsOpen(true)}
-        />
-      </div>
-    </div>
-  )
-}
+        {/* LE PANIER A DISPARU avec l'offre à composer (2026-09-04) : le pack
+            contient une unité de chaque coloris, il n'y a donc plus rien à
+            cocher ici. La bande basse ne porte plus que la navigation, et
+            l'achat se fait sur la page produit, en une fois.
 
-/**
- * LE PANIER, visible en permanence (spec `docs/specs/carrousel-achat.md`).
- *
- * Une rangée de quatre cases montre le COLIS, pas un compteur : les trois
- * coloris payés, puis le 4e leurre offert. Chaque case navigue (elle amène le
- * carrousel sur son leurre) ET porte son état — c'est ce qui répond d'un coup
- * d'œil aux quatre questions : combien, lesquels, combien ça coûte, comment
- * j'en enlève un.
- *
- * Deux sorties vers la caisse sont posées dessous et ne disparaissent JAMAIS,
- * quel que soit l'état. C'est le correctif du défaut le plus grave de la version
- * précédente : à 2 leurres au panier, plus aucun bouton ne menait au paiement.
- *
- * Règle de système : aucun bouton d'ici n'encaisse, donc AUCUN ne porte de
- * montant. Le prix vit dans les cases, la ligne d'état et la note de bas de
- * bande — donc visible dans tous les états. C'est ce qui rend impossible le
- * retour du bug « Acheter · 21,99 € » qui achetait un autre leurre que celui
- * affiché.
- */
-function CartBand({
-  model,
-  selection,
-  strings,
-  onToggle,
-  onClear,
-  onShowColorway,
-  onShowCollector,
-  onOpenSheet,
-}: {
-  model: LureModel
-  selection: readonly string[]
-  strings: CarouselStrings
-  onToggle: (colorwayId: string) => void
-  onClear: () => void
-  onShowColorway: (colorwayId: string) => void
-  onShowCollector: () => void
-  onOpenSheet: () => void
-}) {
-  const soloPrice = strings.soloPrice
-  const displayed = model.colorwayId ? getColorway(model.colorwayId) : undefined
-  const displayedTaken = displayed ? isInCart(selection, displayed.id) : false
-  const displayedOrderable = displayed !== undefined && displayed.available
-  const status = cartStatus(selection)
-  const collectionOpen = collectionAvailable()
-
-  // La phrase d'état : une CLÉ résolue par le domaine, remplie ici. Le domaine
-  // ne connaît aucun texte, ce composant ne connaît aucune règle.
-  const statusTemplate = {
-    'CART.STATE_EMPTY': strings.stateEmpty,
-    'CART.STATE_ONE': strings.stateOne,
-    'CART.STATE_SOME': strings.stateSome,
-    'CART.STATE_FULL': strings.stateFull,
-    'CART.STATE_SOLD_OUT': strings.stateSoldOut,
-  }[status.key]
-
-  const statusText = fill(statusTemplate ?? strings.stateEmpty, {
-    total: strings.collectionTotal,
-    compte: String(status.labels.length),
-    max: String(CART_MAX),
-    liste: status.labels.join(', '),
-  })
-
-  const giftState = giftBoxState(selection)
-  const giftLabel = {
-    offert: strings.boxGiftFree,
-    'a-choisir': strings.boxGiftChoose,
-    suspendu: strings.boxGiftPaused,
-  }[giftState]
-
-  return (
-    <div className="flex w-full max-w-md flex-col items-center gap-2 px-2">
-      {/* ── La rangée du colis : 3 coloris payés + le 4e offert ── */}
-      <div role="group" aria-label={strings.sheet} className="flex w-full items-stretch gap-1.5">
-        {PRODUCT.colorways.map((colorway) => {
-          const state = cartBoxState(selection, colorway.id)
-          const shown = model.colorwayId === colorway.id
-          const stateLabel =
-            state === 'epuise'
-              ? strings.boxSoldOut
-              : state === 'au-panier'
-                ? strings.boxTaken
-                : fill(strings.boxPrice, { prix: soloPrice })
-          return (
-            <button
-              key={colorway.id}
-              type="button"
-              onClick={() => onShowColorway(colorway.id)}
-              aria-current={shown ? 'true' : undefined}
-              aria-label={fill(strings.boxA11y, { coloris: colorway.label, etat: stateLabel })}
-              className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded-lg border px-1 py-1.5 transition-colors duration-[var(--dur-element)] ${
-                shown ? 'border-foreground' : 'border-border hover:border-muted-foreground'
-              } ${state === 'au-panier' ? 'bg-success/10' : ''} ${state === 'epuise' ? 'opacity-55' : ''}`}
-            >
-              <span className="text-label truncate uppercase" translate="no" aria-hidden="true">
-                {colorway.shortLabel}
-              </span>
-              <span
-                aria-hidden="true"
-                className={`flex items-center gap-0.5 text-[0.6875rem] leading-tight ${
-                  state === 'au-panier' ? 'font-bold text-success' : 'text-muted-foreground'
-                }`}
-              >
-                {state === 'au-panier' && <Check className="size-3" strokeWidth={3} />}
-                {stateLabel}
-              </span>
-            </button>
-          )
-        })}
-
-        {/* La 4e case : le leurre offert. Elle ne se coche pas — elle se mérite. */}
+            Le bouton qui ouvre la fiche technique reste : c'est le seul geste
+            que le carrousel doit encore offrir. */}
         <button
           type="button"
-          onClick={onShowCollector}
-          aria-label={fill(strings.giftA11y, { collector: PRODUCT.collector.label })}
-          className={`flex min-h-11 flex-1 flex-col items-center justify-center rounded-lg border border-dashed px-1 py-1.5 transition-colors duration-[var(--dur-element)] ${
-            giftState === 'a-choisir' ? 'border-success' : 'border-border'
-          } ${giftState === 'suspendu' ? 'opacity-55' : ''}`}
+          onClick={() => setSpecsOpen(true)}
+          className="px-btn px-btn--ghost px-btn--md !h-8"
         >
-          <span className="text-label truncate uppercase" aria-hidden="true">
-            {strings.boxGift}
-          </span>
-          <span
-            aria-hidden="true"
-            className={`text-[0.6875rem] leading-tight ${
-              giftState === 'a-choisir' ? 'font-bold text-success' : 'text-muted-foreground'
-            }`}
-          >
-            {giftLabel}
-          </span>
+          {strings.sheetLabel}
         </button>
       </div>
-
-      {/* ── Les actions : ajouter/retirer le leurre regardé, et commander ── */}
-      <div className="flex w-full flex-wrap items-center justify-center gap-2">
-        {displayedOrderable && displayed && (
-          <Button
-            type="button"
-            size="md"
-            variant="ghost"
-            onClick={() => onToggle(displayed.id)}
-            className="gap-1.5"
-          >
-            {displayedTaken && <Check aria-hidden className="size-4" strokeWidth={2.5} />}
-            <span translate="no">
-              {fill(displayedTaken ? strings.remove : strings.add, {
-                coloris: displayed.shortLabel,
-              })}
-            </span>
-            <span className="sr-only" translate="no">
-              {displayed.label}
-            </span>
-          </Button>
-        )}
-
-        {collectionOpen && (
-          <Link
-            href={`/leurre?offre=collection${selection[0] ? `&coloris=${selection[0]}` : ''}#offert`}
-            className="px-btn px-btn--primary px-btn--md"
-          >
-            {strings.orderCollection}
-          </Link>
-        )}
-      </div>
-
-      {/* ── La ligne d'état : montée au premier rendu, jamais démontée ── */}
-      <p
-        aria-live="polite"
-        className="min-h-8 text-center text-xs leading-snug text-muted-foreground"
-      >
-        {statusText}
-      </p>
-
-      {/* ── Les sorties : toujours au moins une, dans tous les états ── */}
-      <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[0.75rem]">
-        <button type="button" onClick={onOpenSheet} className="underline underline-offset-2">
-          {strings.sheet}
-        </button>
-        {displayedOrderable && displayed && (
-          <>
-            <span aria-hidden="true" className="text-muted-foreground">
-              ·
-            </span>
-            <Link
-              href={`/leurre?offre=solo&coloris=${displayed.id}`}
-              className="underline underline-offset-2"
-            >
-              <span translate="no">
-                {fill(strings.orderSolo, { coloris: displayed.shortLabel })}
-              </span>
-            </Link>
-          </>
-        )}
-        {selection.length > 0 && (
-          <>
-            <span aria-hidden="true" className="text-muted-foreground">
-              ·
-            </span>
-            <button type="button" onClick={onClear} className="underline underline-offset-2">
-              {strings.clear}
-            </button>
-          </>
-        )}
-      </div>
-
-      <p className="text-center text-[0.6875rem] leading-tight text-muted-foreground">
-        {fill(strings.footnote, { prix: soloPrice, delai: strings.deliveryDelay })}
-      </p>
     </div>
   )
-}
-
-/**
- * L'action au pied de la fiche technique — EXACTEMENT le même geste que dans la
- * bande du panier, pour que le leurre ouvert se prenne sans refermer sa fiche.
- *
- * Un coloris épuisé n'affiche pas de bouton (jamais un bouton qui ment). Le
- * collector non plus : il ne se vend pas, il se choisit comme 4e leurre offert
- * sur la page produit — c'est le lien « Commander les 4 » de la bande qui y mène.
- */
-function SheetAction({
-  model,
-  selection,
-  strings,
-  onToggle,
-}: {
-  model: LureModel
-  selection: readonly string[]
-  strings: CarouselStrings
-  onToggle: (colorwayId: string) => void
-}) {
-  const colorwayId = model.colorwayId
-  if (!colorwayId) return null
-  const colorway = getColorway(colorwayId)
-  if (!colorway) return null
-  if (!colorway.available) {
-    return <p className="text-[0.8125rem] text-muted-foreground">{strings.boxSoldOut}</p>
-  }
-
-  const inCart = isInCart(selection, colorwayId)
-  return (
-    <Button
-      type="button"
-      size="md"
-      variant={inCart ? 'ghost' : undefined}
-      onClick={() => onToggle(colorwayId)}
-      className="w-full gap-2"
-    >
-      {inCart && <Check aria-hidden className="size-4" strokeWidth={2.5} />}
-      <span translate="no">
-        {fill(inCart ? strings.remove : strings.add, { coloris: colorway.shortLabel })}
-      </span>
-      <span className="sr-only" translate="no">
-        {colorway.label}
-      </span>
-    </Button>
-  )
-}
-
-/** Nombre de crans, dans le sens le plus court, pour aller de `from` à `index`. */
-function ringStep(from: number, index: number): number {
-  const count = LURE_MODELS.length
-  const raw = index - wrapIndex(from)
-  const half = count / 2
-  return ((((raw + half) % count) + count) % count) - half
 }

@@ -43,7 +43,7 @@
 ## 3. HOME
 
 - `HOME.H1` — Le leurre souple, pensé pour les carnassiers
-- `HOME.SUBTITLE` — Black-bass, perche. {longueur} · {poids}. {prixSolo} le leurre — 3 achetés, le 4e offert, livraison incluse ({delai}).
+- `HOME.SUBTITLE` — Black-bass, perche. {longueur} · {poids}. Le pack de {nbColoris} coloris à {prixPack}, livraison {livraison} ({delai}).
 - `HOME.CTA` — Voir le leurre
 
 ### Carrousel 3D
@@ -61,6 +61,7 @@
 ### Sélecteur de vues
 
 - `HOME.VIEWS_LABEL` — Angle de vue du leurre
+- `HOME.SHEET` — Fiche du leurre
 - `HOME.VIEW_RIGHT` — Droite
 - `HOME.VIEW_LEFT` — Gauche
 - `HOME.VIEW_TOP` — Dessus
@@ -86,8 +87,8 @@
 
 ## 4. PRODUCT — page /leurre
 
-- `PRODUCT.TITLE` — Leurre souple — {prixSolo} port inclus
-- `PRODUCT.DESCRIPTION` — Le leurre Alure : un leurre souple, pensé pour les carnassiers. {prixSolo} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour {prixCollection}. Livraison incluse ({delai}), paiement carte ou PayPal, rétractation 14 jours.
+- `PRODUCT.TITLE` — Pack de leurres souples — {prixPack} + {livraison} de livraison
+- `PRODUCT.DESCRIPTION` — Les leurres souples Alure se vendent par pack : une unité de chacun des {nbColoris} coloris pour {prixPack}, plus {livraison} de livraison ({delai}). Pack de goujons à {prixGoujons}. Paiement carte ou PayPal, rétractation 14 jours.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Coloris :
 - `PRODUCT.SOLD_OUT` — Épuisé
@@ -97,54 +98,16 @@
 - `PRODUCT.BUY_LOADING` — Redirection vers le paiement…
 - `PRODUCT.BUY_LOADING_SHORT` — Redirection…
 - `PRODUCT.PAYMENT_HINT` — Paiement par carte ou PayPal, via Stripe.
-- `OFFER.SOLO_TITLE` — Un leurre
-- `OFFER.SOLO_DETAIL` — Le coloris {coloris}, à l'unité.
-- `OFFER.COLLECTION_TITLE` — 3 achetés, le 4e offert
-- `OFFER.COLLECTION_DETAIL` — Les {nbColoris} coloris + le 4e offert au choix — jusqu'au {collector}.
-- `OFFER.PER_LURE_EXACT` — Soit {montant} le leurre.
-- `OFFER.PER_LURE_AT_MOST` — Soit moins de {montant} le leurre.
-- `OFFER.LEGEND` — Votre offre
-- `OFFER.RULE` — 3 leurres achetés, le 4e offert au choix
 
 ### Le panier du carrousel 3D (accueil)
 
-- `CART.BOX_PRICE` — {prix}
-- `CART.BOX_TAKEN` — au panier
-- `CART.BOX_SOLD_OUT` — épuisé
-- `CART.BOX_GIFT` — 4e leurre
-- `CART.BOX_GIFT_FREE` — offert
-- `CART.BOX_GIFT_CHOOSE` — à choisir
-- `CART.BOX_GIFT_PAUSED` — suspendu
-- `CART.BOX_A11Y` — {coloris}, {etat}, afficher ce leurre
-- `CART.GIFT_A11Y` — 4e leurre offert, afficher le {collector}
-- `CART.ADD` — Ajouter {coloris}
-- `CART.REMOVE` — Retirer {coloris}
-- `CART.ORDER_COLLECTION` — Commander les 4 leurres
-- `CART.ORDER_SOLO` — Commander {coloris} seul
-- `CART.CLEAR` — Vider le panier
-- `CART.SHEET` — Fiche du leurre
-- `CART.STATE_EMPTY` — Les 3 coloris, et le 4e leurre offert : {total}.
-- `CART.STATE_ONE` — 1 coloris sur {max} : {liste}.
-- `CART.STATE_SOME` — {compte} coloris sur {max} : {liste}. Il n'existe pas de tarif pour 2 leurres.
-- `CART.STATE_FULL` — Les {max} coloris sont au panier. Vous choisirez votre 4e leurre, offert.
-- `CART.STATE_SOLD_OUT` — Un coloris est épuisé. L'offre des 4 leurres est suspendue. Les autres restent commandables à l'unité.
-- `CART.FOOTNOTE` — {prix} le leurre. Livraison {delai}, port inclus.
-- `PROGRESS.STEP_FIRST` — Votre premier leurre
-- `PROGRESS.STEP_OTHERS` — Les 2e et 3e leurres
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} chacun — et le 4e est offert
-- `PROGRESS.STEP_COLLECTOR` — Le 4e — offert, au choix (jusqu'au {collector})
-- `PROGRESS.COLLECTOR_DONE` — à choisir dans votre commande
-- `PROGRESS.COLLECTOR_TODO` — offert dès 3 leurres achetés
 - `PAYMENT.CARD` — Carte bancaire
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Paiement sur Stripe — vos coordonnées bancaires ne passent jamais par ce site.
-- `PRODUCT.COLLECTOR_LOCKED` — Le {collector} se choisit comme 4e leurre offert, dès 3 achetés.
-- `PRODUCT.COLLECTOR_EARNED` — Le {collector} est offert avec votre commande.
 - `PRODUCT.MEDIA_LABEL` — Ce que vous regardez
 - `PRODUCT.MEDIA_PHOTO` — Photo
 - `PRODUCT.MEDIA_MODEL` — En 3D
 - `PRODUCT.VIEWER_NO_WEBGL` — Votre navigateur n'affiche pas la 3D. La description ci-contre détaille le leurre.
-- `PRODUCT.COLLECTOR_ALT` — Le leurre collector Alure en vue 3D, modèle {nom}, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.
 - `PRODUCT.REASSURANCE_RETURN` — Rétractation 14 jours
 - `PRODUCT.REASSURANCE_PAYMENT` — Paiement par Stripe ou PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Suivi de commande par email
@@ -183,9 +146,7 @@
 
 ## 5. PRICING
 
-- `PRICING.RULE` — 3 leurres achetés, le 4e offert au choix
-- `PRICING.TAX_LINE` — port inclus · TVA non applicable, art. 293 B du CGI.
-- `PRICING.SAVINGS` — Vous économisez {montant}.
+- `PRICING.TAX_LINE` — livraison en sus · TVA non applicable, art. 293 B du CGI.
 
 ## 6. FAQ
 
@@ -194,7 +155,7 @@
 - `FAQ.Q_SHIPPING_COST` — Combien coûte la livraison ?
 - `FAQ.A_SHIPPING_COST` — Rien : la livraison en France est incluse dans le prix affiché, quelle que soit l’offre choisie.
 - `FAQ.Q_BULK` — Le prix baisse-t-il si j'en prends plusieurs ?
-- `FAQ.A_BULK` — Oui. Chaque leurre se commande à l'unité, à {prixSolo}. Dès 3 leurres achetés ({prixCollection}), le 4e est offert — au choix : un coloris en double ou le {collector}. Le total s'affiche avant le paiement, livraison comprise.
+- `FAQ.A_BULK` — Les leurres ne se vendent pas à l'unité : ils partent par pack. Le pack de leurres souples contient une unité de chacun des {nbColoris} coloris, pour {prixPack}. Le pack de goujons en contient 5, pour {prixGoujons}. La livraison, {livraison}, s'ajoute et s'affiche avant le paiement.
 - `FAQ.Q_SIZE` — Quelle taille et quel poids fait le leurre ?
 - `FAQ.A_SIZE` — {longueur} pour {poids}. C'est un format compact : il passe au lancer léger et se pêche aussi bien en linéaire qu'en animation.
 - `FAQ.Q_TRACK` — Comment suivre ma commande ?
@@ -248,7 +209,7 @@
 - `EMAIL.CONFIRM_RECAP` — Récapitulatif :
 - `EMAIL.CONFIRM_COLORWAY` — Coloris : {coloris}
 - `EMAIL.CONFIRM_OFFER` — Offre : {offre}
-- `EMAIL.CONFIRM_TOTAL` — Total payé : {montant} (port inclus — TVA non applicable, art. 293 B du CGI)
+- `EMAIL.CONFIRM_TOTAL` — Total payé : {montant}, livraison comprise — TVA non applicable, art. 293 B du CGI
 - `EMAIL.CONFIRM_DELIVERY` — Livraison : {delai}, comme annoncé avant votre achat.
 - `EMAIL.CONFIRM_TRACKING` — Dès l'expédition, vous recevrez le numéro de suivi par email.
 - `EMAIL.CONFIRM_WITHDRAWAL` — Vous disposez d'un droit de rétractation de 14 jours après réception.
@@ -322,7 +283,7 @@
 - `LEGAL.TERMS_S1_TITLE` — 1. Le vendeur
 - `LEGAL.TERMS_S1_BODY` — {vendeur}, entrepreneur individuel (micro-entreprise), SIREN {siren}, {adresse}. Contact : {email}.
 - `LEGAL.TERMS_S2_TITLE` — 2. Le produit et les prix
-- `LEGAL.TERMS_S2_BODY` — Le site vend le leurre de pêche {marque} (leurre souple), en plusieurs coloris, chaque leurre étant vendu à l'unité. Le prix en vigueur est celui affiché au moment de la commande. À la date d'entrée en vigueur, deux offres coexistent : un leurre seul à {prixSolo}, ou l'offre « 3 achetés, le 4e offert » à {prixCollection} (soit trois leurres au prix de l'unité), avec laquelle un quatrième leurre, au choix de l'acheteur parmi les coloris disponibles ou le coloris collector, est remis gracieusement et sans contrepartie. Livraison en France incluse. TVA non applicable, art. 293 B du CGI.
+- `LEGAL.TERMS_S2_BODY` — Le site vend des packs de leurres de pêche {marque}. À la date d'entrée en vigueur, deux packs sont proposés : le pack de leurres souples, contenant une unité de chacun des {nbColoris} coloris ({coloris}), à {prixPack} ; et le pack de goujons, contenant 5 leurres, à {prixGoujons}. Les leurres ne sont pas vendus à l'unité. Le prix en vigueur est celui affiché au moment de la commande. Les frais de livraison, de {livraison} par commande (Lettre Verte suivie, France métropolitaine), s'ajoutent au prix du pack et sont affichés avant le paiement. TVA non applicable, art. 293 B du CGI.
 - `LEGAL.TERMS_S3_TITLE` — 3. Commande et paiement
 - `LEGAL.TERMS_S3_BODY` — La commande se règle en ligne par carte bancaire ou PayPal, via la plateforme de paiement Stripe. La vente est conclue à la confirmation du paiement, matérialisée par l'email de confirmation. Nous n'avons jamais accès à vos données de carte.
 - `LEGAL.TERMS_S4_TITLE` — 4. Livraison
@@ -403,15 +364,9 @@
 - `PRODUCT.H1_TAIL` — pour les carnassiers
 - `PRODUCT.SECTION_VISUAL` — Visuel du leurre
 - `PRODUCT.DELIVERY_BANNER_BODY` — Votre leurre part de France, en enveloppe matelassée noire. Vous recevez un numéro de suivi par email dès l'envoi.
-- `PRODUCT.GIFT_LABEL` — Votre 4e leurre, offert :
-- `PRODUCT.GIFT_DUPLICATE_A11Y` — {coloris} — en double, offert
-- `PRODUCT.GIFT_COLLECTOR_A11Y` — {collector} — le collector, offert
 
 ### PROGRESS — routes anglaises (2026-08-26)
 
-- `PROGRESS.STEP_SECOND` — Le deuxième
-- `PROGRESS.STEP_THIRD` — Le troisième
-- `PROGRESS.LOCKED_A11Y` — — à débloquer
 
 ### ABOUT — routes anglaises (2026-08-26)
 
@@ -420,12 +375,11 @@
 - `ABOUT.HERO_ALT` — Image de synthèse : un sandre tenu à la main, le leurre Alure vert dans la gueule.
 - `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre, un leurre souple de {specs}, taillé pour le black-bass et la perche, parce que c'est celui que nous voulions avoir en boîte. Les leurres sont stockés chez nous, en France, et nous préparons chaque commande nous-mêmes.
 - `ABOUT.RANGE` — Vous le trouvez ici en {nbColoris} coloris, chacun nommé d'après sa robe — {coloris}.
-- `ABOUT.COLLECTOR_RULE` — Le {collector}, lui, ne s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
 - `ABOUT.VISUALS_TITLE` — Ce que vous voyez est ce que nous vendons
 - `ABOUT.VISUALS_BODY` — Les visuels des leurres viennent de nous : la vitrine interactive de l'accueil est notre modèle 3D du leurre réel, et les gros plans de la boutique montrent la pièce, détail par détail. L'image qui ouvre cette page, elle, est une image de synthèse — nous n'affichons pas de prise réelle tant que nous n'en avons pas de nous.
 - `ABOUT.COLORWAY_ALT` — Le leurre Alure, coloris {coloris}, posé sur une ardoise mouillée.
 - `ABOUT.TRANSPARENCY_TITLE` — D'où part votre leurre
-- `ABOUT.TRANSPARENCY_BODY` — Votre leurre part de chez nous, dans une enveloppe matelassée noire que nous déposons à la poste. Comptez {delai} entre votre commande et sa livraison. Ce délai est affiché avant que vous payiez, et rappelé dans votre email de confirmation. Le prix est port inclus. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit.
+- `ABOUT.TRANSPARENCY_BODY` — Votre pack part de chez nous, dans une enveloppe matelassée noire que nous déposons à la poste. Comptez {delai} entre votre commande et sa livraison. Ce délai est affiché avant que vous payiez, et rappelé dans votre email de confirmation. Les frais de livraison, {livraison}, s'ajoutent au prix du pack et sont annoncés avant le paiement. Vous disposez de 14 jours pour changer d'avis, comme la loi le prévoit.
 - `ABOUT.KIT_ENVELOPE_ALT` — Une pile d'enveloppes matelassées noires.
 - `ABOUT.KIT_LURES_ALT` — Les quatre leurres Alure tenus au creux d'une main, au bord de l'eau.
 - `ABOUT.KIT_CARD_ALT` — Le dos de la carte glissée dans chaque enveloppe, au nom d'Alure.
@@ -441,9 +395,6 @@
 - `CONTACT.SUCCESS_DETAIL` — Nous répondons à l’adresse indiquée.
 - `CONTACT.ERROR_RATE_LIMIT` — Trop de requêtes. Réessayez dans une minute.
 - `CONTACT.ERROR_UNAVAILABLE` — Le formulaire est momentanément indisponible. Réessayez plus tard.
-- `PRICING.TAGLINE_SOLO` — Port inclus · TVA non applicable, art. 293 B du CGI.
-- `PRICING.TAGLINE_COLLECTION` — 3 leurres achetés, le 4e offert au choix · port inclus · TVA non applicable, art. 293 B du CGI.
-- `PROGRESS.COLLECTOR_PICK` — choisissez-le ci-dessus, il part dans votre colis
 - `PRODUCT.VIEWER_ALT` — Le leurre Alure en vue 3D, coloris {coloris}. Il nage sur place.
 - `STATES.PACK_UNKNOWN` — Ce pack n’existe pas.
 - `STATES.PACK_SOLD_OUT` — Ce pack est momentanément indisponible.
@@ -451,7 +402,7 @@
 ### PRECOMMANDE — la campagne des 100 (2026-08-26)
 
 - `PRECOMMANDE.TITLE` — Le leurre existe. La série, non.
-- `PRECOMMANDE.INTRO` — On n'a pas les fonds pour lancer la production. C'est notre seul problème, autant le dire tout de suite. Le modèle est arrêté, les coloris sont choisis, et vous pouvez acheter ce leurre ici à {prixSolo}. Alure est une micro-entreprise française tenue par des pêcheurs, et personne ne la finance à notre place. Il nous faut {objectif} précommandes pour produire une série à notre nom, signée, dans sa propre boîte.
+- `PRECOMMANDE.INTRO` — On n'a pas les fonds pour lancer la production. C'est notre seul problème, autant le dire tout de suite. Le modèle est arrêté, les coloris sont choisis, et vous pouvez acheter le pack ici à {prixPack}. Alure est une micro-entreprise française tenue par des pêcheurs, et personne ne la finance à notre place. Il nous faut {objectif} précommandes pour produire une série à notre nom, signée, dans sa propre boîte.
 - `PRECOMMANDE.COUNTER` — {compte} sur un objectif de {objectif}
 - `PRECOMMANDE.COUNTER_NOTE` — Ce compteur est branché sur nos paiements. Il monte quand une commande est encaissée, et pas autrement.
 - `PRECOMMANDE.WHY_TITLE` — Pourquoi {objectif}
@@ -462,7 +413,7 @@
 - `PRECOMMANDE.DATE_BODY` — Une précommande sans date d'expédition n'engage à rien. La nôtre en a une : votre commande part au plus tard le {dateLimite}. Cette date ne dépend pas du compteur, et nous ne la repousserons pas en attendant des commandes.
 - `PRECOMMANDE.REFUND_TITLE` — Si on n'y arrive pas
 - `PRECOMMANDE.REFUND_BODY` — Si les {objectif} commandes ne sont pas réunies, la série ne se fait pas et vous êtes remboursé en entier. Si elles le sont mais que l'expédition ne peut pas tenir le {dateLimite}, vous êtes remboursé en entier aussi. Le remboursement revient sur votre moyen de paiement, sans que vous ayez à le demander.
-- `PRECOMMANDE.PRICE` — {prixSolo} le leurre. {prixCollection} pour 3 achetés, le 4e offert. Port inclus. C'est le prix de la boutique : la précommande ne le change pas.
+- `PRECOMMANDE.PRICE` — {prixPack} le pack de {nbColoris} coloris, plus {livraison} de livraison. C'est le prix de la boutique : la précommande ne le change pas.
 - `PRECOMMANDE.CTA` — Précommander mon leurre
 - `PRECOMMANDE.CTA_NOTE` — Vous payez aujourd'hui. Expédition au plus tard le {dateLimite}. Livraison en France métropolitaine uniquement.
 - `PRECOMMANDE.LEGAL` — Précommande : vous payez aujourd'hui un leurre que nous nous engageons à expédier au plus tard le {dateLimite}, conformément à l'article L216-1 du code de la consommation. Passé cette date, vous pouvez annuler votre commande et être remboursé intégralement sur votre moyen de paiement, sous 14 jours. Si l'objectif de {objectif} commandes n'est pas atteint, la série n'est pas lancée et toutes les précommandes sont remboursées dans les mêmes conditions. Droit de rétractation de 14 jours à compter de la réception. Livraison en France métropolitaine uniquement. TVA non applicable, article 293 B du CGI. Le vendeur est identifié dans les mentions légales.
@@ -493,10 +444,10 @@
 - `PROJECTS.DESCRIPTION` — Où en est Alure : le leurre existe, il est stocké en France et livré sous {delai}. Il manque une première série signée, dans sa propre boîte.
 - `PROJECTS.INTRO` — Cette page dit où en est le projet Alure, et ce qu'il lui reste à faire. Le leurre existe, il est en stock, il part de chez nous. Ce qui n'existe pas encore, c'est une série produite sous notre nom.
 - `PROJECTS.DONE_TITLE` — Ce qui est déjà là
-- `PROJECTS.DONE_BODY` — Le leurre est fait : un leurre souple de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et le {collector} qui ne se vend pas et s'offre en 4e leurre. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.
+- `PROJECTS.DONE_BODY` — Le leurre est fait : un leurre souple de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et il se vend par pack — une unité de chacun. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.
 - `PROJECTS.STOCK_TITLE` — Le stock est rentré en France
 - `PROJECTS.STOCK_BODY` — Les leurres sont chez nous, et c'est nous qui préparons chaque commande, en enveloppe matelassée noire. Elle vous arrive sous {delai}. Avant, ils partaient de chez un fournisseur, et l'attente allait de 10 à 20 jours.
 - `PROJECTS.SERIES_TITLE` — La série et la boîte
 - `PROJECTS.SERIES_BODY` — Il manque une première série sous notre nom : le même leurre, signé, dans une boîte qui lui soit propre. C'est la seule différence avec celui que vous commandez ici aujourd'hui. Notre objectif est de {objectif} commandes pour la financer, et chaque commande payée compte dans ce total.
 - `PROJECTS.CTA` — Voir le leurre
-- `PROJECTS.CTA_NOTE` — {prixSolo} le leurre, ou {prixCollection} pour 3 achetés et le 4e offert. Port inclus, livraison {delai}. France métropolitaine uniquement.
+- `PROJECTS.CTA_NOTE` — {prixPack} le pack de {nbColoris} coloris, plus {livraison} de livraison ({delai}). France métropolitaine uniquement.

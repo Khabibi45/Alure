@@ -323,7 +323,10 @@ export function HeroScroll({
 
         {status === 'loading' && (
           <div className="absolute inset-0 flex items-center justify-center text-foreground">
-            <AlureLoader progress={manifest ? loaded / manifest.count : null} label={loadingLabel} />
+            <AlureLoader
+              progress={manifest ? loaded / manifest.count : null}
+              label={loadingLabel}
+            />
           </div>
         )}
 

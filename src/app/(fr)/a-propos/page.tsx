@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { PRODUCT, formatSpecs } from '@/lib/shop/product'
+import { PRODUCT, SHIPPING, formatEuros, formatSpecs } from '@/lib/shop/product'
 import { getDictionary, t as translate } from '@/lib/i18n'
 import { AboutScene } from '@/components/sections/AboutScene'
 
@@ -52,8 +52,7 @@ export default function AProposPage() {
           {translate(dict, 'ABOUT.RANGE', {
             nbColoris: String(PRODUCT.colorways.length),
             coloris: PRODUCT.colorways.map((c) => c.label).join(', '),
-          })}{' '}
-          {translate(dict, 'ABOUT.COLLECTOR_RULE', { collector: PRODUCT.collector.label })}
+          })}
         </p>
       </div>
 
@@ -90,6 +89,7 @@ export default function AProposPage() {
         <p>
           {translate(dict, 'ABOUT.TRANSPARENCY_BODY', {
             delai: translate(dict, 'PRODUCT.DELAY_VALUE'),
+            livraison: formatEuros(SHIPPING.amountCents),
           })}
         </p>
       </div>

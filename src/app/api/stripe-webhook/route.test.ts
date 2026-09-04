@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
-import { PRODUCT, totalCents } from '@/lib/shop/product'
+import { totalCents } from '@/lib/shop/product'
 
 // Stripe (vérification de signature, marqueur d'idempotence) et Resend (envoi)
 // sont mockés : ces tests vérifient le CONTRAT de la route — signature,
@@ -47,8 +47,8 @@ function completedEvent(overrides: Record<string, unknown> = {}, eventId?: strin
         // abouti, les cas différés se testent en surchargeant ce champ.
         payment_status: 'paid',
         customer_details: { email: 'client@exemple.fr' },
-        metadata: { coloris: PRODUCT.colorways[0].id, offre: 'collection' },
-        amount_total: totalCents('collection'),
+        metadata: { pack: 'leurres' },
+        amount_total: totalCents('leurres'),
         ...overrides,
       },
     },
@@ -83,9 +83,9 @@ describe('POST /api/stripe-webhook', () => {
     expect(sendOrderEmails).toHaveBeenCalledWith(
       expect.objectContaining({
         customerEmail: 'client@exemple.fr',
-        colorisLabel: PRODUCT.colorways[0].label,
-        offerSummary: expect.stringMatching(/offert/i),
-        totalCents: totalCents('collection'),
+        // Le résumé nomme le pack et son contenu — c'est ce que lit le client.
+        packLabel: expect.stringMatching(/pack de leurres/i),
+        totalCents: totalCents('leurres'),
       })
     )
   })

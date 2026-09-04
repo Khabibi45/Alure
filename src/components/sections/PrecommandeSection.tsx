@@ -4,7 +4,7 @@ import { localePath, type Locale } from '@/lib/i18n/paths'
 import { getOrdersCount } from '@/lib/shop/orders-count'
 import { PaymentKeyRejectedError } from '@/lib/shop/errors'
 import { PRECOMMANDE_ACTIVE, PRECOMMANDE_GOAL, shipByLabel } from '@/lib/shop/precommande'
-import { OFFERS, PRODUCT, formatEuros } from '@/lib/shop/product'
+import { PACKS, SHIPPING, formatEuros } from '@/lib/shop/product'
 
 /**
  * LA CAMPAGNE DE PRÉCOMMANDE — « il nous faut 100 commandes pour lancer une
@@ -56,8 +56,9 @@ export async function PrecommandeSection({ locale }: { locale: Locale }) {
     compte: String(count),
     objectif: String(PRECOMMANDE_GOAL),
     dateLimite,
-    prixSolo: formatEuros(PRODUCT.pricing.soloCents, locale),
-    prixCollection: formatEuros(OFFERS.collection.amountCents, locale),
+    prixPack: formatEuros(PACKS.leurres.amountCents, locale),
+    prixGoujons: formatEuros(PACKS.goujons.amountCents, locale),
+    livraison: formatEuros(SHIPPING.amountCents, locale),
   }
 
   const blocs = [

@@ -39,6 +39,78 @@ l'écran où il est déjà le plus petit.
 En portrait, `lure-stage` remet donc les deux décalages à zéro. Le raccord avec la séquence y perd,
 mais il était déjà faux : sur téléphone, l'image de référence n'est pas celle qui s'affiche.
 
+## 2026-09-04 (soir) — LA BOUTIQUE PASSE AUX PACKS
+
+Le plus gros changement du projet depuis la mise en place du paiement. Décisions de Camil, prises
+au fil de la journée et toutes appliquées d'un bloc — un demi-changement aurait laissé le site
+annoncer un prix et en encaisser un autre.
+
+### Ce qui se vend
+
+| | Avant | Maintenant |
+|---|---|---|
+| Unité de vente | 1 leurre | **le pack** |
+| Pack de leurres | — | une unité de **chacun des 4 coloris** — **10,99 €** |
+| Pack de goujons | — | 5 goujons — **5,99 €** |
+| Offre groupée | « 3 achetés, le 4e offert » | **supprimée** |
+| Collector « Pirate » | non vendable, obtenu en cadeau | **devient le coloris Noir**, vendu dans le pack |
+| Livraison | incluse | **3,60 € en sus** |
+
+### La livraison : un tarif relevé, pas choisi
+
+Camil : « trouve le coût d'envoi, vois si le prix peut varier, et annonce-le. » Tarif **La Poste,
+Lettre Verte Suivie**, en vigueur au 1er janvier 2026 : 2,02 € jusqu'à 20 g, **3,60 € jusqu'à
+100 g**, 5,74 € jusqu'à 250 g.
+
+Un pack de leurres pèse 4 × 6,5 g = 26 g ; l'enveloppe matelassée et la carte ajoutent une
+trentaine de grammes. Un envoi tourne donc autour de 50 g, et **deux packs restent sous les
+100 g** : le tarif ne varie pas dans l'usage réel. Un forfait dit la vérité, une grille par poids
+compliquerait la page sans changer le montant. Un test garde ce calcul.
+
+⚠️ **Ce chiffre bouge chaque 1er janvier** (+7,4 % en 2026). À revérifier à cette date — et il doit
+rester identique au tarif d'expédition configuré dans Stripe.
+
+### Chez Stripe, la livraison n'est pas un article
+
+Elle passe par `shipping_options`, pas par une ligne de commande. Deux raisons : le client voit le
+détail « pack + livraison » au lieu d'un total opaque, et un frais de port facturé comme un produit
+serait remboursé comme un produit en cas de rétractation partielle.
+
+### Ce qui a disparu, et ce que ça simplifie
+
+Le panneau d'offre, la frise de progression, le panier du carrousel, le champ `cadeau`, le
+sélecteur de coloris à l'achat — environ 1 400 lignes. Un pack n'a rien à composer : plus de
+combinaison, plus de rupture partielle à gérer, plus de prix à recalculer selon la sélection. Les
+pastilles de coloris restent sur la page produit, mais elles ne se cliquent plus : elles MONTRENT
+ce qu'on reçoit.
+
+Le carrousel de l'accueil ouvre toujours sur le noir, vu de gauche, et son bouton « fiche du
+leurre » subsiste — c'est le seul geste qu'il doit encore offrir.
+
+### Les CGV
+
+La clause qui décrit ce qu'on vend a été **réécrite et validée par Camil** avant d'être posée :
+deux packs nommés, leur contenu, leurs prix, l'absence de vente à l'unité, et les frais de
+livraison annoncés avant le paiement. C'est un texte contractuel, il ne se réécrit pas sans accord.
+
+### Le filet
+
+`shop.test.ts`, `stripe.test.ts` et la campagne de paiement sont réécrits autour de l'invariant qui
+compte : **la somme des lignes PLUS la livraison vaut exactement le total encaissé**. Il interdit
+l'écart entre le montant affiché et le montant prélevé. 50 clés de dictionnaire supprimées, 24
+textes réécrits dans les deux langues, parité tenue par le test.
+
+Le build a d'ailleurs attrapé un vrai oubli avant la mise en ligne : la page « À propos » ne
+fournissait pas le montant de livraison à son texte, et le `fill` a **échoué bruyamment** au
+prérendu plutôt que d'afficher une phrase à trou. C'est exactement ce qu'on lui demande.
+
+### Ce qui reste à faire, et qui ne se code pas
+
+1. **Créer les prix et le tarif d'expédition dans Stripe** — sinon l'affiché et l'encaissé
+   divergent au premier paiement.
+2. **La section « Prochaine sélection » de l'accueil dit que le goujon n'est pas en vente**, alors
+   qu'il l'est désormais. À réécrire.
+
 ## 2026-09-04 — Le leurre s'appelle enfin « souple », et la page produit tient en un bloc
 
 ### Le mot juste, partout

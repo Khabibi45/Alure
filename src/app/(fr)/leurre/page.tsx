@@ -3,20 +3,19 @@ import { Truck, Undo2, CreditCard, Mail, MapPin } from 'lucide-react'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Marker } from '@/components/ui/Marker'
 import { BuyBox } from '@/components/sections/leurre/BuyBox'
-import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayMedia } from '@/components/sections/leurre/ColorwayMedia'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
-import { OFFERS, PRODUCT, formatEuros, formatSpecs } from '@/lib/shop/product'
+import { PACKS, SHIPPING, PRODUCT, formatEuros, formatSpecs, type PackId } from '@/lib/shop/product'
 import { DEFAULT_LOCALE } from '@/lib/i18n/paths'
 import { leurreStrings } from '@/lib/i18n/leurre-strings'
 
 export const metadata: Metadata = {
-  title: `Leurre souple — ${formatEuros(PRODUCT.pricing.soloCents)} port inclus`,
-  description: `Le leurre Alure : un leurre souple, pensé pour les carnassiers. ${formatEuros(PRODUCT.pricing.soloCents)} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour ${formatEuros(OFFERS.collection.amountCents)}. Livraison incluse (${PRODUCT.deliveryDelay}), paiement carte ou PayPal, rétractation 14 jours.`,
+  title: `Pack de leurres souples — ${formatEuros(PACKS.leurres.amountCents)} + ${formatEuros(SHIPPING.amountCents)} de livraison`,
+  description: `Les leurres souples Alure se vendent par pack : une unité de chacun des ${PRODUCT.colorways.length} coloris pour ${formatEuros(PACKS.leurres.amountCents)}, plus ${formatEuros(SHIPPING.amountCents)} de livraison (${PRODUCT.deliveryDelay}). Pack de goujons à ${formatEuros(PACKS.goujons.amountCents)}. Paiement carte ou PayPal, rétractation 14 jours.`,
 }
 
 /**
@@ -65,8 +64,8 @@ export default async function LeurrePage({
         </div>
       </aside>
 
-      <ColorwayProvider initialColoris={preselection.coloris} initialOffre={preselection.offre}>
-        <CheckoutProvider strings={strings}>
+      <ColorwayProvider>
+        <CheckoutProvider strings={strings} initialPack={preselection.pack as PackId | undefined}>
           <div className="grid gap-8 md:grid-cols-2 md:gap-12">
             {/* Visuel principal : le leurre en 3D, dans le coloris sélectionné dans
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
@@ -120,11 +119,10 @@ export default async function LeurrePage({
             on comprend comment il est fait, puis on choisit son offre. */}
           <LureDetails strings={strings} />
 
-          {/* L'offre, la progression et le CTA — sur toute la largeur de la page
-            (consigne Camil 2026-08-12). */}
-          <section aria-label="Votre offre" className="mt-10 md:mt-14">
-            <OfferPanel strings={strings} />
-
+          {/* La réassurance — trois faits, sous la fiche. Le panneau d'offre a
+            disparu avec l'offre elle-même : il n'y a plus qu'un pack à prendre,
+            et son bouton vit dans l'îlot d'achat. */}
+          <section aria-label="Réassurance" className="mt-10 md:mt-14">
             {/* Réassurance (§8.10) — trois faits ; en rang sur desktop. */}
             <ul className="mt-8 md:grid md:grid-cols-3 md:gap-6">
               {[

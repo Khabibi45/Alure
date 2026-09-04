@@ -111,7 +111,8 @@ export function LureSpecs({
   // collector, sans le dire) était une arithmétique commerciale locale — et fausse.
   const lines = [formatSpecs(), lineupSummary(), ...model.lines]
   const typed = useTypewriter(lines, !reducedMotion)
-  const finished = typed.length === lines.length && typed[lines.length - 1] === lines[lines.length - 1]
+  const finished =
+    typed.length === lines.length && typed[lines.length - 1] === lines[lines.length - 1]
 
   return (
     <aside

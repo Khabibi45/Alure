@@ -50,7 +50,9 @@ describe('POST /api/contact', () => {
   })
 
   it('rejette un numéro de commande à saut de ligne — il part dans le SUJET de l’email (400)', async () => {
-    const res = await POST(makeReq({ ...valid, orderNumber: 'cs_123\r\nBcc: spam@evil.tld' }, '1.1.1.6'))
+    const res = await POST(
+      makeReq({ ...valid, orderNumber: 'cs_123\r\nBcc: spam@evil.tld' }, '1.1.1.6')
+    )
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.issues.orderNumber).toBeTruthy()

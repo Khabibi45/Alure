@@ -18,12 +18,12 @@ export const LURE_DETAIL_IDS = ['yeux', 'paillettes', 'barrette', 'queue', 'pale
 export type LureDetailId = (typeof LURE_DETAIL_IDS)[number]
 
 /**
- * Les quatre leurres qui ont des photos : les trois coloris vendus, plus le
- * collector. Le Pirate ne s'achète pas, mais il se choisit — et on ne choisit
- * pas un leurre qu'on n'a pas vu.
+ * Les leurres qui ont des photos — c'est-à-dire tout le catalogue. Le noir en
+ * fait partie depuis qu'il a cessé d'être un collector (2026-09-04) : le pack
+ * contient une unité de chacun, ils se montrent donc tous de la même façon.
  */
 export const PHOTOGRAPHED_LURES: readonly Pick<Colorway, 'id' | 'label' | 'image' | 'photoSlug'>[] =
-  [...PRODUCT.colorways, PRODUCT.collector]
+  PRODUCT.colorways
 
 /**
  * Le chemin d'un gros plan, construit depuis le slug du coloris — la seule

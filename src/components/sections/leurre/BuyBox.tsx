@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react'
 import Image from 'next/image'
-import { PACKS, PACK_IDS, PRODUCT, type PackId } from '@/lib/shop/product'
+import { PACK_IDS, PRODUCT, type PackId } from '@/lib/shop/product'
 import { Button } from '@/components/ui/Button'
 import { useCheckout } from './checkout-context'
 import { PaymentMethods } from './PaymentMethods'

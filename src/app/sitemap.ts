@@ -1,7 +1,12 @@
 import type { MetadataRoute } from 'next'
 import { SITE } from '@/lib/site-config'
 import { LEGAL_COMPLETE } from '@/lib/legal-config'
-import { PREFIXED_LOCALES, TRANSLATED_PATHS, localePath, hreflangAlternates } from '@/lib/i18n/paths'
+import {
+  PREFIXED_LOCALES,
+  TRANSLATED_PATHS,
+  localePath,
+  hreflangAlternates,
+} from '@/lib/i18n/paths'
 
 /**
  * Les chemins traduits viennent de `paths.ts` — la SOURCE UNIQUE, celle que le
@@ -14,7 +19,12 @@ import { PREFIXED_LOCALES, TRANSLATED_PATHS, localePath, hreflangAlternates } fr
  * langues, sinon la version anglaise d'une page exclue se ferait indexer.
  */
 const HORS_INDEX: readonly string[] = ['/merci']
-const LEGALES: readonly string[] = ['/mentions-legales', '/cgv', '/retractation', '/confidentialite']
+const LEGALES: readonly string[] = [
+  '/mentions-legales',
+  '/cgv',
+  '/retractation',
+  '/confidentialite',
+]
 
 function absolute(languages: Record<string, string>): Record<string, string> {
   return Object.fromEntries(

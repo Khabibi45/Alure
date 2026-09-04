@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Marker } from '@/components/ui/Marker'
 import { LEGAL, LEGAL_COMPLETE } from '@/lib/legal-config'
 import { SITE } from '@/lib/site-config'
-import { OFFERS, PRODUCT, formatEuros } from '@/lib/shop/product'
+import { PACKS, SHIPPING, PRODUCT, formatEuros } from '@/lib/shop/product'
 
 export const metadata: Metadata = {
   title: 'Conditions générales de vente',
@@ -31,14 +31,15 @@ export default function CgvPage() {
 
       <h2 className="mt-10 text-[1.25rem] font-bold text-foreground">2. Le produit et les prix</h2>
       <p className="mt-3">
-        Le site vend le leurre de pêche {SITE.name} (leurre souple), en plusieurs
-        coloris, chaque leurre étant vendu à l'unité. Le prix en vigueur est celui affiché au
-        moment de la commande. À la date d'entrée en vigueur, deux offres coexistent : un leurre
-        seul à {formatEuros(PRODUCT.pricing.soloCents)}, ou l'offre « 3 achetés, le 4e offert » à{' '}
-        {formatEuros(OFFERS.collection.amountCents)} (soit trois leurres au prix de l'unité), avec
-        laquelle un quatrième leurre, au choix de l'acheteur parmi les coloris disponibles ou le
-        coloris collector, est remis gracieusement et sans contrepartie. Livraison en France
-        incluse. TVA non applicable, art. 293 B du CGI.
+        Le site vend des packs de leurres de pêche {SITE.name}. À la date d'entrée en vigueur, deux
+        packs sont proposés : le pack de leurres souples, contenant une unité de chacun des{' '}
+        {PRODUCT.colorways.length} coloris ({PRODUCT.colorways.map((c) => c.label).join(', ')}), à{' '}
+        {formatEuros(PACKS.leurres.amountCents)} ; et le pack de goujons, contenant{' '}
+        {PACKS.goujons.unitCount} leurres, à {formatEuros(PACKS.goujons.amountCents)}. Les leurres
+        ne sont pas vendus à l'unité. Le prix en vigueur est celui affiché au moment de la commande.
+        Les frais de livraison, de {formatEuros(SHIPPING.amountCents)} par commande (
+        {SHIPPING.carrier}, France métropolitaine), s'ajoutent au prix du pack et sont affichés
+        avant le paiement. TVA non applicable, art. 293 B du CGI.
       </p>
 
       <h2 className="mt-10 text-[1.25rem] font-bold text-foreground">3. Commande et paiement</h2>

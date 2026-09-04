@@ -183,17 +183,15 @@ describe('parité FR/EN — aucun texte en dur dans ce qui est servi en anglais'
   })
 
   it.each(
-    fichiers
-      .map((f) => [relative(RACINE, f), f] as const)
-      .filter(([nom]) => !DETTE.has(nom))
+    fichiers.map((f) => [relative(RACINE, f), f] as const).filter(([nom]) => !DETTE.has(nom))
   )('%s ne contient aucune chaîne visible en dur', (nom, chemin) => {
-      const suspects = litterauxSuspects(readFileSync(chemin, 'utf8'))
-      expect(
-        suspects,
-        `${nom} — texte visible écrit en dur. Il s’affichera en français sur /en (CLAUDE.md, règle Alure n°6). ` +
-          `Les chaînes se déclarent dans docs/i18n/fr.md ET en.md, se préparent côté serveur ` +
-          `(src/lib/i18n/chrome.ts ou un module *-strings.ts) et arrivent en props. ` +
-          `Si la chaîne est réellement neutre, ajoute-la à AUTORISES dans ce fichier, avec sa raison.`
-      ).toEqual([])
+    const suspects = litterauxSuspects(readFileSync(chemin, 'utf8'))
+    expect(
+      suspects,
+      `${nom} — texte visible écrit en dur. Il s’affichera en français sur /en (CLAUDE.md, règle Alure n°6). ` +
+        `Les chaînes se déclarent dans docs/i18n/fr.md ET en.md, se préparent côté serveur ` +
+        `(src/lib/i18n/chrome.ts ou un module *-strings.ts) et arrivent en props. ` +
+        `Si la chaîne est réellement neutre, ajoute-la à AUTORISES dans ce fichier, avec sa raison.`
+    ).toEqual([])
   })
 })

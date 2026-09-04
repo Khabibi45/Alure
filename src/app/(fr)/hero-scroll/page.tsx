@@ -20,8 +20,11 @@ export const metadata: Metadata = {
 export default function HeroScrollPage() {
   return (
     <main>
-      <Hero variant="scroll"
-        strings={carouselStrings('fr')} title={t(getDictionary('fr'), 'HOME.H1')} />
+      <Hero
+        variant="scroll"
+        strings={carouselStrings('fr')}
+        title={t(getDictionary('fr'), 'HOME.H1')}
+      />
     </main>
   )
 }

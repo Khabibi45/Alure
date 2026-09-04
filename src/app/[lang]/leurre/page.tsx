@@ -3,14 +3,21 @@ import { Truck, Undo2, CreditCard, Mail, MapPin } from 'lucide-react'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Marker } from '@/components/ui/Marker'
 import { BuyBox } from '@/components/sections/leurre/BuyBox'
-import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
 import { ColorwayMedia } from '@/components/sections/leurre/ColorwayMedia'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
-import { OFFERS, PRODUCT, formatEuros, formatLength, formatWeight } from '@/lib/shop/product'
+import {
+  PACKS,
+  SHIPPING,
+  PRODUCT,
+  formatEuros,
+  formatLength,
+  formatWeight,
+  type PackId,
+} from '@/lib/shop/product'
 import { getDictionary, t, isLocale, localePath, hreflangAlternates } from '@/lib/i18n'
 import { leurreStrings } from '@/lib/i18n/leurre-strings'
 
@@ -49,16 +56,18 @@ export async function generateMetadata({
   const { lang } = await params
   if (!isLocale(lang)) return {}
   const dict = getDictionary(lang)
-  const prixSolo = formatEuros(PRODUCT.pricing.soloCents, lang)
+  const params_ = {
+    prixPack: formatEuros(PACKS.leurres.amountCents, lang),
+    prixGoujons: formatEuros(PACKS.goujons.amountCents, lang),
+    livraison: formatEuros(SHIPPING.amountCents, lang),
+    nbColoris: String(PRODUCT.colorways.length),
+    // Le délai vient du dictionnaire, jamais de `PRODUCT.deliveryDelay`, qui
+    // est une chaîne française en dur.
+    delai: t(dict, 'PRODUCT.DELAY_VALUE'),
+  }
   return {
-    title: t(dict, 'PRODUCT.TITLE', { prixSolo }),
-    description: t(dict, 'PRODUCT.DESCRIPTION', {
-      prixSolo,
-      prixCollection: formatEuros(OFFERS.collection.amountCents, lang),
-      // Le délai vient du dictionnaire, jamais de `PRODUCT.deliveryDelay`, qui
-      // est une chaîne française en dur.
-      delai: t(dict, 'PRODUCT.DELAY_VALUE'),
-    }),
+    title: t(dict, 'PRODUCT.TITLE', params_),
+    description: t(dict, 'PRODUCT.DESCRIPTION', params_),
     alternates: {
       canonical: localePath(lang, '/leurre'),
       languages: hreflangAlternates('/leurre').languages,
@@ -108,8 +117,8 @@ export default async function LangLeurrePage({
         </div>
       </aside>
 
-      <ColorwayProvider initialColoris={preselection.coloris} initialOffre={preselection.offre}>
-        <CheckoutProvider strings={strings}>
+      <ColorwayProvider>
+        <CheckoutProvider strings={strings} initialPack={preselection.pack as PackId | undefined}>
           <div className="mt-8 grid gap-8 md:grid-cols-2 md:gap-12">
             {/* Visuel principal : le leurre en 3D, dans le coloris sélectionné dans
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
@@ -169,11 +178,10 @@ export default async function LangLeurrePage({
             on comprend comment il est fait, puis on choisit son offre. */}
           <LureDetails strings={strings} />
 
-          {/* L'offre, la progression et le CTA — sur toute la largeur de la page
-            (consigne Camil 2026-08-12). */}
-          <section aria-label={t(dict, 'OFFER.LEGEND')} className="mt-10 md:mt-14">
-            <OfferPanel strings={strings} />
-
+          {/* La réassurance — trois faits, sous la fiche. Le panneau d'offre a
+            disparu avec l'offre elle-même : il n'y a plus qu'un pack à prendre,
+            et son bouton vit dans l'îlot d'achat. */}
+          <section aria-label="" className="mt-10 md:mt-14">
             {/* Réassurance (§8.10) — trois faits ; en rang sur desktop. */}
             <ul className="mt-8 md:grid md:grid-cols-3 md:gap-6">
               {reassurance.map(({ icon: Icon, text }) => (

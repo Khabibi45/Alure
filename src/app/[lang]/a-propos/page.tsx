@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { PRODUCT, formatSpecs } from '@/lib/shop/product'
+import { PRODUCT, SHIPPING, formatEuros, formatSpecs } from '@/lib/shop/product'
 import { getDictionary, t, isLocale, localePath, hreflangAlternates } from '@/lib/i18n'
 import { AboutScene } from '@/components/sections/AboutScene'
 
@@ -79,8 +79,7 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
           {t(dict, 'ABOUT.RANGE', {
             nbColoris: String(PRODUCT.colorways.length),
             coloris: colorwayNames,
-          })}{' '}
-          {t(dict, 'ABOUT.COLLECTOR_RULE', { collector: PRODUCT.collector.label })}
+          })}
         </p>
       </div>
 
@@ -119,7 +118,12 @@ export default async function LangAboutPage({ params }: { params: Promise<{ lang
         {t(dict, 'ABOUT.TRANSPARENCY_TITLE')}
       </h2>
       <div className="mt-4 space-y-5 text-[0.9375rem] leading-relaxed text-prose-foreground">
-        <p>{t(dict, 'ABOUT.TRANSPARENCY_BODY', { delai: t(dict, 'PRODUCT.DELAY_VALUE') })}</p>
+        <p>
+          {t(dict, 'ABOUT.TRANSPARENCY_BODY', {
+            delai: t(dict, 'PRODUCT.DELAY_VALUE'),
+            livraison: formatEuros(SHIPPING.amountCents, locale),
+          })}
+        </p>
         <p>{t(dict, 'SHIPPING_NOTICE.BODY')}</p>
       </div>
 

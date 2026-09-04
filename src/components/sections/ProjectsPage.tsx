@@ -3,7 +3,7 @@ import { PrecommandeSection } from '@/components/sections/PrecommandeSection'
 import { getDictionary, t } from '@/lib/i18n'
 import { localePath, type Locale } from '@/lib/i18n/paths'
 import { PRECOMMANDE_GOAL } from '@/lib/shop/precommande'
-import { OFFERS, PRODUCT, formatEuros, formatSpecs } from '@/lib/shop/product'
+import { PACKS, SHIPPING, PRODUCT, formatEuros, formatSpecs } from '@/lib/shop/product'
 
 /**
  * « Nos projets » — le corps de la page, partagé par les deux langues.
@@ -40,9 +40,9 @@ export function ProjectsPage({ locale }: { locale: Locale }) {
     specs: formatSpecs(locale),
     nbColoris: String(PRODUCT.colorways.length),
     coloris: PRODUCT.colorways.map((c) => c.label).join(', '),
-    collector: PRODUCT.collector.label,
-    prixSolo: formatEuros(PRODUCT.pricing.soloCents, locale),
-    prixCollection: formatEuros(OFFERS.collection.amountCents, locale),
+    prixPack: formatEuros(PACKS.leurres.amountCents, locale),
+    prixGoujons: formatEuros(PACKS.goujons.amountCents, locale),
+    livraison: formatEuros(SHIPPING.amountCents, locale),
   }
 
   /**

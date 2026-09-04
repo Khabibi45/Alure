@@ -45,7 +45,7 @@
 ## 3. HOME
 
 - `HOME.H1` — The soft swimbait, made for predatory fish
-- `HOME.SUBTITLE` — Black bass, perch. {longueur} · {poids}. {prixSolo} for one lure — buy 3, get a 4th free, delivery included ({delai}).
+- `HOME.SUBTITLE` — Black bass, perch. {longueur} · {poids}. The {nbColoris}-colourway pack at {prixPack}, {livraison} delivery ({delai}).
 - `HOME.CTA` — See the lure
 
 ### 3D carousel
@@ -63,6 +63,7 @@
 ### View selector
 
 - `HOME.VIEWS_LABEL` — Viewing angle of the lure
+- `HOME.SHEET` — Lure spec sheet
 - `HOME.VIEW_RIGHT` — Right
 - `HOME.VIEW_LEFT` — Left
 - `HOME.VIEW_TOP` — Top
@@ -88,8 +89,8 @@
 
 ## 4. PRODUCT — /leurre page
 
-- `PRODUCT.TITLE` — Soft swimbait — {prixSolo}, delivery included
-- `PRODUCT.DESCRIPTION` — The Alure lure: a soft swimbait, made for predatory fish. {prixSolo} per lure, sold individually — buy 3 and pick a 4th free (up to the collector colourway): 4 lures for {prixCollection}. Delivery included ({delai}), card or PayPal, 14-day right of withdrawal.
+- `PRODUCT.TITLE` — Soft-lure pack — {prixPack} plus {livraison} delivery
+- `PRODUCT.DESCRIPTION` — Alure soft lures are sold as packs: one of each of the {nbColoris} colourways for {prixPack}, plus {livraison} delivery ({delai}). Gudgeon pack at {prixGoujons}. Card or PayPal, 14-day right of withdrawal.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Colourway:
 - `PRODUCT.SOLD_OUT` — Out of stock
@@ -99,54 +100,16 @@
 - `PRODUCT.BUY_LOADING` — Redirecting to payment…
 - `PRODUCT.BUY_LOADING_SHORT` — Redirecting…
 - `PRODUCT.PAYMENT_HINT` — Payment by card or PayPal, through Stripe.
-- `OFFER.SOLO_TITLE` — One lure
-- `OFFER.SOLO_DETAIL` — The {coloris} colourway, on its own.
-- `OFFER.COLLECTION_TITLE` — Buy 3, get a 4th free
-- `OFFER.COLLECTION_DETAIL` — All {nbColoris} colourways + a 4th of your choice — up to the {collector}.
-- `OFFER.PER_LURE_EXACT` — That works out at {montant} a lure.
-- `OFFER.PER_LURE_AT_MOST` — That works out at under {montant} a lure.
-- `OFFER.LEGEND` — Your offer
-- `OFFER.RULE` — Buy 3 lures, pick a 4th free
 
 ### Le panier du carrousel 3D (accueil)
 
-- `CART.BOX_PRICE` — {prix}
-- `CART.BOX_TAKEN` — in cart
-- `CART.BOX_SOLD_OUT` — sold out
-- `CART.BOX_GIFT` — 4th lure
-- `CART.BOX_GIFT_FREE` — free
-- `CART.BOX_GIFT_CHOOSE` — your pick
-- `CART.BOX_GIFT_PAUSED` — paused
-- `CART.BOX_A11Y` — {coloris}, {etat}, show this lure
-- `CART.GIFT_A11Y` — Free 4th lure, show the {collector}
-- `CART.ADD` — Add {coloris}
-- `CART.REMOVE` — Remove {coloris}
-- `CART.ORDER_COLLECTION` — Order all 4 lures
-- `CART.ORDER_SOLO` — Order {coloris} on its own
-- `CART.CLEAR` — Empty the cart
-- `CART.SHEET` — Lure details
-- `CART.STATE_EMPTY` — All 3 colours, plus a free 4th lure: {total}.
-- `CART.STATE_ONE` — 1 colour of {max}: {liste}.
-- `CART.STATE_SOME` — {compte} colours of {max}: {liste}. There is no price for 2 lures.
-- `CART.STATE_FULL` — All {max} colours are in the cart. You will pick your free 4th lure.
-- `CART.STATE_SOLD_OUT` — One colour is sold out. The 4-lure offer is paused. The others can still be ordered individually.
-- `CART.FOOTNOTE` — {prix} per lure. Delivery {delai}, shipping included.
-- `PROGRESS.STEP_FIRST` — Your first lure
-- `PROGRESS.STEP_OTHERS` — Your 2nd and 3rd lures
-- `PROGRESS.STEP_OTHERS_DONE` — +{montant} each — and the 4th is free
-- `PROGRESS.STEP_COLLECTOR` — The 4th — free, your choice (up to the {collector})
-- `PROGRESS.COLLECTOR_DONE` — pick it with your order
-- `PROGRESS.COLLECTOR_TODO` — free once 3 lures are bought
 - `PAYMENT.CARD` — Card
 - `PAYMENT.PAYPAL` — PayPal
 - `PAYMENT.SAFETY` — Payment is taken on Stripe — your card details never pass through this site.
-- `PRODUCT.COLLECTOR_LOCKED` — The {collector} can be picked as your free 4th lure once you buy 3.
-- `PRODUCT.COLLECTOR_EARNED` — The {collector} comes free with your order.
 - `PRODUCT.MEDIA_LABEL` — What you are looking at
 - `PRODUCT.MEDIA_PHOTO` — Photo
 - `PRODUCT.MEDIA_MODEL` — In 3D
 - `PRODUCT.VIEWER_NO_WEBGL` — Your browser does not display 3D. The description alongside covers the lure in detail.
-- `PRODUCT.COLLECTOR_ALT` — The Alure collector lure in 3D, {nom} model, available as the free 4th lure once 3 are bought. It swims on the spot.
 - `PRODUCT.REASSURANCE_RETURN` — 14-day right of withdrawal
 - `PRODUCT.REASSURANCE_PAYMENT` — Payment by Stripe or PayPal
 - `PRODUCT.REASSURANCE_TRACKING` — Order tracking by email
@@ -185,9 +148,7 @@
 
 ## 5. PRICING
 
-- `PRICING.RULE` — Buy 3 lures, pick a 4th free
-- `PRICING.TAX_LINE` — delivery included · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
-- `PRICING.SAVINGS` — You save {montant}.
+- `PRICING.TAX_LINE` — delivery extra · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
 
 ## 6. FAQ
 
@@ -196,7 +157,7 @@
 - `FAQ.Q_SHIPPING_COST` — How much does delivery cost?
 - `FAQ.A_SHIPPING_COST` — Nothing: delivery within France is included in the price shown, whichever offer you choose.
 - `FAQ.Q_BULK` — Does the price come down if I take several?
-- `FAQ.A_BULK` — Yes. Each lure is sold individually at {prixSolo}. Buy 3 ({prixCollection}) and the 4th is free — your choice: a duplicate colourway or the {collector}. The total is shown before payment, delivery included.
+- `FAQ.A_BULK` — Lures are not sold individually: they ship as packs. The soft-lure pack holds one of each of the {nbColoris} colourways, for {prixPack}. The gudgeon pack holds 5, for {prixGoujons}. Delivery, {livraison}, is added and shown before payment.
 - `FAQ.Q_SIZE` — What size and weight is the lure?
 - `FAQ.A_SIZE` — {longueur} for {poids}. It is a compact format: it casts on light tackle and fishes just as well on a straight retrieve as on a worked one.
 - `FAQ.Q_TRACK` — How do I follow my order?
@@ -250,7 +211,7 @@
 - `EMAIL.CONFIRM_RECAP` — Summary:
 - `EMAIL.CONFIRM_COLORWAY` — Colourway: {coloris}
 - `EMAIL.CONFIRM_OFFER` — Offer: {offre}
-- `EMAIL.CONFIRM_TOTAL` — Total paid: {montant} (delivery included — TVA non applicable, art. 293 B du CGI, the French small-business VAT exemption)
+- `EMAIL.CONFIRM_TOTAL` — Total paid: {montant}, delivery included — TVA non applicable, art. 293 B du CGI
 - `EMAIL.CONFIRM_DELIVERY` — Delivery: {delai}, as stated before you bought.
 - `EMAIL.CONFIRM_TRACKING` — As soon as your order ships, you will receive the tracking number by email.
 - `EMAIL.CONFIRM_WITHDRAWAL` — You have a 14-day right of withdrawal from delivery.
@@ -324,7 +285,7 @@
 - `LEGAL.TERMS_S1_TITLE` — 1. The seller
 - `LEGAL.TERMS_S1_BODY` — {vendeur}, sole trader (French micro-entreprise), SIREN {siren}, {adresse}. Contact: {email}.
 - `LEGAL.TERMS_S2_TITLE` — 2. The product and the prices
-- `LEGAL.TERMS_S2_BODY` — The site sells the {marque} fishing lure (a soft lure) in several colourways, each lure being sold individually. The price that applies is the one displayed when the order is placed. On the date these terms take effect, two offers coexist: a single lure at {prixSolo}, or the “buy 3, get a 4th free” offer at {prixCollection} (that is, three lures at the unit price), under which a fourth lure, chosen by the buyer from the available colourways or the collector colourway, is given free of charge and without any consideration. Delivery within France included. TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
+- `LEGAL.TERMS_S2_BODY` — Le site vend des packs de leurres de pêche {marque}. À la date d'entrée en vigueur, deux packs sont proposés : le pack de leurres souples, contenant une unité de chacun des {nbColoris} coloris ({coloris}), à {prixPack} ; et le pack de goujons, contenant 5 leurres, à {prixGoujons}. Les leurres ne sont pas vendus à l'unité. Le prix en vigueur est celui affiché au moment de la commande. Les frais de livraison, de {livraison} par commande (Lettre Verte suivie, France métropolitaine), s'ajoutent au prix du pack et sont affichés avant le paiement. TVA non applicable, art. 293 B du CGI.
 - `LEGAL.TERMS_S3_TITLE` — 3. Order and payment
 - `LEGAL.TERMS_S3_BODY` — Orders are paid online by bank card or PayPal, through the Stripe payment platform. The sale is concluded when the payment is confirmed, which the confirmation email records. We never have access to your card details.
 - `LEGAL.TERMS_S4_TITLE` — 4. Delivery
@@ -405,15 +366,9 @@
 - `PRODUCT.H1_TAIL` — lure for predators
 - `PRODUCT.SECTION_VISUAL` — View of the lure
 - `PRODUCT.DELIVERY_BANNER_BODY` — Your lure leaves from France, in a black padded envelope. You receive a tracking number by email as soon as it ships.
-- `PRODUCT.GIFT_LABEL` — Your free 4th lure:
-- `PRODUCT.GIFT_DUPLICATE_A11Y` — {coloris} — a duplicate, free
-- `PRODUCT.GIFT_COLLECTOR_A11Y` — {collector} — the collector, free
 
 ### PROGRESS — routes anglaises (2026-08-26)
 
-- `PROGRESS.STEP_SECOND` — The second
-- `PROGRESS.STEP_THIRD` — The third
-- `PROGRESS.LOCKED_A11Y` — — still locked
 
 ### ABOUT — routes anglaises (2026-08-26)
 
@@ -422,12 +377,11 @@
 - `ABOUT.HERO_ALT` — Computer-generated image: a zander held in the hand, the green Alure lure in its mouth.
 - `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure, a soft swimbait, {specs}, made for black bass and perch, because it is the one we wanted in our own box. We keep the lures here in France, and we pack every order ourselves.
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
-- `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
 - `ABOUT.VISUALS_BODY` — The lure visuals are ours: the interactive viewer on the home page is our 3D model of the real lure, and the shop's close-ups show the piece itself, detail by detail. The image at the top of this page is a computer-generated one — we will not show a real catch until we have one of our own.
 - `ABOUT.COLORWAY_ALT` — The Alure lure, {coloris} colourway, resting on wet slate.
 - `ABOUT.TRANSPARENCY_TITLE` — Where your lure ships from
-- `ABOUT.TRANSPARENCY_BODY` — Your lure ships from us, in a black padded envelope we take to the post office. Allow {delai} between your order and delivery. That lead time is shown before you pay, and repeated in your confirmation email. The price includes delivery. You have 14 days to change your mind, as French law provides.
+- `ABOUT.TRANSPARENCY_BODY` — Your pack leaves from our place, in a black padded envelope we drop at the post office. Allow {delai} between your order and its delivery. That window is shown before you pay, and repeated in your confirmation email. Delivery, {livraison}, is added to the pack price and announced before payment. You have 14 days to change your mind, as the law provides.
 - `ABOUT.KIT_ENVELOPE_ALT` — A stack of black padded envelopes.
 - `ABOUT.KIT_LURES_ALT` — The four Alure lures held in the palm of a hand, by the water.
 - `ABOUT.KIT_CARD_ALT` — The back of the card tucked into every envelope, carrying the Alure name.
@@ -443,9 +397,6 @@
 - `CONTACT.SUCCESS_DETAIL` — We reply to the address you provided.
 - `CONTACT.ERROR_RATE_LIMIT` — Too many requests. Please try again in a minute.
 - `CONTACT.ERROR_UNAVAILABLE` — The form is temporarily unavailable. Please try again later.
-- `PRICING.TAGLINE_SOLO` — Delivery included · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
-- `PRICING.TAGLINE_COLLECTION` — Buy 3 lures, pick a 4th free · delivery included · TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
-- `PROGRESS.COLLECTOR_PICK` — pick it above — it ships in your parcel
 - `PRODUCT.VIEWER_ALT` — The Alure lure in 3D, {coloris} colourway. It swims on the spot.
 - `STATES.PACK_UNKNOWN` — That pack does not exist.
 - `STATES.PACK_SOLD_OUT` — That pack is unavailable right now.
@@ -453,7 +404,7 @@
 ### PRECOMMANDE — la campagne des 100 (2026-08-26)
 
 - `PRECOMMANDE.TITLE` — The lure exists. The run doesn't.
-- `PRECOMMANDE.INTRO` — We don't have the money to start production. That's our only problem, so we'll say it first. The model is settled, the colourways are chosen, and you can buy this lure here for {prixSolo}. Alure is a French micro-entreprise run by anglers, and nobody is funding it for us. We need {objectif} pre-orders to make a run under our own name, signed, in a box of its own.
+- `PRECOMMANDE.INTRO` — We do not have the funds to start production. That is our only problem, and we would rather say so now. The model is settled, the colourways are chosen, and you can buy the pack here at {prixPack}. Alure is a French micro-entreprise run by anglers, and nobody funds it for us. We need {objectif} pre-orders to produce a signed series of our own, in its own box.
 - `PRECOMMANDE.COUNTER` — {compte} towards a target of {objectif}
 - `PRECOMMANDE.COUNTER_NOTE` — This counter reads our payments. It moves when an order is paid, and at no other time.
 - `PRECOMMANDE.WHY_TITLE` — Why {objectif}
@@ -464,7 +415,7 @@
 - `PRECOMMANDE.DATE_BODY` — A pre-order with no shipping date binds nobody. Ours has one: your order leaves by {dateLimite} at the latest. That date does not depend on the counter, and we will not push it back while we wait for orders.
 - `PRECOMMANDE.REFUND_TITLE` — If we fall short
 - `PRECOMMANDE.REFUND_BODY` — If the {objectif} orders are not reached, the run does not happen and you are refunded in full. If they are reached but shipping cannot meet {dateLimite}, you are refunded in full as well. The refund goes back to the payment method you used, without you having to ask.
-- `PRECOMMANDE.PRICE` — {prixSolo} for one lure. {prixCollection} for three, with a fourth free. Delivery included. Same price as the shop: pre-ordering does not change it.
+- `PRECOMMANDE.PRICE` — {prixPack} for the {nbColoris}-colourway pack, plus {livraison} delivery. It is the shop price: pre-ordering does not change it.
 - `PRECOMMANDE.CTA` — Pre-order my lure
 - `PRECOMMANDE.CTA_NOTE` — You pay today. It ships by {dateLimite} at the latest. Delivery to mainland France only.
 - `PRECOMMANDE.LEGAL` — Pre-order: you are paying today for a lure we undertake to ship by {dateLimite} at the latest, under article L216-1 of the French consumer code. After that date you may cancel your order and be refunded in full to your original payment method, within 14 days. If the target of {objectif} orders is not reached, the run is called off and every pre-order is refunded on the same terms. 14-day right of withdrawal from the day the parcel arrives. Delivery to mainland France only. TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption). The seller is identified in the legal notice.
@@ -495,10 +446,10 @@
 - `PROJECTS.DESCRIPTION` — Where Alure stands: the lure exists, it is stocked in France and delivered in {delai}. A first signed run, in its own box, is still missing.
 - `PROJECTS.INTRO` — This page says where the Alure project stands, and what is left to do. The lure exists, it is in stock, it ships from us. What does not exist yet is a run made under our own name.
 - `PROJECTS.DONE_TITLE` — What is already here
-- `PROJECTS.DONE_BODY` — The lure is made: a soft swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, plus the {collector}, which is never sold and comes as the free fourth lure. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.
+- `PROJECTS.DONE_BODY` — The lure is made: a soft swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, and it sells as a pack — one of each. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.
 - `PROJECTS.STOCK_TITLE` — The stock is now in France
 - `PROJECTS.STOCK_BODY` — The lures are with us, and we pack every order ourselves, in a black padded envelope. Your order reaches you in {delai}. Before that, they shipped from a supplier, and the wait ran from 10 to 20 days.
 - `PROJECTS.SERIES_TITLE` — The run and the box
 - `PROJECTS.SERIES_BODY` — What is missing is a first run under our own name: the same lure, signed, in a box of its own. That is the only difference from the one you order here today. Our target is {objectif} orders to pay for it, and every paid order counts towards that total.
 - `PROJECTS.CTA` — See the lure
-- `PROJECTS.CTA_NOTE` — {prixSolo} for one lure, or {prixCollection} for three with a fourth free. Delivery included, {delai}. Mainland France only.
+- `PROJECTS.CTA_NOTE` — {prixPack} for the {nbColoris}-colourway pack, plus {livraison} delivery ({delai}). Mainland France only.

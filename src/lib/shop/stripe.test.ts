@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { OFFER_IDS, PRODUCT, totalCents, checkoutLines, getOffer } from './product'
+import { PACKS, PACK_IDS, PRODUCT, SHIPPING, totalCents, checkoutLines } from './product'
 
 /**
  * Le SDK Stripe est mocké : ces tests vérifient CE QU'ON LUI ENVOIE, pas son
@@ -32,7 +32,11 @@ function lastLineItems(): LineItem[] {
   return create.mock.calls[create.mock.calls.length - 1][0].line_items as LineItem[]
 }
 
-const coloris = PRODUCT.colorways[0].id
+/** Le montant du tarif d'expédition posé sur la dernière session créée. */
+function lastShippingCents(): number {
+  const session = create.mock.calls[create.mock.calls.length - 1][0]
+  return session.shipping_options[0].shipping_rate_data.fixed_amount.amount as number
+}
 
 beforeEach(() => {
   create.mockReset()
@@ -41,77 +45,81 @@ beforeEach(() => {
 })
 
 describe('createCheckoutSession — le montant demandé au client', () => {
-  it.each(OFFER_IDS)('la somme des lignes envoyées à Stripe vaut totalCents pour %s', async (offre) => {
-    await createCheckoutSession({ coloris, offre })
-    const sum = lastLineItems().reduce((acc, l) => acc + l.price_data.unit_amount * l.quantity, 0)
-    expect(sum).toBe(totalCents(offre))
-  })
+  it.each(PACK_IDS)(
+    'la somme des lignes PLUS la livraison vaut totalCents — pack %s',
+    async (pack) => {
+      await createCheckoutSession({ pack })
+      const lignes = lastLineItems().reduce(
+        (somme, item) => somme + item.quantity * item.price_data.unit_amount,
+        0
+      )
+      // L'INVARIANT : ce que Stripe encaisse est ce que la page affiche.
+      expect(lignes + lastShippingCents()).toBe(totalCents(pack))
+    }
+  )
 
-  it('n’envoie qu’une ligne pour un leurre seul', async () => {
-    await createCheckoutSession({ coloris, offre: 'solo' })
+  it('facture le pack en UNE ligne, à son prix', async () => {
+    await createCheckoutSession({ pack: 'leurres' })
     const items = lastLineItems()
     expect(items).toHaveLength(1)
-    expect(items[0].price_data.unit_amount).toBe(PRODUCT.pricing.soloCents)
+    expect(items[0].quantity).toBe(1)
+    expect(items[0].price_data.unit_amount).toBe(PACKS.leurres.amountCents)
+    expect(items[0].price_data.product_data.name).toBe(PACKS.leurres.name)
   })
 
-  it('facture « 3 achetés, le 4e offert » : 3 × l’unité, puis le cadeau à 0,00 €', async () => {
-    await createCheckoutSession({ coloris, offre: 'collection', cadeau: PRODUCT.collector.id })
-    const items = lastLineItems()
-    expect(items).toHaveLength(2)
-    expect(items[0].quantity).toBe(getOffer('collection').paidCount)
-    expect(items[0].price_data.unit_amount).toBe(PRODUCT.pricing.soloCents)
-    expect(items[1].price_data.unit_amount).toBe(0)
-    expect(items[1].price_data.product_data.name).toMatch(/offert/i)
-    // Le choix de l'acheteur se lit sur le reçu — jamais un cadeau anonyme.
-    expect(items[1].price_data.product_data.name).toContain(PRODUCT.collector.label)
+  it('passe la livraison en FRAIS DE PORT, jamais en article', async () => {
+    // C'est ce qui fait voir au client « pack + livraison » au lieu d'un total
+    // opaque — et ce qui évite qu'un frais de port soit remboursé comme un
+    // produit en cas de rétractation partielle.
+    await createCheckoutSession({ pack: 'leurres' })
+    expect(lastShippingCents()).toBe(SHIPPING.amountCents)
+    expect(lastLineItems().some((i) => i.price_data.unit_amount === SHIPPING.amountCents)).toBe(
+      false
+    )
   })
 
   it('reste aligné sur checkoutLines — une seule source de barème', async () => {
-    const colorway = PRODUCT.colorways[1]
-    await createCheckoutSession({ coloris: colorway.id, offre: 'collection' })
-    const sent = lastLineItems().map((l) => ({ q: l.quantity, cents: l.price_data.unit_amount }))
-    const expected = checkoutLines('collection', colorway.label).map((l) => ({
-      q: l.quantity,
-      cents: l.unitAmountCents,
+    await createCheckoutSession({ pack: 'goujons' })
+    const expected = checkoutLines('goujons').map((l) => ({
+      name: l.name,
+      quantity: l.quantity,
+      unit_amount: l.unitAmountCents,
     }))
-    expect(sent).toEqual(expected)
+    expect(
+      lastLineItems().map((i) => ({
+        name: i.price_data.product_data.name,
+        quantity: i.quantity,
+        unit_amount: i.price_data.unit_amount,
+      }))
+    ).toEqual(expected)
   })
 
-  it('facture en euros et nomme le coloris commandé sur l’offre solo', async () => {
-    const colorway = PRODUCT.colorways[1]
-    await createCheckoutSession({ coloris: colorway.id, offre: 'solo' })
-    for (const item of lastLineItems()) {
-      expect(item.price_data.currency).toBe('eur')
-    }
-    expect(lastLineItems()[0].price_data.product_data.name).toContain(colorway.label)
+  it('facture en euros', async () => {
+    await createCheckoutSession({ pack: 'leurres' })
+    expect(lastLineItems()[0].price_data.currency).toBe(PRODUCT.currency)
   })
 
-  it('ne livre qu’en France et transmet l’offre ET le cadeau au webhook', async () => {
-    await createCheckoutSession({ coloris, offre: 'collection', cadeau: PRODUCT.collector.id })
+  it('ne livre qu’en France et transmet le pack au webhook', async () => {
+    await createCheckoutSession({ pack: 'goujons' })
     const session = create.mock.calls[0][0]
     expect(session.shipping_address_collection.allowed_countries).toEqual(['FR'])
-    expect(session.metadata).toMatchObject({
-      coloris,
-      offre: 'collection',
-      cadeau: PRODUCT.collector.id,
-    })
-    expect(session.mode).toBe('payment')
+    expect(session.metadata).toEqual({ pack: 'goujons' })
   })
 
-  it('refuse une offre inconnue AVANT d’appeler Stripe', async () => {
-    await expect(createCheckoutSession({ coloris, offre: 'duo' })).rejects.toThrow(/inconnue/i)
+  it('refuse un pack inconnu AVANT d’appeler Stripe', async () => {
+    await expect(createCheckoutSession({ pack: 'duo' })).rejects.toThrow(/inconnu/i)
     expect(create).not.toHaveBeenCalled()
   })
 
   it('échoue bruyamment si Stripe renvoie une session sans URL', async () => {
     create.mockResolvedValueOnce({ id: 'cs_test_2', url: null })
-    await expect(createCheckoutSession({ coloris, offre: 'solo' })).rejects.toThrow(/sans URL/i)
+    await expect(createCheckoutSession({ pack: 'leurres' })).rejects.toThrow(/sans URL/i)
   })
 })
 
 describe('createCheckoutSession — les URLs de retour', () => {
   it('bâtit le retour sur le domaine canonique, jamais sur l’en-tête Host', async () => {
-    await createCheckoutSession({ coloris, offre: 'solo' }, 'https://attaquant.example')
+    await createCheckoutSession({ pack: 'leurres' }, 'https://attaquant.example')
     const session = create.mock.calls[0][0]
     expect(session.success_url).not.toContain('attaquant.example')
     expect(session.cancel_url).not.toContain('attaquant.example')

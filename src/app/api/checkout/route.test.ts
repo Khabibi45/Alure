@@ -1,7 +1,6 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
-import { PRODUCT } from '@/lib/shop/product'
 
 // Stripe est mocké : ces tests vérifient la ROUTE (gardes + contrats de réponse),
 // pas l'API Stripe. Le comportement du mock se pilote test par test.
@@ -13,7 +12,7 @@ vi.mock('@/lib/shop/stripe', () => ({
 import { POST } from './route'
 
 // L'offre groupée exige le choix du 4e offert (cadeau) — ici le collector.
-const valid = { coloris: PRODUCT.colorways[0].id, offre: 'collection', cadeau: PRODUCT.collector.id }
+const valid = { pack: 'leurres' }
 let ipCounter = 0
 
 function makeReq(body: unknown, ip?: string) {
@@ -42,16 +41,16 @@ describe('POST /api/checkout', () => {
     expect(createCheckoutSession).toHaveBeenCalledWith(valid, expect.any(String))
   })
 
-  it('rejette une offre inconnue (400) avec le détail par champ, sans appeler Stripe', async () => {
-    const res = await POST(makeReq({ ...valid, offre: 'duo' }))
+  it('rejette un pack inconnu (400) avec le détail par champ, sans appeler Stripe', async () => {
+    const res = await POST(makeReq({ pack: 'duo' }))
     expect(res.status).toBe(400)
     const body = await res.json()
-    expect(body.issues.offre).toBeTruthy()
+    expect(body.issues.pack).toBeTruthy()
     expect(createCheckoutSession).not.toHaveBeenCalled()
   })
 
-  it('rejette un coloris inconnu (400) sans appeler Stripe', async () => {
-    const res = await POST(makeReq({ ...valid, coloris: 'coloris-pirate' }))
+  it('rejette une commande sans pack (400) sans appeler Stripe', async () => {
+    const res = await POST(makeReq({}))
     expect(res.status).toBe(400)
     expect(createCheckoutSession).not.toHaveBeenCalled()
   })

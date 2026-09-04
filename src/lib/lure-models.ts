@@ -7,7 +7,7 @@
  * (`lureDisplayName`) — le `workingName` n'est que le nom du fichier livré.
  */
 
-import { PRODUCT, getColorway } from './shop/product'
+import { getColorway } from './shop/product'
 
 export type LureModel = {
   id: string
@@ -71,16 +71,11 @@ export const LURE_MODELS: readonly LureModel[] = [
     id: 'noir',
     workingName: 'Noir',
     src: '/models/leurre-souple-noir.glb',
-    // Ne se vend pas seul : il se CHOISIT comme 4e leurre offert (3 achetés).
-    colorwayId: null,
-    collector: true,
-    description:
-      'Le leurre souple collector Alure en vue 3D, coloris « Pirate » : corps noir, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.',
-    lines: [
-      'Le collector. Il ne se vend pas : il s’obtient.',
-      'À choisir comme 4e leurre offert, dès 3 achetés.',
-      'Corps noir, mêmes cotes, même nage.',
-    ],
+    // Vendu comme les autres depuis le 2026-09-04 : il est dans le pack.
+    colorwayId: 'coloris-4',
+    collector: false,
+    description: 'Le leurre souple Alure en vue 3D, coloris « Noir ». Il nage sur place.',
+    lines: ['Corps souple, coloris noir.'],
   },
 ] as const
 
@@ -101,20 +96,22 @@ export const LURE_MODELS: readonly LureModel[] = [
 export const NEXT_LURE_MODEL = '/models/goujon.glb'
 
 /**
- * Le nom PUBLIC d'un modèle : le libellé du coloris au catalogue pour un modèle
- * vendable, celui du collector sinon. Le `workingName` (nom du fichier) ne sort
- * jamais à l'écran — deux sources de nommage finiraient par diverger.
+ * Le nom PUBLIC d'un modèle : le libellé du coloris au catalogue. Le
+ * `workingName` (nom du fichier) ne sort jamais à l'écran — deux sources de
+ * nommage finiraient par diverger.
  */
 export function lureDisplayName(model: LureModel): string {
   if (model.colorwayId) return getColorway(model.colorwayId)?.label ?? model.workingName
-  return model.collector ? PRODUCT.collector.label : model.workingName
+  return model.workingName
 }
 
-/** Les modèles réellement achetables (le collector n'en fait pas partie). */
+/**
+ * Les modèles réellement achetables — c'est-à-dire tous, depuis que le noir a
+ * cessé d'être un collector (2026-09-04). Le champ `collector` reste dans le
+ * type : il ne coûte rien et redevient utile le jour où une pièce ne se vendra
+ * pas. Aujourd'hui aucun modèle ne le porte.
+ */
 export const SELLABLE_LURE_MODELS = LURE_MODELS.filter((m) => !m.collector)
-
-/** Le modèle offert, s'il y en a un. */
-export const COLLECTOR_LURE_MODEL = LURE_MODELS.find((m) => m.collector) ?? null
 
 /** Le modèle 3D à montrer pour un coloris donné. */
 export function getModelForColorway(colorwayId: string): LureModel | undefined {

@@ -25,8 +25,8 @@ const PUBLIC_DIR = join(process.cwd(), 'public')
 const publicPath = (src: string) => join(PUBLIC_DIR, src)
 
 describe('les photos des leurres', () => {
-  it('couvre les trois coloris vendus et le collector', () => {
-    expect(PHOTOGRAPHED_LURES.map((l) => l.photoSlug)).toEqual(['bleu', 'rouge', 'vert', 'pirate'])
+  it('couvre les quatre coloris du catalogue', () => {
+    expect(PHOTOGRAPHED_LURES.map((l) => l.photoSlug)).toEqual(['bleu', 'rouge', 'vert', 'noir'])
   })
 
   it.each(PHOTOGRAPHED_LURES.map((l) => [l.photoSlug, l] as const))(

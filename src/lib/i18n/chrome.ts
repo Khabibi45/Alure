@@ -3,7 +3,6 @@ import { localePath, LOCALES, type Locale } from './paths'
 import type { LangOption } from '@/components/sections/LangSwitcher'
 import type { CarouselStrings } from '@/components/sections/home/carousel-strings'
 import { LURE_VIEWS, type LureViewId } from '@/lib/three/lure-views'
-import { OFFERS, PRODUCT, formatEuros } from '@/lib/shop/product'
 
 /**
  * L'habillage commun (header/footer) préparé CÔTÉ SERVEUR pour chaque langue :
@@ -58,9 +57,6 @@ export function carouselStrings(locale: Locale): CarouselStrings {
     viewDescriptions[view.id] = t(dict, `HOME.VIEW_${VIEW_KEYS[view.id]}_DESC`)
   }
   return {
-    soloPrice: formatEuros(PRODUCT.pricing.soloCents, locale),
-    collectionTotal: formatEuros(OFFERS.collection.amountCents, locale),
-    deliveryDelay: t(dict, 'PRODUCT.DELAY_VALUE'),
     previous: t(dict, 'HOME.PREV'),
     next: t(dict, 'HOME.NEXT'),
     loading: t(dict, 'HOME.LOADING'),
@@ -68,30 +64,10 @@ export function carouselStrings(locale: Locale): CarouselStrings {
     modelFailed: t(dict, 'HOME.MODEL_FAILED'),
     framesFailed: t(dict, 'HOME.FRAMES_FAILED'),
     viewsLabel: t(dict, 'HOME.VIEWS_LABEL'),
+    sheetLabel: t(dict, 'HOME.SHEET'),
     views,
     viewDescriptions,
     modelAlt: raw(dict, 'HOME.MODEL_ALT'),
-    boxPrice: raw(dict, 'CART.BOX_PRICE'),
-    boxTaken: t(dict, 'CART.BOX_TAKEN'),
-    boxSoldOut: t(dict, 'CART.BOX_SOLD_OUT'),
-    boxGift: t(dict, 'CART.BOX_GIFT'),
-    boxGiftFree: t(dict, 'CART.BOX_GIFT_FREE'),
-    boxGiftChoose: t(dict, 'CART.BOX_GIFT_CHOOSE'),
-    boxGiftPaused: t(dict, 'CART.BOX_GIFT_PAUSED'),
-    boxA11y: raw(dict, 'CART.BOX_A11Y'),
-    giftA11y: raw(dict, 'CART.GIFT_A11Y'),
-    add: raw(dict, 'CART.ADD'),
-    remove: raw(dict, 'CART.REMOVE'),
-    orderCollection: t(dict, 'CART.ORDER_COLLECTION'),
-    orderSolo: raw(dict, 'CART.ORDER_SOLO'),
-    clear: t(dict, 'CART.CLEAR'),
-    sheet: t(dict, 'CART.SHEET'),
-    stateEmpty: raw(dict, 'CART.STATE_EMPTY'),
-    stateOne: raw(dict, 'CART.STATE_ONE'),
-    stateSome: raw(dict, 'CART.STATE_SOME'),
-    stateFull: raw(dict, 'CART.STATE_FULL'),
-    stateSoldOut: t(dict, 'CART.STATE_SOLD_OUT'),
-    footnote: raw(dict, 'CART.FOOTNOTE'),
   }
 }
 

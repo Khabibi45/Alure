@@ -46,17 +46,14 @@ vi.mock('@/lib/shop/orders-count', () => ({
 }))
 
 import {
+  PACKS,
+  PACK_IDS,
   PRODUCT,
-  OFFERS,
+  SHIPPING,
   checkoutLines,
-  totalCents,
-  offerSummary,
-  savingsCents,
-  perLureAtMostCents,
-  luresReceived,
   formatEuros,
-  giftLabel,
-  GIFT_CHOICE_IDS,
+  packSummary,
+  totalCents,
 } from '@/lib/shop/product'
 import {
   confirmationSubject,
@@ -157,86 +154,67 @@ async function callCheckout(body: unknown, opts: { raw?: string; ip?: string } =
 /* ══════════════════════════════════════════════════════════════════════════ */
 
 campagne('1 · Le catalogue réellement vendable', () => {
-  it('n’expose que deux offres : un leurre, ou 3 achetés + le 4e offert', () => {
-    expect(Object.keys(OFFERS)).toEqual(['solo', 'collection'])
+  it('n’expose que deux packs — plus aucune vente à l’unité', () => {
+    expect(PACK_IDS).toEqual(['leurres', 'goujons'])
     console.log('\n╔═══ CE QUE LE SITE VEND RÉELLEMENT ═══╗')
-    for (const offer of Object.values(OFFERS)) {
+    for (const id of PACK_IDS) {
+      const pack = PACKS[id]
       console.log(
-        `  « ${offer.label} » → ${formatEuros(offer.amountCents)} | ` +
-          `${offer.paidCount} payé(s) + ${offer.giftCount} offert(s) = ${luresReceived(offer.id)} leurre(s) reçus`
+        `  « ${pack.name} » → ${formatEuros(pack.amountCents)} | ` +
+          `${pack.unitCount} pièces | + ${formatEuros(SHIPPING.amountCents)} de livraison ` +
+          `= ${formatEuros(totalCents(id))} encaissés`
       )
     }
     console.log(
-      `  Économie calculée sur la collection : ${formatEuros(savingsCents('collection'))} ` +
-        `(la page annonce « moins de ${formatEuros(perLureAtMostCents('collection'))} le leurre »)`
+      `  Le pack de leurres contient UNE unité de chacun des ${PRODUCT.colorways.length} coloris : ` +
+        PRODUCT.colorways.map((c) => c.label).join(', ')
     )
-    console.log('  Il n’existe AUCUNE offre « 2 leurres » ni « 3 leurres sans cadeau ».')
+    console.log('  Il n’existe AUCUNE vente à l’unité, ni offre « 3 achetés le 4e offert ».')
   })
 
-  it('facture la collection exactement 3 × le prix unitaire', () => {
-    expect(totalCents('solo')).toBe(2199)
-    expect(totalCents('collection')).toBe(2199 * 3)
-    expect(totalCents('collection')).toBe(6597)
+  it('facture les prix décidés, livraison en sus', () => {
+    expect(PACKS.leurres.amountCents).toBe(1099)
+    expect(PACKS.goujons.amountCents).toBe(599)
+    expect(SHIPPING.amountCents).toBe(360)
+    expect(totalCents('leurres')).toBe(1099 + 360)
+    expect(totalCents('goujons')).toBe(599 + 360)
   })
 })
 
 campagne('2 · Le reçu Stripe — ce que le client voit et paie', () => {
-  it('la somme des lignes vaut toujours le total encaissé', () => {
-    for (const offre of ['solo', 'collection']) {
-      const lines = checkoutLines(offre, PRODUCT.colorways[0].label, 'Pirate')
+  it('la somme des lignes PLUS la livraison vaut toujours le total encaissé', () => {
+    for (const pack of PACK_IDS) {
+      const lines = checkoutLines(pack)
       const sum = lines.reduce((t, l) => t + l.unitAmountCents * l.quantity, 0)
-      expect(sum).toBe(totalCents(offre))
+      expect(sum + SHIPPING.amountCents).toBe(totalCents(pack))
     }
   })
 
-  it('détaille le reçu de chaque cas d’achat', () => {
-    const cas = [
-      {
-        titre: 'UN LEURRE — Truite arc-en-ciel',
-        offre: 'solo',
-        coloris: 'Truite arc-en-ciel',
-        cadeau: undefined,
-      },
-      { titre: 'UN LEURRE — Perche', offre: 'solo', coloris: 'Perche', cadeau: undefined },
-      { titre: 'UN LEURRE — Orange feu', offre: 'solo', coloris: 'Orange feu', cadeau: undefined },
-      {
-        titre: 'COLLECTION — 4e offert : Pirate',
-        offre: 'collection',
-        coloris: 'Truite arc-en-ciel',
-        cadeau: 'Pirate',
-      },
-      {
-        titre: 'COLLECTION — 4e offert : Perche',
-        offre: 'collection',
-        coloris: 'Truite arc-en-ciel',
-        cadeau: 'Perche',
-      },
-    ]
-    console.log('\n╔═══ LE REÇU, CAS PAR CAS ═══╗')
-    for (const c of cas) {
-      const lines = checkoutLines(c.offre, c.coloris, c.cadeau)
-      const total = lines.reduce((t, l) => t + l.unitAmountCents * l.quantity, 0)
-      console.log(`\n  ▸ ${c.titre}`)
+  it('détaille le reçu de chaque pack', () => {
+    console.log('\n╔═══ LE REÇU, PACK PAR PACK ═══╗')
+    for (const pack of PACK_IDS) {
+      const lines = checkoutLines(pack)
+      const articles = lines.reduce((t, l) => t + l.unitAmountCents * l.quantity, 0)
+      console.log(`\n  ▸ ${PACKS[pack].name}`)
       for (const l of lines) {
         console.log(`      ${l.quantity} × ${l.name} — ${formatEuros(l.unitAmountCents)}`)
       }
+      console.log(`      livraison (${SHIPPING.carrier}) — ${formatEuros(SHIPPING.amountCents)}`)
       console.log(`      ─────────────────────────────`)
       console.log(
-        `      TOTAL : ${formatEuros(total)}   (port inclus, TVA non applicable art. 293 B)`
+        `      TOTAL : ${formatEuros(articles + SHIPPING.amountCents)}   (TVA non applicable art. 293 B)`
       )
-      expect(total).toBe(totalCents(c.offre))
+      expect(articles + SHIPPING.amountCents).toBe(totalCents(pack))
     }
   })
 
-  it('le 4e offert est facturé 0,00 € et n’entre jamais dans le montant', () => {
-    for (const giftId of GIFT_CHOICE_IDS) {
-      const label = giftLabel(giftId)
-      expect(label).not.toBeNull()
-      const lines = checkoutLines('collection', 'Truite arc-en-ciel', label as string)
-      const gift = lines.find((l) => l.unitAmountCents === 0)
-      expect(gift).toBeDefined()
-      expect(gift?.name).toContain(label as string)
-      expect(lines.reduce((t, l) => t + l.unitAmountCents * l.quantity, 0)).toBe(6597)
+  it('la livraison n’est JAMAIS une ligne d’article', () => {
+    // Elle passe par les frais de port de Stripe. Facturée comme un article,
+    // elle serait remboursée comme un produit en cas de rétractation.
+    for (const pack of PACK_IDS) {
+      expect(checkoutLines(pack).some((l) => l.unitAmountCents === SHIPPING.amountCents)).toBe(
+        false
+      )
     }
   })
 })
@@ -423,34 +401,21 @@ campagne('7 · /api/checkout — la porte d’entrée de la commande', () => {
 
 campagne('8 · Les emails, tels qu’ils arrivent vraiment', () => {
   it('affiche le contenu exact de chaque email de commande', () => {
-    const cas = [
-      {
-        titre: 'UN LEURRE — Perche',
-        order: {
-          sessionId: 'cs_test_exemple_solo',
-          customerEmail: 'client@exemple.fr',
-          colorisLabel: 'Perche',
-          offerSummary: offerSummary('solo', 'Perche'),
-          totalCents: totalCents('solo'),
-        },
+    const cas = PACK_IDS.map((pack) => ({
+      titre: PACKS[pack].name,
+      order: {
+        sessionId: `cs_test_exemple_${pack}`,
+        customerEmail: 'client@exemple.fr',
+        packLabel: packSummary(pack),
+        totalCents: totalCents(pack),
       },
-      {
-        titre: 'COLLECTION — 4e offert : Pirate',
-        order: {
-          sessionId: 'cs_test_exemple_collection',
-          customerEmail: 'client@exemple.fr',
-          colorisLabel: 'Truite arc-en-ciel',
-          offerSummary: offerSummary('collection', 'Truite arc-en-ciel', 'Pirate'),
-          totalCents: totalCents('collection'),
-        },
-      },
-    ]
+    }))
     for (const c of cas) {
       console.log(`\n╔═══ EMAIL CLIENT — ${c.titre} ═══╗`)
       console.log(`Objet : ${confirmationSubject()}`)
       console.log(confirmationText(c.order))
       console.log(`\n╔═══ EMAIL VENDEUR — ${c.titre} ═══╗`)
-      console.log(`Objet : Commande à traiter — ${c.order.offerSummary}`)
+      console.log(`Objet : Commande à traiter — ${c.order.packLabel}`)
       console.log(notificationText(c.order))
 
       // Règle Alure n°1 : le délai est ré-affiché dans l'email de confirmation.
@@ -468,9 +433,8 @@ campagne('8 · Les emails, tels qu’ils arrivent vraiment', () => {
     const html = confirmationHtml({
       sessionId: 'cs_x',
       customerEmail: 'a@b.fr',
-      colorisLabel: 'x',
-      offerSummary: '<script>alert(1)</script>',
-      totalCents: 2199,
+      packLabel: '<script>alert(1)</script>',
+      totalCents: 1459,
     })
     expect(html).not.toContain('<script>')
     expect(html).toContain('&lt;script&gt;')

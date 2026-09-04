@@ -21,8 +21,11 @@ export const metadata: Metadata = {
 export default function HeroVideoPage() {
   return (
     <main>
-      <Hero variant="video"
-        strings={carouselStrings('fr')} title={t(getDictionary('fr'), 'HOME.H1')} />
+      <Hero
+        variant="video"
+        strings={carouselStrings('fr')}
+        title={t(getDictionary('fr'), 'HOME.H1')}
+      />
     </main>
   )
 }

@@ -1,5 +1,12 @@
 import { getDictionary, t, type Locale } from '@/lib/i18n'
-import { OFFERS, PRODUCT, formatEuros, formatLength, formatWeight } from '@/lib/shop/product'
+import {
+  PACKS,
+  SHIPPING,
+  PRODUCT,
+  formatEuros,
+  formatLength,
+  formatWeight,
+} from '@/lib/shop/product'
 
 /**
  * LA source unique du contenu FAQ, dans toutes les langues : la page ET le
@@ -26,10 +33,10 @@ export function faqItems(locale: Locale): FaqItem[] {
   const dict = getDictionary(locale)
   const params = {
     delai: t(dict, 'PRODUCT.DELAY_VALUE'),
-    prixSolo: formatEuros(PRODUCT.pricing.soloCents, locale),
-    prixCollection: formatEuros(OFFERS.collection.amountCents, locale),
+    prixPack: formatEuros(PACKS.leurres.amountCents, locale),
+    prixGoujons: formatEuros(PACKS.goujons.amountCents, locale),
+    livraison: formatEuros(SHIPPING.amountCents, locale),
     nbColoris: String(PRODUCT.colorways.length),
-    collector: PRODUCT.collector.label,
     longueur: formatLength(locale),
     poids: formatWeight(locale),
   }
