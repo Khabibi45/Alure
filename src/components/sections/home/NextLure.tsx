@@ -34,14 +34,16 @@ export function NextLure({ locale }: { locale: Locale }) {
       className="mx-auto max-w-5xl px-5 py-14 md:py-20 lg:py-24"
     >
       <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-12">
-        {/* Le visuel d'abord sur téléphone : c'est lui qui arrête le défilement. */}
+        {/* Le visuel d'abord sur téléphone : c'est lui qui arrête le défilement.
+          AUCUN CADRE autour du leurre (consigne Camil, 2026-09-04) : la carte
+          `surface` dessinait une boîte, et on voyait la boîte tourner autant que
+          le goujon. Le canvas est transparent — sans cadre, le leurre flotte sur
+          le fond de la page, et c'est lui qu'on regarde. */}
         <div className="order-1 md:order-2">
-          <div className="rounded-card bg-surface shadow-card overflow-hidden">
-            <NextLureViewer
-              loadingLabel={t(dict, 'HOME.LOADING')}
-              description={t(dict, 'HOME.NEXT_ALT')}
-            />
-          </div>
+          <NextLureViewer
+            loadingLabel={t(dict, 'HOME.LOADING')}
+            description={t(dict, 'HOME.NEXT_ALT')}
+          />
         </div>
 
         <div className="order-2 md:order-1">
