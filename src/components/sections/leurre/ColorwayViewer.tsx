@@ -108,7 +108,10 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
       },
       // `still` : sur la page produit, le leurre ne nage pas. On y compare des
       // coloris et on détaille une forme — un mouvement permanent empêche les deux.
-      { solo: true, still: true }
+      // `zoom` un cran en dessous de 1 : le leurre respire dans son cadre
+      // (consigne Camil, 2026-09-03). C'est la CAMÉRA qui recule, jamais le
+      // modèle qui rétrécit — l'ondulation est une fraction de sa longueur.
+      { solo: true, still: true, zoom: 0.85 }
     )
     stageRef.current = stage
     stage.setView(getLureView(DEFAULT_LURE_VIEW).rotation)
@@ -234,7 +237,7 @@ export function ColorwayViewer({ strings }: { strings: LeurreStrings }) {
         onPointerCancel={endOrbit}
         onLostPointerCapture={endOrbit}
         onKeyDown={onKeyDown}
-        className="rounded-card bg-muted relative aspect-square w-full cursor-grab touch-pan-y overflow-hidden select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ring)] active:cursor-grabbing"
+        className="rounded-card bg-muted relative aspect-[4/3] w-full cursor-grab touch-pan-y overflow-hidden select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-ring)] active:cursor-grabbing"
       >
         <canvas ref={canvasRef} className="block h-full w-full" aria-hidden="true" />
 

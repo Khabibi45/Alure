@@ -6,8 +6,7 @@ import { BuyBox } from '@/components/sections/leurre/BuyBox'
 import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
-import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
-import { ColorwayPhoto } from '@/components/sections/leurre/ColorwayPhoto'
+import { ColorwayMedia } from '@/components/sections/leurre/ColorwayMedia'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
@@ -16,8 +15,8 @@ import { DEFAULT_LOCALE } from '@/lib/i18n/paths'
 import { leurreStrings } from '@/lib/i18n/leurre-strings'
 
 export const metadata: Metadata = {
-  title: `Leurre articulé 2 sections — ${formatEuros(PRODUCT.pricing.soloCents)} port inclus`,
-  description: `Le leurre Alure : articulé deux sections, pensé pour les carnassiers. ${formatEuros(PRODUCT.pricing.soloCents)} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour ${formatEuros(OFFERS.collection.amountCents)}. Livraison incluse (${PRODUCT.deliveryDelay}), paiement carte ou PayPal, rétractation 14 jours.`,
+  title: `Leurre souple — ${formatEuros(PRODUCT.pricing.soloCents)} port inclus`,
+  description: `Le leurre Alure : un leurre souple, pensé pour les carnassiers. ${formatEuros(PRODUCT.pricing.soloCents)} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour ${formatEuros(OFFERS.collection.amountCents)}. Livraison incluse (${PRODUCT.deliveryDelay}), paiement carte ou PayPal, rétractation 14 jours.`,
 }
 
 /**
@@ -73,18 +72,13 @@ export default async function LeurrePage({
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
               colonne grid et fait déborder toute la page à 375px. */}
             <section aria-label="Visuel du leurre" className="min-w-0">
-              {/* La photo d'abord — elle dit ce qu'on reçoit ; la 3D dessous,
-                pour tourner autour (décision Camil 2026-09-01). */}
-              <ColorwayPhoto strings={strings} />
-              <div className="mt-4">
-                <ColorwayViewer strings={strings} />
-              </div>
+              <ColorwayMedia strings={strings} />
             </section>
 
             {/* Prix + coloris — l'offre et le CTA sont en pleine largeur dessous. */}
             <section aria-label="Acheter" className="min-w-0 md:sticky md:top-24 md:self-start">
               <h1 className="text-[1.75rem] leading-[1.1] font-bold tracking-[0.02em] uppercase text-balance md:text-[2.5rem]">
-                Le leurre <Marker>articulé</Marker> deux sections
+                Le leurre <Marker>souple</Marker> pour les carnassiers
               </h1>
               {/* Les dimensions juste sous le titre : un leurre s'achète d'abord sur
                 sa taille et son poids de lancer. */}

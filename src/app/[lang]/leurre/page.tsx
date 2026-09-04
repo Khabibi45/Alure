@@ -6,8 +6,7 @@ import { BuyBox } from '@/components/sections/leurre/BuyBox'
 import { OfferPanel } from '@/components/sections/leurre/OfferPanel'
 import { CheckoutProvider } from '@/components/sections/leurre/checkout-context'
 import { ColorwayProvider } from '@/components/sections/leurre/colorway-context'
-import { ColorwayViewer } from '@/components/sections/leurre/ColorwayViewer'
-import { ColorwayPhoto } from '@/components/sections/leurre/ColorwayPhoto'
+import { ColorwayMedia } from '@/components/sections/leurre/ColorwayMedia'
 import { LureDetails } from '@/components/sections/leurre/LureDetails'
 import { parsePreselection } from '@/lib/shop/checkout-schema'
 import { productJsonLd } from '@/lib/shop/jsonld'
@@ -116,12 +115,7 @@ export default async function LangLeurrePage({
               l'îlot d'achat. min-w-0 : sans lui, le canvas fixe la largeur de la
               colonne grid et fait déborder toute la page à 375px. */}
             <section aria-label={t(dict, 'PRODUCT.SECTION_VISUAL')} className="min-w-0">
-              {/* La photo d'abord — elle dit ce qu'on reçoit ; la 3D dessous,
-                pour tourner autour (décision Camil 2026-09-01). */}
-              <ColorwayPhoto strings={strings} />
-              <div className="mt-4">
-                <ColorwayViewer strings={strings} />
-              </div>
+              <ColorwayMedia strings={strings} />
             </section>
 
             {/* Prix + coloris — l'offre et le CTA sont en pleine largeur dessous. */}

@@ -15,13 +15,21 @@ import {
 } from '@/lib/shop/collection-selection'
 import { fill } from '@/lib/i18n/fill'
 import type { CarouselStrings } from './carousel-strings'
-import { DEFAULT_LURE_VIEW, LURE_VIEWS, getLureView, type LureViewId } from '@/lib/three/lure-views'
+import { LURE_VIEWS, getLureView, type LureViewId } from '@/lib/three/lure-views'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { AlureLoader } from '@/components/ui/AlureLoader'
 import { useCollectionSelection } from './use-collection-selection'
 import { createLureStage, type LureStage } from './lure-stage'
 import { LureSpecs } from './LureSpecs'
+
+/**
+ * L'angle d'ouverture de l'accueil (consigne Camil, 2026-09-03) : le flanc
+ * GAUCHE. Il ne suit pas `DEFAULT_LURE_VIEW`, qui reste la vue de référence de
+ * la page produit — deux pages, deux premières impressions, et aucune raison
+ * qu'elles se suivent.
+ */
+const INITIAL_VIEW: LureViewId = 'gauche'
 
 /** Fraction de la largeur du cadre à parcourir pour passer au leurre suivant. */
 const DRAG_TRAVEL = 0.55
@@ -48,10 +56,21 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
   const dragRef = useRef<{ pointerId: number; startX: number } | null>(null)
   const movedRef = useRef(0)
 
-  const [target, setTarget] = useState(0)
+  // Ce qu'on voit EN ARRIVANT sur la page (consigne Camil, 2026-09-03) : le
+  // Pirate, de gauche. Pas le premier du registre — le collector est celui qui
+  // ne s'achète pas, donc celui qui donne envie de lire la suite.
+  //
+  // L'index est CHERCHÉ, pas écrit : `LURE_MODELS` peut changer d'ordre, et un 3
+  // en dur montrerait alors un autre leurre sans que rien ne le signale.
+  const [target, setTarget] = useState(() =>
+    Math.max(
+      0,
+      LURE_MODELS.findIndex((m) => m.collector)
+    )
+  )
   const [status, setStatus] = useState<Status>('loading')
   const [loaded, setLoaded] = useState<readonly number[]>([])
-  const [view, setView] = useState<LureViewId>(DEFAULT_LURE_VIEW)
+  const [view, setView] = useState<LureViewId>(INITIAL_VIEW)
   /** La fiche s’ouvre au CLIC sur le leurre — pas au glissé, qui change de leurre. */
   const [specsOpen, setSpecsOpen] = useState(false)
   /** Progression réelle du téléchargement de chaque modèle (`null` = non mesurable). */
@@ -113,9 +132,9 @@ export function LureCarousel({ strings }: { strings: CarouselStrings }) {
       // en dessous de 1, le cadre s'élargit et le leurre occupe moins de place.
       // Il ne faut surtout pas mettre le modèle à l'échelle — l'amplitude de nage
       // est une fraction de la longueur du corps, l'ondulation changerait avec.
-      // À 0,8, le leurre occupe 32 % de la largeur du cadre au lieu de 41 %.
+      // À 0,72, le leurre occupe 29 % de la largeur du cadre au lieu de 41 %.
       // C'est CE nombre qu'on bouge pour l'agrandir ou le réduire.
-      { zoom: 0.8 }
+      { zoom: 0.72 }
     )
     stageRef.current = stage
 

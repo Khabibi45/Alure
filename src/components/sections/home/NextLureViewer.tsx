@@ -83,7 +83,7 @@ export function NextLureViewer({
           setStatus('unsupported')
         },
       },
-      { solo: true, still: true }
+      { solo: true, still: true, zoom: 0.85 }
     )
     stage.load(0)
 
