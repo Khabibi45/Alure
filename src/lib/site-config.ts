@@ -11,7 +11,7 @@ export const SITE = {
   // seul fichier à changer, et c'est ce qui rend le changement sûr.
   url: 'https://alure-outdoor.com',
   description:
-    'Alure, le leurre articulé deux sections à la nage ultra-réaliste pour la pêche du black-bass et de la perche.',
+    'Alure, le leurre souple à la nage ultra-réaliste pour la pêche du black-bass et de la perche.',
   locale: 'fr_FR',
   /** Vente en ligne uniquement — pas d'adresse LocalBusiness. */
   address: null as null | { locality: string; region: string; country: string },

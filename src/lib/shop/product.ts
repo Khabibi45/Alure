@@ -48,7 +48,7 @@ export type Colorway = {
 
 export const PRODUCT = {
   id: 'alure-leurre-v1',
-  name: 'Leurre Alure — articulé 2 sections',
+  name: 'Leurre souple Alure',
   /**
    * Prix à l'unité, port inclus. TVA non applicable, art. 293 B du CGI.
    * « Chaque leurre à l'unité ; 3 achetés, le 4e offert au choix » — la règle

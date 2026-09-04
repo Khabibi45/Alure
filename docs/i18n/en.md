@@ -21,8 +21,8 @@
 ## 1. META
 
 - `META.BRAND` — Alure
-- `META.TAGLINE` — The two-section jointed swimbait, made for predatory fish
-- `META.DESCRIPTION` — Alure, the two-section jointed swimbait with an ultra-realistic swimming action, for black bass and perch.
+- `META.TAGLINE` — The soft swimbait, made for predatory fish
+- `META.DESCRIPTION` — Alure, the soft swimbait with an ultra-realistic swimming action, for black bass and perch.
 - `META.LANG` — en
 - `META.LOCALE` — en_GB
 - `META.LANG_NAME` — English
@@ -44,7 +44,7 @@
 
 ## 3. HOME
 
-- `HOME.H1` — The two-section jointed swimbait, made for predatory fish
+- `HOME.H1` — The soft swimbait, made for predatory fish
 - `HOME.SUBTITLE` — Black bass, perch. {longueur} · {poids}. {prixSolo} for one lure — buy 3, get a 4th free, delivery included ({delai}).
 - `HOME.CTA` — See the lure
 
@@ -88,8 +88,8 @@
 
 ## 4. PRODUCT — /leurre page
 
-- `PRODUCT.TITLE` — Two-section jointed swimbait — {prixSolo}, delivery included
-- `PRODUCT.DESCRIPTION` — The Alure lure: two sections, jointed, made for predatory fish. {prixSolo} per lure, sold individually — buy 3 and pick a 4th free (up to the collector colourway): 4 lures for {prixCollection}. Delivery included ({delai}), card or PayPal, 14-day right of withdrawal.
+- `PRODUCT.TITLE` — Soft swimbait — {prixSolo}, delivery included
+- `PRODUCT.DESCRIPTION` — The Alure lure: a soft swimbait, made for predatory fish. {prixSolo} per lure, sold individually — buy 3 and pick a 4th free (up to the collector colourway): 4 lures for {prixCollection}. Delivery included ({delai}), card or PayPal, 14-day right of withdrawal.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Colourway:
 - `PRODUCT.SOLD_OUT` — Out of stock
@@ -142,6 +142,9 @@
 - `PAYMENT.SAFETY` — Payment is taken on Stripe — your card details never pass through this site.
 - `PRODUCT.COLLECTOR_LOCKED` — The {collector} can be picked as your free 4th lure once you buy 3.
 - `PRODUCT.COLLECTOR_EARNED` — The {collector} comes free with your order.
+- `PRODUCT.MEDIA_LABEL` — What you are looking at
+- `PRODUCT.MEDIA_PHOTO` — Photo
+- `PRODUCT.MEDIA_MODEL` — In 3D
 - `PRODUCT.VIEWER_NO_WEBGL` — Your browser does not display 3D. The description alongside covers the lure in detail.
 - `PRODUCT.COLLECTOR_ALT` — The Alure collector lure in 3D, {nom} model, available as the free 4th lure once 3 are bought. It swims on the spot.
 - `PRODUCT.REASSURANCE_RETURN` — 14-day right of withdrawal
@@ -310,7 +313,7 @@
 - `LEGAL.TERMS_S1_TITLE` — 1. The seller
 - `LEGAL.TERMS_S1_BODY` — {vendeur}, sole trader (French micro-entreprise), SIREN {siren}, {adresse}. Contact: {email}.
 - `LEGAL.TERMS_S2_TITLE` — 2. The product and the prices
-- `LEGAL.TERMS_S2_BODY` — The site sells the {marque} fishing lure (a jointed two-section lure) in several colourways, each lure being sold individually. The price that applies is the one displayed when the order is placed. On the date these terms take effect, two offers coexist: a single lure at {prixSolo}, or the “buy 3, get a 4th free” offer at {prixCollection} (that is, three lures at the unit price), under which a fourth lure, chosen by the buyer from the available colourways or the collector colourway, is given free of charge and without any consideration. Delivery within France included. TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
+- `LEGAL.TERMS_S2_BODY` — The site sells the {marque} fishing lure (a soft lure) in several colourways, each lure being sold individually. The price that applies is the one displayed when the order is placed. On the date these terms take effect, two offers coexist: a single lure at {prixSolo}, or the “buy 3, get a 4th free” offer at {prixCollection} (that is, three lures at the unit price), under which a fourth lure, chosen by the buyer from the available colourways or the collector colourway, is given free of charge and without any consideration. Delivery within France included. TVA non applicable, art. 293 B du CGI (the French small-business VAT exemption).
 - `LEGAL.TERMS_S3_TITLE` — 3. Order and payment
 - `LEGAL.TERMS_S3_BODY` — Orders are paid online by bank card or PayPal, through the Stripe payment platform. The sale is concluded when the payment is confirmed, which the confirmation email records. We never have access to your card details.
 - `LEGAL.TERMS_S4_TITLE` — 4. Delivery
@@ -387,8 +390,8 @@
 ### PRODUCT — routes anglaises (2026-08-26)
 
 - `PRODUCT.H1_LEAD` — The
-- `PRODUCT.H1_MARK` — jointed
-- `PRODUCT.H1_TAIL` — two-section swimbait
+- `PRODUCT.H1_MARK` — soft
+- `PRODUCT.H1_TAIL` — lure for predators
 - `PRODUCT.SECTION_VISUAL` — View of the lure
 - `PRODUCT.DELIVERY_BANNER_BODY` — Your lure leaves from France, in a black padded envelope. You receive a tracking number by email as soon as it ships.
 - `PRODUCT.GIFT_LABEL` — Your free 4th lure:
@@ -403,10 +406,10 @@
 
 ### ABOUT — routes anglaises (2026-08-26)
 
-- `ABOUT.DESCRIPTION` — Who sells the Alure lure: a French micro-entreprise run by predator anglers. One jointed lure, stocked in France and shipped by us.
+- `ABOUT.DESCRIPTION` — Who sells the Alure lure: a French micro-entreprise run by predator anglers. One soft lure, stocked in France and shipped by us.
 - `ABOUT.H1` — One lure, stocked in France
 - `ABOUT.HERO_ALT` — Computer-generated image: a zander held in the hand, the green Alure lure in its mouth.
-- `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure, a two-section jointed swimbait, {specs}, made for black bass and perch, because it is the one we wanted in our own box. We keep the lures here in France, and we pack every order ourselves.
+- `ABOUT.INTRO` — Alure is a French micro-entreprise set up by predator anglers. We do not sell a catalogue: we sell one lure, a soft swimbait, {specs}, made for black bass and perch, because it is the one we wanted in our own box. We keep the lures here in France, and we pack every order ourselves.
 - `ABOUT.RANGE` — You will find it here in {nbColoris} colourways, each named after its livery — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — The {collector} is not for sale: you pick it as your free 4th lure once you have bought 3.
 - `ABOUT.VISUALS_TITLE` — What you see is what we sell
@@ -481,7 +484,7 @@
 - `PROJECTS.DESCRIPTION` — Where Alure stands: the lure exists, it is stocked in France and delivered in {delai}. A first signed run, in its own box, is still missing.
 - `PROJECTS.INTRO` — This page says where the Alure project stands, and what is left to do. The lure exists, it is in stock, it ships from us. What does not exist yet is a run made under our own name.
 - `PROJECTS.DONE_TITLE` — What is already here
-- `PROJECTS.DONE_BODY` — The lure is made: a two-section jointed swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, plus the {collector}, which is never sold and comes as the free fourth lure. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.
+- `PROJECTS.DONE_BODY` — The lure is made: a soft swimbait, {specs}, for black bass and perch. It comes in {nbColoris} colourways, {coloris}, plus the {collector}, which is never sold and comes as the free fourth lure. The images on this site are our own 3D renders of that piece, and on its page you turn it with your finger.
 - `PROJECTS.STOCK_TITLE` — The stock is now in France
 - `PROJECTS.STOCK_BODY` — The lures are with us, and we pack every order ourselves, in a black padded envelope. Your order reaches you in {delai}. Before that, they shipped from a supplier, and the wait ran from 10 to 20 days.
 - `PROJECTS.SERIES_TITLE` — The run and the box

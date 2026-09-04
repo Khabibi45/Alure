@@ -12,7 +12,7 @@ export function productJsonLd(): Record<string, unknown> {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: PRODUCT.name,
-    description: `Leurre de pêche articulé deux sections pour carnassiers, ${PRODUCT.specs.lengthCm} cm pour ${PRODUCT.specs.weightGrams} g. Livraison incluse (${PRODUCT.deliveryDelay}).`,
+    description: `Leurre de pêche souple pour carnassiers, ${PRODUCT.specs.lengthCm} cm pour ${PRODUCT.specs.weightGrams} g. Livraison incluse (${PRODUCT.deliveryDelay}).`,
     brand: { '@type': 'Brand', name: SITE.name },
     // Dimensions déclarées : elles alimentent les résultats enrichis et doivent
     // correspondre au chiffre affiché sur la page (même source, PRODUCT.specs).

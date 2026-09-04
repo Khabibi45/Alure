@@ -77,6 +77,11 @@ export type LeurreStrings = {
    */
   readonly shippingNoticeTitle: string
   readonly shippingNoticeBody: string
+  /* ── Le sélecteur photo / 3D ── */
+  readonly mediaLabel: string
+  readonly mediaPhoto: string
+  readonly mediaModel: string
+
   /* ── Le visuel 3D ── */
   readonly viewerLoading: string
   readonly viewerNoWebgl: string

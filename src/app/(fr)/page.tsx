@@ -8,9 +8,9 @@ import { SITE } from '@/lib/site-config'
 import { getDictionary, t, hreflangAlternates, localePath } from '@/lib/i18n'
 
 export const metadata: Metadata = {
-  // Titre absolu : l'accueil porte le nom + LA requête (« leurre articulé »),
+  // Titre absolu : l'accueil porte le nom + LA requête (« leurre souple »),
   // pas le gabarit « %s — Alure » des pages intérieures.
-  title: { absolute: `${SITE.name} — leurre articulé 2 sections pour black-bass et perche` },
+  title: { absolute: `${SITE.name} — leurre souple pour black-bass et perche` },
   description: SITE.description,
   // hreflang réciproques : l'accueil existe dans les deux langues.
   alternates: { canonical: '/', languages: hreflangAlternates('/').languages },

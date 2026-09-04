@@ -19,8 +19,8 @@
 ## 1. META
 
 - `META.BRAND` — Alure
-- `META.TAGLINE` — Le leurre articulé deux sections, pensé pour les carnassiers
-- `META.DESCRIPTION` — Alure, le leurre articulé deux sections à la nage ultra-réaliste pour la pêche du black-bass et de la perche.
+- `META.TAGLINE` — Le leurre souple, pensé pour les carnassiers
+- `META.DESCRIPTION` — Alure, le leurre souple à la nage ultra-réaliste pour la pêche du black-bass et de la perche.
 - `META.LANG` — fr
 - `META.LOCALE` — fr_FR
 - `META.LANG_NAME` — Français
@@ -42,7 +42,7 @@
 
 ## 3. HOME
 
-- `HOME.H1` — Le leurre articulé deux sections, pensé pour les carnassiers
+- `HOME.H1` — Le leurre souple, pensé pour les carnassiers
 - `HOME.SUBTITLE` — Black-bass, perche. {longueur} · {poids}. {prixSolo} le leurre — 3 achetés, le 4e offert, livraison incluse ({delai}).
 - `HOME.CTA` — Voir le leurre
 
@@ -86,8 +86,8 @@
 
 ## 4. PRODUCT — page /leurre
 
-- `PRODUCT.TITLE` — Leurre articulé 2 sections — {prixSolo} port inclus
-- `PRODUCT.DESCRIPTION` — Le leurre Alure : articulé deux sections, pensé pour les carnassiers. {prixSolo} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour {prixCollection}. Livraison incluse ({delai}), paiement carte ou PayPal, rétractation 14 jours.
+- `PRODUCT.TITLE` — Leurre souple — {prixSolo} port inclus
+- `PRODUCT.DESCRIPTION` — Le leurre Alure : un leurre souple, pensé pour les carnassiers. {prixSolo} le leurre à l'unité — et 3 achetés, le 4e offert au choix (jusqu'au coloris collector) : 4 leurres pour {prixCollection}. Livraison incluse ({delai}), paiement carte ou PayPal, rétractation 14 jours.
 - `PRODUCT.SPECS` — {longueur} · {poids}
 - `PRODUCT.COLORWAY_LABEL` — Coloris :
 - `PRODUCT.SOLD_OUT` — Épuisé
@@ -140,6 +140,9 @@
 - `PAYMENT.SAFETY` — Paiement sur Stripe — vos coordonnées bancaires ne passent jamais par ce site.
 - `PRODUCT.COLLECTOR_LOCKED` — Le {collector} se choisit comme 4e leurre offert, dès 3 achetés.
 - `PRODUCT.COLLECTOR_EARNED` — Le {collector} est offert avec votre commande.
+- `PRODUCT.MEDIA_LABEL` — Ce que vous regardez
+- `PRODUCT.MEDIA_PHOTO` — Photo
+- `PRODUCT.MEDIA_MODEL` — En 3D
 - `PRODUCT.VIEWER_NO_WEBGL` — Votre navigateur n'affiche pas la 3D. La description ci-contre détaille le leurre.
 - `PRODUCT.COLLECTOR_ALT` — Le leurre collector Alure en vue 3D, modèle {nom}, à choisir comme 4e leurre offert dès 3 achetés. Il nage sur place.
 - `PRODUCT.REASSURANCE_RETURN` — Rétractation 14 jours
@@ -308,7 +311,7 @@
 - `LEGAL.TERMS_S1_TITLE` — 1. Le vendeur
 - `LEGAL.TERMS_S1_BODY` — {vendeur}, entrepreneur individuel (micro-entreprise), SIREN {siren}, {adresse}. Contact : {email}.
 - `LEGAL.TERMS_S2_TITLE` — 2. Le produit et les prix
-- `LEGAL.TERMS_S2_BODY` — Le site vend le leurre de pêche {marque} (leurre articulé deux sections), en plusieurs coloris, chaque leurre étant vendu à l'unité. Le prix en vigueur est celui affiché au moment de la commande. À la date d'entrée en vigueur, deux offres coexistent : un leurre seul à {prixSolo}, ou l'offre « 3 achetés, le 4e offert » à {prixCollection} (soit trois leurres au prix de l'unité), avec laquelle un quatrième leurre, au choix de l'acheteur parmi les coloris disponibles ou le coloris collector, est remis gracieusement et sans contrepartie. Livraison en France incluse. TVA non applicable, art. 293 B du CGI.
+- `LEGAL.TERMS_S2_BODY` — Le site vend le leurre de pêche {marque} (leurre souple), en plusieurs coloris, chaque leurre étant vendu à l'unité. Le prix en vigueur est celui affiché au moment de la commande. À la date d'entrée en vigueur, deux offres coexistent : un leurre seul à {prixSolo}, ou l'offre « 3 achetés, le 4e offert » à {prixCollection} (soit trois leurres au prix de l'unité), avec laquelle un quatrième leurre, au choix de l'acheteur parmi les coloris disponibles ou le coloris collector, est remis gracieusement et sans contrepartie. Livraison en France incluse. TVA non applicable, art. 293 B du CGI.
 - `LEGAL.TERMS_S3_TITLE` — 3. Commande et paiement
 - `LEGAL.TERMS_S3_BODY` — La commande se règle en ligne par carte bancaire ou PayPal, via la plateforme de paiement Stripe. La vente est conclue à la confirmation du paiement, matérialisée par l'email de confirmation. Nous n'avons jamais accès à vos données de carte.
 - `LEGAL.TERMS_S4_TITLE` — 4. Livraison
@@ -385,8 +388,8 @@
 ### PRODUCT — routes anglaises (2026-08-26)
 
 - `PRODUCT.H1_LEAD` — Le leurre
-- `PRODUCT.H1_MARK` — articulé
-- `PRODUCT.H1_TAIL` — deux sections
+- `PRODUCT.H1_MARK` — souple
+- `PRODUCT.H1_TAIL` — pour les carnassiers
 - `PRODUCT.SECTION_VISUAL` — Visuel du leurre
 - `PRODUCT.DELIVERY_BANNER_BODY` — Votre leurre part de France, en enveloppe matelassée noire. Vous recevez un numéro de suivi par email dès l'envoi.
 - `PRODUCT.GIFT_LABEL` — Votre 4e leurre, offert :
@@ -401,10 +404,10 @@
 
 ### ABOUT — routes anglaises (2026-08-26)
 
-- `ABOUT.DESCRIPTION` — Qui vend le leurre Alure : une micro-entreprise française de pêcheurs de carnassiers. Un seul leurre articulé, stocké en France, expédié par nos soins.
+- `ABOUT.DESCRIPTION` — Qui vend le leurre Alure : une micro-entreprise française de pêcheurs de carnassiers. Un seul leurre souple, stocké en France, expédié par nos soins.
 - `ABOUT.H1` — Un seul leurre, stocké en France
 - `ABOUT.HERO_ALT` — Image de synthèse : un sandre tenu à la main, le leurre Alure vert dans la gueule.
-- `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre, un articulé deux sections de {specs}, taillé pour le black-bass et la perche, parce que c'est celui que nous voulions avoir en boîte. Les leurres sont stockés chez nous, en France, et nous préparons chaque commande nous-mêmes.
+- `ABOUT.INTRO` — Alure est une micro-entreprise française montée par des pêcheurs de carnassiers. Nous ne vendons pas un catalogue : nous vendons un leurre, un leurre souple de {specs}, taillé pour le black-bass et la perche, parce que c'est celui que nous voulions avoir en boîte. Les leurres sont stockés chez nous, en France, et nous préparons chaque commande nous-mêmes.
 - `ABOUT.RANGE` — Vous le trouvez ici en {nbColoris} coloris, chacun nommé d'après sa robe — {coloris}.
 - `ABOUT.COLLECTOR_RULE` — Le {collector}, lui, ne s'achète pas : il se choisit comme 4e leurre offert, dès 3 achetés.
 - `ABOUT.VISUALS_TITLE` — Ce que vous voyez est ce que nous vendons
@@ -479,7 +482,7 @@
 - `PROJECTS.DESCRIPTION` — Où en est Alure : le leurre existe, il est stocké en France et livré sous {delai}. Il manque une première série signée, dans sa propre boîte.
 - `PROJECTS.INTRO` — Cette page dit où en est le projet Alure, et ce qu'il lui reste à faire. Le leurre existe, il est en stock, il part de chez nous. Ce qui n'existe pas encore, c'est une série produite sous notre nom.
 - `PROJECTS.DONE_TITLE` — Ce qui est déjà là
-- `PROJECTS.DONE_BODY` — Le leurre est fait : un articulé deux sections de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et le {collector} qui ne se vend pas et s'offre en 4e leurre. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.
+- `PROJECTS.DONE_BODY` — Le leurre est fait : un leurre souple de {specs}, pour le black-bass et la perche. Il existe en {nbColoris} coloris, {coloris}, et le {collector} qui ne se vend pas et s'offre en 4e leurre. Les visuels du site sont nos rendus 3D de cette pièce, et sur sa page vous la faites tourner du doigt.
 - `PROJECTS.STOCK_TITLE` — Le stock est rentré en France
 - `PROJECTS.STOCK_BODY` — Les leurres sont chez nous, et c'est nous qui préparons chaque commande, en enveloppe matelassée noire. Elle vous arrive sous {delai}. Avant, ils partaient de chez un fournisseur, et l'attente allait de 10 à 20 jours.
 - `PROJECTS.SERIES_TITLE` — La série et la boîte

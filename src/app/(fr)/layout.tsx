@@ -19,7 +19,7 @@ import { headerNav, langSwitcher } from '@/lib/i18n/chrome'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.name} — le leurre articulé deux sections`,
+    default: `${SITE.name} — le leurre souple`,
     template: `%s — ${SITE.name}`,
   },
   description: SITE.description,
