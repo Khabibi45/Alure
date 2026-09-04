@@ -8,7 +8,7 @@ import {
 } from '@/lib/shop/stripe'
 import { sendOrderEmails, type OrderSummary } from '@/lib/shop/emails'
 import { revalidateOrdersCount } from '@/lib/shop/orders-count'
-import { getColorway, giftLabel, offerSummary } from '@/lib/shop/product'
+import { packSummary } from '@/lib/shop/product'
 import {
   EmailNotConfiguredError,
   WebhookNotConfiguredError,
@@ -58,32 +58,24 @@ function markProcessed(id: string): void {
 
 function toOrderSummary(session: Stripe.Checkout.Session): OrderSummary | null {
   const customerEmail = session.customer_details?.email
-  const colorisId = session.metadata?.coloris
-  const offre = session.metadata?.offre
+  const packId = session.metadata?.pack
   const totalCents = session.amount_total
-  if (!customerEmail || !colorisId || !offre || totalCents === null) {
+  if (!customerEmail || !packId || totalCents === null) {
     return null
   }
-  const colorway = getColorway(colorisId)
-  // Coloris retiré du catalogue entre l'achat et le webhook : on garde l'ID brut
-  // plutôt que de perdre l'information.
-  const colorisLabel = colorway?.label ?? colorisId
-  // Le 4e offert choisi — id brut si le libellé est introuvable, jamais perdu.
-  const cadeauId = session.metadata?.cadeau
-  const cadeauLabel = cadeauId ? (giftLabel(cadeauId) ?? cadeauId) : undefined
   let summary: string
   try {
-    summary = offerSummary(offre, colorisLabel, cadeauLabel)
+    summary = packSummary(packId)
   } catch {
-    // Offre inconnue (métadonnée d'une ancienne version) : on ne devine pas, on
-    // transmet ce qu'on a lu. L'email reste vrai, il est juste moins joli.
-    summary = `${colorisLabel} — offre « ${offre} »`
+    // Pack inconnu (métadonnée d'une commande passée sous une version
+    // précédente du catalogue) : on ne devine pas, on transmet ce qu'on a lu.
+    // L'email reste vrai, il est juste moins joli.
+    summary = packId
   }
   return {
     sessionId: session.id,
     customerEmail,
-    colorisLabel,
-    offerSummary: summary,
+    packLabel: summary,
     totalCents,
   }
 }

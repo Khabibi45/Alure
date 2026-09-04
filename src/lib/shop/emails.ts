@@ -1,7 +1,7 @@
 import 'server-only'
 import { Resend } from 'resend'
 import { SITE } from '@/lib/site-config'
-import { PRODUCT, formatEuros } from './product'
+import { PRODUCT, SHIPPING, formatEuros } from './product'
 import { EmailNotConfiguredError } from './errors'
 
 /**
@@ -19,9 +19,9 @@ import { EmailNotConfiguredError } from './errors'
 export type OrderSummary = {
   sessionId: string
   customerEmail: string
-  colorisLabel: string
-  /** Ce qui a été commandé, en une ligne — cf. `offerSummary()`. */
-  offerSummary: string
+  /** Le pack commandé, en une ligne — cf. `packSummary()`. */
+  packLabel: string
+  /** Le montant RÉELLEMENT encaissé : le pack plus la livraison. */
   totalCents: number
 }
 
@@ -37,8 +37,8 @@ export function confirmationText(order: OrderSummary): string {
     '',
     `Récapitulatif :`,
     `- ${PRODUCT.name}`,
-    `- ${order.offerSummary}`,
-    `- Total payé : ${formatEuros(order.totalCents)} (port inclus — TVA non applicable, art. 293 B du CGI)`,
+    `- ${order.packLabel}`,
+    `- Total payé : ${formatEuros(order.totalCents)}, livraison comprise (${formatEuros(SHIPPING.amountCents)}) — TVA non applicable, art. 293 B du CGI`,
     '',
     `Livraison : ${PRODUCT.deliveryDelay}, comme annoncé avant votre achat.`,
     `Dès l'expédition, vous recevrez le numéro de suivi par email.`,
@@ -57,7 +57,7 @@ export function confirmationHtml(order: OrderSummary): string {
     `<p>Votre commande est confirmée — merci de votre confiance.</p>`,
     `<p><strong>Récapitulatif :</strong><br/>`,
     `${esc(PRODUCT.name)}<br/>`,
-    `${esc(order.offerSummary)}<br/>`,
+    `${esc(order.packLabel)}<br/>`,
     `Total payé : ${esc(formatEuros(order.totalCents))} (port inclus — TVA non applicable, art. 293 B du CGI)</p>`,
     `<p><strong>Livraison : ${esc(PRODUCT.deliveryDelay)}</strong>, comme annoncé avant votre achat. Dès l'expédition, vous recevrez le numéro de suivi par email.</p>`,
     `<p>Vous disposez d'un droit de rétractation de 14 jours après réception. Une question ? Répondez simplement à cet email.</p>`,
@@ -69,7 +69,7 @@ export function notificationText(order: OrderSummary): string {
   return [
     `Nouvelle commande payée (session ${order.sessionId}) :`,
     `- Client : ${order.customerEmail}`,
-    `- ${order.offerSummary}`,
+    `- ${order.packLabel}`,
     `- Total : ${formatEuros(order.totalCents)}`,
     '',
     `À préparer et expédier, puis renseigner le n° de suivi au client par email.`,
@@ -118,7 +118,7 @@ export async function sendOrderEmails(order: OrderSummary): Promise<void> {
   const notification = await resend.emails.send({
     from,
     to: notifyTo,
-    subject: `Commande à traiter — ${order.offerSummary}`,
+    subject: `Commande à traiter — ${order.packLabel}`,
     text: notificationText(order),
   })
   if (notification.error) {

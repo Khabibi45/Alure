@@ -1,7 +1,7 @@
 import 'server-only'
 import Stripe from 'stripe'
 import { SITE } from '@/lib/site-config'
-import { PRODUCT, getColorway, checkoutLines, formatSpecs, giftLabel } from './product'
+import { PRODUCT, SHIPPING, checkoutLines, formatSpecs, getPack, type PackId } from './product'
 import {
   PaymentKeyRejectedError,
   PaymentNotConfiguredError,
@@ -64,12 +64,9 @@ export async function createCheckoutSession(
   devOrigin: string | null = null
 ): Promise<string> {
   const stripe = getStripe()
-  const colorway = getColorway(input.coloris)
-  if (!colorway) throw new Error(`Coloris inconnu après validation : ${input.coloris}`)
+  const pack = getPack(input.pack as PackId)
 
   const base = returnBaseUrl(devOrigin)
-  // Le 4e offert, choisi par l'acheteur — son libellé s'affiche sur le reçu.
-  const chosenGift = input.cadeau ? (giftLabel(input.cadeau) ?? undefined) : undefined
   /**
    * La langue de l'acheteur, telle qu'elle a été validée par le schéma. Elle
    * était figée à `'fr'` : un client venu de `/en` composait sa commande en
@@ -82,26 +79,38 @@ export async function createCheckoutSession(
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     locale,
-    // Le reçu dit l'offre telle qu'elle est vendue : 3 × l'unité + le 4e offert
-    // à 0,00 €. Les montants viennent de checkoutLines(), dont la somme est
-    // testée égale à totalCents().
-    line_items: checkoutLines(input.offre, colorway.label, chosenGift).map((line) => ({
+    // Le reçu dit le pack tel qu'il se vend : UNE ligne. Les montants viennent
+    // de checkoutLines(), dont la somme plus la livraison est testée égale à
+    // totalCents() — c'est l'invariant qui interdit l'écart entre l'affiché et
+    // l'encaissé.
+    line_items: checkoutLines(input.pack).map((line) => ({
       quantity: line.quantity,
       price_data: {
         currency: PRODUCT.currency,
         unit_amount: line.unitAmountCents,
         product_data: {
           name: line.name,
-          description: `${formatSpecs()}. Livraison incluse (${PRODUCT.deliveryDelay}). TVA non applicable, art. 293 B du CGI.`,
+          description: `${pack.unitCount} pièces. ${formatSpecs()}. Livraison en sus (${PRODUCT.deliveryDelay}). TVA non applicable, art. 293 B du CGI.`,
         },
       },
     })),
     shipping_address_collection: { allowed_countries: ['FR'] },
+    // LA LIVRAISON PASSE PAR `shipping_options`, PAS PAR UNE LIGNE D'ARTICLE.
+    // Stripe la présente alors comme des frais de port : le client voit le
+    // détail « pack + livraison » au lieu d'un total opaque, et le montant
+    // encaissé correspond exactement à ce que la page annonçait.
+    shipping_options: [
+      {
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: SHIPPING.amountCents, currency: PRODUCT.currency },
+          display_name: SHIPPING.carrier,
+        },
+      },
+    ],
     // Ce que le webhook relira pour l'email de confirmation.
     metadata: {
-      coloris: colorway.id,
-      offre: input.offre,
-      ...(input.cadeau ? { cadeau: input.cadeau } : {}),
+      pack: pack.id,
     },
     // Les retours restent dans la langue de l'achat : `/en/merci`, `/en/leurre`.
     success_url: `${base}${localePath(locale, '/merci')}?session_id={CHECKOUT_SESSION_ID}`,

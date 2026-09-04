@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkoutSchema, CHECKOUT_MAX_BYTES } from '@/lib/shop/checkout-schema'
-import { giftOrderableError, orderableError } from '@/lib/shop/product'
+import { orderableError } from '@/lib/shop/product'
 import { createCheckoutSession } from '@/lib/shop/stripe'
 import { PaymentNotConfiguredError } from '@/lib/shop/errors'
 
@@ -69,19 +69,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Au-delà de la forme : le coloris doit exister ET être disponible.
-    const unorderable = orderableError(parsed.data.coloris)
+    // Au-delà de la forme : le pack doit exister ET être livrable. Le pack de
+    // leurres contient une unité de CHAQUE coloris — un seul en rupture et il
+    // n'est plus expédiable, on ne livre pas trois quarts d'un pack.
+    const unorderable = orderableError(parsed.data.pack)
     if (unorderable) {
       return NextResponse.json({ error: unorderable }, { status: 400 })
-    }
-
-    // Le 4e offert suit la même règle : un coloris épuisé ne se choisit pas
-    // (le collector, lui, ne connaît pas la rupture).
-    if (parsed.data.cadeau !== undefined) {
-      const ungiftable = giftOrderableError(parsed.data.cadeau)
-      if (ungiftable) {
-        return NextResponse.json({ error: ungiftable }, { status: 400 })
-      }
     }
 
     const url = await createCheckoutSession(parsed.data, request.nextUrl.origin)

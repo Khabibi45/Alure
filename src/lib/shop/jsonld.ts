@@ -1,5 +1,5 @@
 import { SITE } from '@/lib/site-config'
-import { PRODUCT } from './product'
+import { PACKS, SHIPPING, PRODUCT } from './product'
 
 /**
  * JSON-LD `Product` de la page /leurre (règle n°9 : SEO structurel à la création).
@@ -25,10 +25,22 @@ export function productJsonLd(): Record<string, unknown> {
     offers: {
       '@type': 'Offer',
       url: `${SITE.url}/leurre`,
-      // Le prix pour UN exemplaire. Pas d'AggregateOffer : son `lowPrice` annoncerait
-      // le prix moyen d'un panier de 5 (15,40 €), qu'on ne peut pas payer à l'unité —
-      // un prix affiché en résultat de recherche doit être un prix réellement payable.
-      price: (PRODUCT.pricing.soloCents / 100).toFixed(2),
+      // Le prix du PACK de leurres — la seule façon de l'acheter depuis le
+      // 2026-09-04. Un prix affiché en résultat de recherche doit être un prix
+      // réellement payable : ce n'est donc ni un prix à l'unité (qui n'existe
+      // plus), ni un total livraison comprise (qui dépend de la commande).
+      price: (PACKS.leurres.amountCents / 100).toFixed(2),
+      // La livraison est ANNONCÉE, pas fondue dans le prix : Google la présente
+      // à part, et un « + 3,60 € » découvert au paiement est un litige.
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: (SHIPPING.amountCents / 100).toFixed(2),
+          currency: 'EUR',
+        },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'FR' },
+      },
       priceCurrency: 'EUR',
       availability: anyAvailable ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/NewCondition',

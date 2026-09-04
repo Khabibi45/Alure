@@ -49,20 +49,11 @@ export type Colorway = {
 export const PRODUCT = {
   id: 'alure-leurre-v1',
   name: 'Leurre souple Alure',
-  /**
-   * Prix à l'unité, port inclus. TVA non applicable, art. 293 B du CGI.
-   * « Chaque leurre à l'unité ; 3 achetés, le 4e offert au choix » — la règle
-   * tient en une phrase, et c'est cette phrase-là qui s'affiche au client.
-   */
-  pricing: {
-    /** Le prix d'un leurre seul. C'est LA référence de tous les autres montants. */
-    soloCents: 2199,
-  },
   currency: 'eur' as const,
   /**
    * Passage aux LEURRES SOUPLES le 2026-09-01 (modèles fournis par Camil) :
-   * les trois coloris vendus deviennent Bleu, Rouge et Vert, et le collector
-   * reste le noir. Les noms sont volontairement les couleurs elles-mêmes —
+   * les quatre coloris sont Bleu, Rouge, Vert et Noir. Les noms sont
+   * volontairement les couleurs elles-mêmes —
    * décrire une robe qu'on n'a pas vue serait l'inventer (règle n°6). À affiner
    * quand les rendus définitifs seront validés.
    *
@@ -104,27 +95,22 @@ export const PRODUCT = {
       image: '/produit/leurre-vert.webp',
       photoSlug: 'vert',
     },
+    {
+      /**
+       * Le NOIR. Il s'appelait « Pirate » et ne se vendait pas : c'était le
+       * collector, obtenu en 4e leurre offert. Cette mécanique est supprimée le
+       * 2026-09-04 (décision Camil) — le pack contient une unité de CHAQUE
+       * coloris, celui-ci compris, et le nom redevient simplement la couleur,
+       * comme les trois autres.
+       */
+      id: 'coloris-4',
+      label: 'Noir',
+      shortLabel: 'Noir',
+      available: true,
+      image: '/produit/leurre-noir.webp',
+      photoSlug: 'noir',
+    },
   ] satisfies Colorway[],
-  /**
-   * Le leurre collector : jamais vendu seul — il se CHOISIT comme 4e leurre
-   * offert (offre « 3 achetés, le 4e offert au choix », 2026-08-14). Il n'entre
-   * dans aucun calcul de montant. C'est ce qui lui donne sa valeur : on ne peut
-   * pas l'acheter. Renommé « Pirate » le 2026-08-12 (décision Camil) — le nom
-   * se propage partout d'ici : site, reçus Stripe, emails, dictionnaires
-   * ({collector}). L'`id` sert au champ `cadeau` du checkout.
-   */
-  collector: {
-    id: 'pirate',
-    label: 'Pirate',
-    /**
-     * Sa photo, au même titre que les trois coloris vendus : le Pirate ne
-     * s'achète pas, mais il se CHOISIT — et on ne choisit pas un leurre qu'on
-     * n'a pas vu. La pastille du 4e leurre offert montrait jusqu'ici une tête
-     * de mort ; c'était une icône, pas le produit.
-     */
-    image: '/produit/leurre-pirate.webp',
-    photoSlug: 'pirate',
-  },
   /**
    * Dimensions réelles du leurre, confirmées par Camil le 2026-08-06 (le journal
    * les portait jusque-là en « à mesurer »). Source unique : toute mention de
@@ -185,60 +171,128 @@ export function getColorway(id: string): Colorway | undefined {
   return PRODUCT.colorways.find((c) => c.id === id)
 }
 
-/* ────────────────────────── L'offre à deux paliers ────────────────────────── */
+/* ────────────────────────────── LES DEUX PACKS ────────────────────────────── */
 
-export type OfferId = 'solo' | 'collection'
+/**
+ * Le catalogue, depuis le 2026-09-04 (décision Camil) : on ne vend plus de
+ * leurre à l'unité, on vend des PACKS.
+ *
+ * Ce qui a disparu ce jour-là, et pourquoi il n'en reste pas de trace ici :
+ *
+ *   - le prix à l'unité (21,99 €) ;
+ *   - l'offre « 3 achetés, le 4e offert », avec son champ `cadeau` ;
+ *   - le collector « Pirate », qui ne s'achetait pas.
+ *
+ * Un pack n'a rien à choisir : celui de leurres souples contient UNE UNITÉ DE
+ * CHAQUE coloris. C'est ce qui rend le modèle simple à dire et à tenir — pas de
+ * combinaison, pas de rupture partielle à gérer au panier, pas de prix à
+ * recalculer selon la sélection.
+ */
+export type PackId = 'leurres' | 'goujons'
 
-export type Offer = {
-  readonly id: OfferId
-  /** Libellé affiché (sélecteur d'offre, récapitulatifs). */
-  readonly label: string
-  /** Nombre de coloris VENDUS (le cadeau n'en fait pas partie). */
-  readonly colorwayCount: number
+export type Pack = {
+  readonly id: PackId
+  /**
+   * Le nom qui part sur le REÇU STRIPE et dans l'email de confirmation. Il
+   * reste en français dans les deux langues : le client doit retrouver sur son
+   * relevé exactement ce qu'il a vu en payant.
+   */
+  readonly name: string
+  /** Montant du pack, HORS livraison. */
   readonly amountCents: number
-  /** Nombre de leurres PAYÉS, au prix de l'unité. */
-  readonly paidCount: number
-  /** Nombre de leurres OFFERTS — au choix de l'acheteur (champ `cadeau`). */
-  readonly giftCount: number
+  /** Nombre d'objets dans le pack — ce qui arrive vraiment dans l'enveloppe. */
+  readonly unitCount: number
+}
+
+export const PACKS = {
+  leurres: {
+    id: 'leurres',
+    name: 'Pack de leurres souples Alure',
+    amountCents: 1099,
+    // Une unité de chaque coloris : le compte SUIT le catalogue plutôt que d'être
+    // écrit en dur. Ajouter un coloris changera le contenu du pack, et le test
+    // le rappellera — plutôt qu'un 4 en dur qui mentirait en silence.
+    unitCount: PRODUCT.colorways.length,
+  },
+  goujons: {
+    id: 'goujons',
+    name: 'Pack de goujons Alure',
+    amountCents: 599,
+    unitCount: 5,
+  },
+} as const satisfies Record<PackId, Pack>
+
+export const PACK_IDS = Object.keys(PACKS) as PackId[]
+
+function assertPack(id: string): asserts id is PackId {
+  if (!(id in PACKS)) throw new Error(`Pack inconnu : ${id}`)
+}
+
+export function getPack(id: PackId): Pack {
+  return PACKS[id]
+}
+
+/* ───────────────────────────── LA LIVRAISON ───────────────────────────── */
+
+/**
+ * La livraison n'est PLUS incluse (décision Camil, 2026-09-04) — elle se paie
+ * en plus, et elle s'affiche donc avant le paiement : c'est une obligation, pas
+ * une politesse.
+ *
+ * LE MONTANT N'EST PAS CHOISI, IL EST RELEVÉ. Tarif La Poste **Lettre Verte
+ * Suivie**, en vigueur au 1er janvier 2026 : 2,02 € jusqu'à 20 g, **3,60 €
+ * jusqu'à 100 g**, 5,74 € jusqu'à 250 g.
+ *
+ * Pourquoi la tranche 100 g, et pourquoi un forfait :
+ *
+ *   un pack de leurres pèse 4 × 6,5 g = 26 g ; l'enveloppe matelassée et la
+ *   carte ajoutent une trentaine de grammes. Un envoi tourne donc autour de
+ *   50 g, et deux packs ensemble restent sous les 100 g. Le tarif ne varie pas
+ *   dans l'usage réel : un forfait dit la vérité, une grille par poids
+ *   compliquerait la page sans changer le montant.
+ *
+ * ⚠️ Ce chiffre est un TARIF PUBLIC qui bouge chaque 1er janvier (+7,4 % en
+ * 2026). À revérifier à cette date — et il doit rester identique au tarif
+ * d'expédition configuré dans Stripe, sinon l'affiché et l'encaissé divergent.
+ */
+export const SHIPPING = {
+  amountCents: 360,
+  /** Le service postal réellement utilisé — il s'affiche au client. */
+  carrier: 'Lettre Verte suivie',
+  /** La tranche de poids couverte par ce tarif. */
+  maxWeightGrams: 100,
+} as const
+
+/** Total réellement encaissé : le pack, plus la livraison. */
+export function totalCents(packId: string): number {
+  assertPack(packId)
+  return PACKS[packId].amountCents + SHIPPING.amountCents
 }
 
 /**
- * Deux paliers, pas trois : un choix binaire se décide, une liste de cinq prix se
- * calcule. Chaque leurre se vend À L'UNITÉ (le solo) ; le palier 2 est
- * « 3 ACHETÉS, LE 4e OFFERT AU CHOIX » (offre Camil 2026-08-14) : on paie trois
- * leurres au prix de l'unité, et l'acheteur CHOISIT son 4e — un coloris en
- * double ou le Pirate. Le montant est exactement 3 × l'unité.
+ * Le prix par pièce dans un pack — `null` si la division n'est pas exacte.
+ *
+ * On n'affiche jamais un prix arrondi qui, remultiplié, ne redonne pas le
+ * total : 10,99 € pour 4 leurres font 2,7475 € pièce, un montant qui n'existe
+ * pas en centimes. Dans ce cas c'est `perUnitAtMostCents` qui parle, avec un
+ * « moins de » qui, lui, est vrai.
  */
-export const OFFERS = {
-  solo: {
-    id: 'solo',
-    label: 'Un leurre',
-    colorwayCount: 1,
-    amountCents: PRODUCT.pricing.soloCents,
-    paidCount: 1,
-    giftCount: 0,
-  },
-  collection: {
-    id: 'collection',
-    label: '3 achetés, le 4e offert',
-    colorwayCount: PRODUCT.colorways.length,
-    // « 3 achetés » : on paie trois leurres à l'unité — jamais un prix recalculé.
-    amountCents: PRODUCT.pricing.soloCents * 3,
-    paidCount: 3,
-    giftCount: 1,
-  },
-} as const satisfies Record<OfferId, Offer>
+export function perUnitCents(packId: string): number | null {
+  assertPack(packId)
+  const pack = PACKS[packId]
+  return pack.amountCents % pack.unitCount === 0 ? pack.amountCents / pack.unitCount : null
+}
 
-/**
- * La ligne sous le prix — par palier, jamais commune : afficher l'argument de la
- * collection sous le total d'un leurre seul décrirait une offre que le montant
- * ne reflète pas.
- */
-export function priceTagline(offerId: string): string {
-  assertOffer(offerId)
-  return offerId === 'collection'
-    ? '3 leurres achetés, le 4e offert au choix · port inclus · TVA non applicable, art. 293 B du CGI.'
-    : 'Port inclus · TVA non applicable, art. 293 B du CGI.'
+/** Le prix par pièce arrondi au dixième d'euro SUPÉRIEUR — à n'annoncer qu'avec « moins de ». */
+export function perUnitAtMostCents(packId: string): number {
+  assertPack(packId)
+  const pack = PACKS[packId]
+  return Math.ceil(pack.amountCents / pack.unitCount / 10) * 10
+}
+
+/** « 4 coloris · 6,5 cm » — le résumé vrai de la gamme. */
+export function lineupSummary(): string {
+  return `${PRODUCT.colorways.length} coloris · ${formatLength()}`
 }
 
 /** « Livraison 3 à 5 jours ouvrés » — LA formulation courte, dérivée de la source unique. */
@@ -246,104 +300,19 @@ export function deliveryShort(): string {
   return `Livraison ${PRODUCT.deliveryDelay}`
 }
 
-/** « 3 coloris + 1 collector · 2 sections » — le résumé vrai de la gamme. */
-export function lineupSummary(): string {
-  return `${PRODUCT.colorways.length} coloris + 1 collector · 2 sections`
-}
-
-export const OFFER_IDS = Object.keys(OFFERS) as OfferId[]
-
-function assertOffer(id: string): asserts id is OfferId {
-  if (!(id in OFFERS)) throw new Error(`Offre inconnue : ${id}`)
-}
-
-export function getOffer(id: OfferId): Offer {
-  return OFFERS[id]
-}
-
-/** Total d'une commande en centimes — l'unique endroit où un montant se calcule. */
-export function totalCents(offerId: string): number {
-  assertOffer(offerId)
-  return OFFERS[offerId].amountCents
-}
-
 /**
- * L'économie, calculée contre le prix RÉELLEMENT pratiqué d'un leurre seul
- * (21,99 € × le nombre de coloris). Jamais contre un prix de référence gonflé :
- * ce serait une pratique commerciale trompeuse, pas une astuce de conversion.
- * Le collector n'entre pas dans le calcul — il n'a pas de prix, il ne se vend pas.
+ * La ligne sous le prix. Elle dit la livraison EN SUS — c'est le point sur
+ * lequel un client se sent trompé s'il le découvre au paiement.
  */
-export function savingsCents(offerId: string): number {
-  assertOffer(offerId)
-  const offer = OFFERS[offerId]
-  return PRODUCT.pricing.soloCents * offer.colorwayCount - offer.amountCents
+export function priceTagline(): string {
+  return `+ ${formatEuros(SHIPPING.amountCents)} de livraison · TVA non applicable, art. 293 B du CGI.`
 }
 
-/**
- * Le prix par leurre, **cadeau compris**. C'est LE chiffre qui fait décider.
- * Retourne `null` si la division n'est pas exacte — on n'affiche jamais un prix
- * arrondi qui, remultiplié, ne redonne pas le total (principe n°1).
- */
-export function perLureCents(offerId: string): number | null {
-  assertOffer(offerId)
-  const offer = OFFERS[offerId]
-  const lures = luresReceived(offerId)
-  return offer.amountCents % lures === 0 ? offer.amountCents / lures : null
-}
-
-/** Nombre d'objets réellement expédiés, cadeau compris. */
-export function luresReceived(offerId: string): number {
-  assertOffer(offerId)
-  const offer = OFFERS[offerId]
-  return offer.paidCount + offer.giftCount
-}
-
-/**
- * Le prix par leurre arrondi à l'euro SUPÉRIEUR, à n'annoncer qu'avec « moins de ».
- *
- * 65,97 € pour 4 leurres font 16,4925 € pièce : un montant qui n'existe pas en
- * centimes. Plutôt que d'écrire « 16,49 € » — faux, et faux en notre faveur — on
- * annonce « moins de 17 € », qui est vrai et se vérifie.
- */
-export function perLureAtMostCents(offerId: string): number {
-  assertOffer(offerId)
-  return Math.ceil(OFFERS[offerId].amountCents / luresReceived(offerId) / 100) * 100
-}
-
-/**
- * Le récapitulatif d'une commande, en une ligne — emails, logs, dashboard.
- * `giftLabel` : le 4e leurre choisi (webhook) — « au choix » s'il manque
- * (métadonnée d'une ancienne commande : on ne devine pas).
- */
-export function offerSummary(offerId: string, colorwayLabel: string, giftLabel?: string): string {
-  assertOffer(offerId)
-  const offer = OFFERS[offerId]
-  return offer.giftCount > 0
-    ? `3 achetés — les ${offer.colorwayCount} coloris + le 4e offert : ${giftLabel ?? 'au choix'}`
-    : `1 leurre — ${colorwayLabel}`
-}
-
-/* ──────────── Le 4e leurre offert, au choix (champ `cadeau`) ──────────── */
-
-/** Les choix possibles du cadeau : chaque coloris, ou le collector. */
-export const GIFT_CHOICE_IDS: readonly string[] = [
-  ...PRODUCT.colorways.map((c) => c.id),
-  PRODUCT.collector.id,
-]
-
-/** Le libellé public d'un choix de cadeau — `null` si l'identifiant est inconnu. */
-export function giftLabel(giftId: string): string | null {
-  if (giftId === PRODUCT.collector.id) return PRODUCT.collector.label
-  return getColorway(giftId)?.label ?? null
-}
-
-/**
- * Le cadeau est-il réellement offrable ? Le collector l'est toujours (il ne
- * connaît pas la rupture d'un coloris) ; un coloris suit sa disponibilité.
- */
-export function giftOrderableError(giftId: string): string | null {
-  if (giftId === PRODUCT.collector.id) return null
-  return orderableError(giftId)
+/** Le récapitulatif d'une commande, en une ligne — emails, logs, dashboard. */
+export function packSummary(packId: string): string {
+  assertPack(packId)
+  const pack = PACKS[packId]
+  return `${pack.name} — ${pack.unitCount} pièces`
 }
 
 /** Une ligne de commande telle qu'elle part chez Stripe et s'affiche au client. */
@@ -356,57 +325,35 @@ export type CheckoutLine = {
 /**
  * Décompose une commande en lignes facturables.
  *
- * Le reçu dit l'offre telle qu'elle est vendue : chaque leurre à l'UNITÉ.
- * « 3 achetés, le 4e offert » = 3 × le prix unitaire, puis le 4e — CHOISI par
- * l'acheteur — en ligne à **0,00 €**. Invariant garanti par le test : la somme
- * des lignes vaut exactement `totalCents(offre)` — c'est lui qui interdit
- * l'écart entre le montant affiché et le montant encaissé.
+ * Le pack est UNE ligne : c'est ainsi qu'il se vend, et le reçu doit dire ce
+ * que le client a acheté. La livraison n'en fait pas partie — elle passe par
+ * `shipping_options` chez Stripe, ce qui la fait apparaître comme des frais de
+ * port et non comme un article.
+ *
+ * Un test garde l'invariant qui compte : la somme des lignes plus la livraison
+ * vaut exactement `totalCents(pack)`. C'est lui qui interdit l'écart entre le
+ * montant affiché et le montant encaissé.
  */
-export function checkoutLines(
-  offerId: string,
-  colorwayLabel: string,
-  chosenGiftLabel?: string
-): CheckoutLine[] {
-  assertOffer(offerId)
-  const offer = OFFERS[offerId]
-
-  if (offer.id === 'solo') {
-    return [
-      {
-        name: `${PRODUCT.name} · ${colorwayLabel}`,
-        quantity: 1,
-        unitAmountCents: offer.amountCents,
-      },
-    ]
-  }
-
-  return [
-    {
-      name: `${PRODUCT.name} · à l'unité`,
-      quantity: offer.paidCount,
-      unitAmountCents: PRODUCT.pricing.soloCents,
-    },
-    {
-      name: `${PRODUCT.name} · 4e offert${chosenGiftLabel ? ` — ${chosenGiftLabel}` : ' au choix'}`,
-      quantity: offer.giftCount,
-      unitAmountCents: 0,
-    },
-  ]
+export function checkoutLines(packId: string): CheckoutLine[] {
+  assertPack(packId)
+  const pack = PACKS[packId]
+  return [{ name: pack.name, quantity: 1, unitAmountCents: pack.amountCents }]
 }
 
 /**
- * Vérifie qu'une commande est réellement passable (au-delà de la forme validée
- * par le schéma zod) : coloris connu ET disponible. Retourne le message d'erreur
- * à afficher, ou null si tout est bon. Partagé route API + îlot client.
- * `colorways` est injectable pour les tests.
+ * Vérifie qu'une commande est réellement passable, au-delà de la forme validée
+ * par le schéma zod. Retourne le message à afficher, ou `null` si tout est bon.
+ * Partagé route API + îlot client.
+ *
+ * Un pack n'a pas de coloris à choisir : sa disponibilité est celle de son
+ * contenu. Le pack de leurres tombe donc dès qu'un seul coloris est en rupture
+ * — il contient une unité de chacun, on ne peut pas en livrer trois sur quatre.
  */
-export function orderableError(
-  colorisId: string,
-  colorways: readonly Colorway[] = PRODUCT.colorways
-): string | null {
-  const colorway = colorways.find((c) => c.id === colorisId)
-  if (!colorway) return 'Ce coloris n’existe pas.'
-  if (!colorway.available) return 'Ce coloris est épuisé.'
+export function orderableError(packId: string): string | null {
+  if (!(packId in PACKS)) return 'Ce pack n’existe pas.'
+  if (packId === 'leurres' && PRODUCT.colorways.some((c) => !c.available)) {
+    return 'Un coloris du pack est épuisé.'
+  }
   return null
 }
 
